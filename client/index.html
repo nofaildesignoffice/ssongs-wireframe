@@ -14,7 +14,7 @@
   --white:#FFFFFF; --light:#F5F5F5; --dark:#2D2D2D; --black:#1A1A1A;
   --ink:#1A1A1A; --dim:#333333; --gray:#666666; --lt:#999999; --muted:#BCBCBC;
   --border:#E0E0E0; --border2:#D0D0D0; --ph:#E0E0E0; --phic:#BCBCBC;
-  --r1:8px; --r2:12px; --maxw:1380px;
+  --r1:8px; --r2:12px; --maxw:1380px; --ctrl:48px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -471,10 +471,13 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
 .formrow{display:flex;gap:16px;align-items:flex-start;padding:13px 0;border-bottom:1px solid #F2F2F2}
 .fl{width:96px;flex:none;font-size:13px;font-weight:700;color:var(--gray);padding-top:13px}
 .fc{flex:1;min-width:0}
-.inp{display:flex;align-items:center;min-height:46px;
+.inp,.inqform .wsel.wide{display:flex;align-items:center;box-sizing:border-box;
+  height:var(--ctrl);min-height:var(--ctrl);line-height:1.4;
   border:1px solid var(--border2);border-radius:var(--r1);
-  padding:12px 14px;font-size:13.5px;color:var(--lt);background:var(--white)}
-.inp.area{min-height:150px;align-items:flex-start}
+  padding:0 14px;font-size:13.5px;background:var(--white)}
+.inp{color:var(--lt)}
+.inqform .wsel.wide{color:var(--dim);justify-content:space-between;gap:8px}
+.inp.area{height:auto;min-height:156px;align-items:flex-start;padding:14px}
 @media(max-width:560px){.formrow{flex-direction:column;gap:7px}.fl{width:auto;padding-top:0}}
 .formfoot{margin-top:20px;display:flex;flex-direction:column;gap:14px}
 .agree{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--dim)}
