@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>쏭스스토어 와이어프레임 — 3안 비교</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <style>
+    :root{--ground:#F2F5F4;--surface:#FFF;--line:#DCE3E1;--ink:#121B1A;--muted:#5B6866;--accent:#0E5C57;--accent-soft:#E2EFED}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--ground);color:var(--ink);
+      font-family:"IBM Plex Sans KR","Apple SD Gothic Neo",system-ui,sans-serif;line-height:1.65}
+    .wrap{max-width:960px;margin:0 auto;padding:52px 22px 70px}
+    h1{font-family:"Gothic A1",sans-serif;font-size:27px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px}
+    .sub{color:var(--muted);font-size:13.5px;margin:0 0 30px}
+    .cards{display:grid;grid-template-columns:1fr;gap:14px}
+    @media(min-width:760px){.cards{grid-template-columns:repeat(3,1fr)}}
+    a.card{display:block;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+      padding:22px 20px 20px;text-decoration:none;color:inherit}
+    a.card:hover{border-color:var(--accent)}
+    a.card .k{display:inline-block;font-family:"IBM Plex Mono",monospace;font-weight:600;font-size:12px;
+      color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:3px 9px;margin-bottom:11px}
+    a.card h2{font-family:"Gothic A1",sans-serif;font-size:17px;font-weight:800;margin:0 0 7px}
+    a.card p{font-size:13px;color:var(--muted);margin:0}
+    table{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--surface);
+      border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-top:34px}
+    th,td{text-align:left;padding:11px 14px;border-bottom:1px solid #EEF2F1}
+    th{background:#FAFBFB;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+    tr:last-child td{border-bottom:0}
+    .note{margin-top:26px;font-size:13px;color:var(--muted);border-left:3px solid var(--accent);
+      background:var(--surface);border:1px solid var(--line);border-left-width:3px;border-radius:8px;padding:14px 16px}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>쏭스스토어 와이어프레임 — 3안 비교</h1>
+  <p class="sub">카페24 리뉴얼 · 전 페이지 17종 · 2026-08-20</p>
+  <div class="cards">
+    <a class="card" href="a.html"><span class="k">A안</span>
+      <h2>6대분류 동등</h2><p>계약 제2조4항 문언 그대로. 스트랩·소품도 같은 위계.</p></a>
+    <a class="card" href="b.html"><span class="k">B안</span>
+      <h2>소량 2종 축소</h2><p>구조는 A와 동일. 드롭다운 하단에 구분선 아래 작게.</p></a>
+    <a class="card" href="c.html"><span class="k">C안</span>
+      <h2>5대분류 통합</h2><p>스트랩 8 + 소품 2 = 10개를 하나로. 계약 문언 변경.</p></a>
+  </div>
+
+  <table>
+    <thead><tr><th>항목</th><th>A안</th><th>B안</th><th>C안</th></tr></thead>
+    <tbody>
+      <tr><td>SHOP 대분류</td><td>6</td><td>6</td><td>5</td></tr>
+      <tr><td>계약 문언</td><td>그대로</td><td>그대로</td><td>변경 · 서면 합의</td></tr>
+      <tr><td>색인 목록 URL</td><td>7</td><td>7</td><td>6</td></tr>
+      <tr><td>빈약 페이지</td><td>2개 (8 · 2)</td><td>2개 (8 · 2)</td><td>없음</td></tr>
+      <tr><td>후속 변경</td><td>쉬움</td><td>쉬움 (A·C 양방향)</td><td>재합의 필요</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    세 안의 차이는 <b>SHOP 드롭다운 한 곳</b>뿐입니다. 나머지 16개 페이지는 동일합니다.
+    각 파일을 열고 상단 SHOP 메뉴에 마우스를 올려 비교하세요.
+    브라우저 창 폭을 줄이면 900px에서 햄버거 메뉴로, 560px에서 1열로 바뀝니다.
+  </div>
+</div>
+</body>
+</html>
