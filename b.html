@@ -453,11 +453,19 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
 .csbody .faqsec:first-of-type > h2{margin-top:0}
 .faqsec details{border:1px solid var(--border);border-radius:var(--r2);
   padding:14px 16px;margin-bottom:9px;background:var(--white)}
-.faqsec summary{font-weight:600;font-size:14px;cursor:pointer;list-style:none;
-  display:flex;justify-content:space-between;gap:12px}
+.faqsec summary{position:relative;display:block;font-weight:600;font-size:14px;
+  line-height:1.55;cursor:pointer;list-style:none;padding-right:34px}
 .faqsec summary::-webkit-details-marker{display:none}
-.faqsec summary::after{content:"+";color:var(--lt);font-weight:400;font-size:17px;line-height:1}
-.faqsec details[open] summary::after{content:"2"}
+.faqsec summary::before,
+.faqsec summary::after{content:"";position:absolute;top:calc(0.775em);
+  background:var(--gray);border-radius:1px}
+.faqsec summary::before{right:4px;width:14px;height:1.6px;transform:translateY(-50%)}
+.faqsec summary::after{right:10.2px;width:1.6px;height:14px;transform:translateY(-50%)}
+.faqsec details[open] summary::before,
+.faqsec details[open] summary::after{background:var(--ink)}
+.faqsec details[open] summary::after{opacity:0}
+@media(prefers-reduced-motion:no-preference){
+  .faqsec summary::after{transition:opacity .15s}}
 .faqsec .fa{padding-top:11px}
 .faqsec .ans{margin:0;font-size:13.5px;font-weight:600;line-height:1.7}
 .faqsec .why{margin:6px 0 0;font-size:13px;color:var(--gray);line-height:1.75}
