@@ -151,10 +151,11 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   margin-top:18px;font-size:13.5px;color:var(--dim)}
 .resbar b{font-size:16px;font-weight:800}
 .dim{color:var(--lt);font-size:12.5px;font-weight:400}
-@media(max-width:560px){
+@media(max-width:767px){
   .filterbar{padding:2px 14px}
-  .frow{flex-direction:column;gap:8px;padding:11px 0}
+  .frow{flex-direction:column;gap:8px;padding:11px 0;align-items:stretch}
   .fkey{width:auto;padding-top:0;font-size:11.5px;letter-spacing:.02em}
+  .fval{width:100%}
 }
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:var(--r1);
@@ -336,7 +337,11 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .okey{width:92px;flex:none;font-size:12.5px;font-weight:700;color:var(--gray);padding-top:7px}
 .oval{flex:1;min-width:0;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .oval .chips{display:contents}
-@media(max-width:560px){.optrow{flex-direction:column;gap:7px}.okey{width:auto;padding-top:0}}
+@media(max-width:767px){
+  .optrow{flex-direction:column;gap:8px;align-items:stretch}
+  .okey{width:auto;padding-top:0}
+  .oval{width:100%}
+  .oval .wsel.wide{width:100%}}
 .req{display:inline-block;font-size:10.5px;font-weight:700;color:var(--white);
   background:var(--ink);border-radius:3px;padding:1px 5px;margin-left:3px}
 .opt{display:inline-block;font-size:10.5px;color:var(--lt);border:1px solid var(--border2);
@@ -487,7 +492,11 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
 .inp{color:var(--lt)}
 .inqform .wsel.wide{color:var(--dim);justify-content:space-between;gap:8px}
 .inp.area{height:auto;min-height:156px;align-items:flex-start;padding:14px}
-@media(max-width:560px){.formrow{flex-direction:column;gap:7px}.fl{width:auto;padding-top:0}}
+@media(max-width:767px){
+  .formrow{flex-direction:column;gap:8px;align-items:stretch}
+  .fl{width:auto;padding-top:0}
+  .fc{width:100%}
+  .inp,.inqform .wsel.wide{width:100%}}
 .formfoot{margin-top:20px;display:flex;flex-direction:column;gap:14px}
 .agree{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--dim)}
 .cbx{width:17px;height:17px;border:1px solid var(--border2);border-radius:4px;display:inline-block}
