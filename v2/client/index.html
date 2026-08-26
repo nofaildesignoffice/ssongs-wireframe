@@ -424,6 +424,12 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .slider .viewport{overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;
   -webkit-overflow-scrolling:touch;scrollbar-width:none;-ms-overflow-style:none}
 .slider .viewport::-webkit-scrollbar{display:none}
+.slider .viewport{cursor:grab}
+.hero .slider{cursor:grab}
+.hero .slider:active{cursor:grabbing}
+.slider .viewport.dragging{cursor:grabbing;scroll-behavior:auto;user-select:none}
+.slider .viewport.dragging a{pointer-events:none}
+@media(hover:none){.slider .viewport{cursor:auto}}
 .slider .track{display:flex;gap:16px}
 .slider .track > *{scroll-snap-align:start}
 .sbtn{position:absolute;top:38%;z-index:3;width:38px;height:38px;border-radius:50%;
@@ -885,6 +891,21 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
       sl.addEventListener("focusin", stop);
       sl.addEventListener("focusout", start);
 
+      // 데스크탑 마우스 드래그 — 페이드는 스크롤이 없으므로 방향만 읽는다
+      var mx = null;
+      sl.addEventListener("pointerdown", function(e){
+        if(e.pointerType !== "mouse" || e.button !== 0) return;
+        mx = e.clientX; stop(); e.preventDefault();
+      });
+      sl.addEventListener("pointerup", function(e){
+        if(mx === null) return;
+        var dx = e.clientX - mx;
+        if(Math.abs(dx) > 45) show(cur + (dx < 0 ? 1 : -1));
+        mx = null; idle(4000);
+      });
+      sl.addEventListener("pointerleave", function(){ if(mx !== null){ mx = null; idle(4000); } });
+      sl.addEventListener("dragstart", function(e){ e.preventDefault(); });
+
       // 페이드는 스크롤이 없으므로 스와이프를 직접 받는다
       var x0 = null;
       sl.addEventListener("touchstart", function(e){
@@ -1070,6 +1091,42 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
     vp.addEventListener("scroll", syncDots, { passive: true });
     syncDots();
     }
+    // 데스크탑 마우스 드래그 — 터치는 브라우저 기본 스크롤에 맡긴다
+    (function(){
+      var down = false, moved = 0, sx = 0, sl = 0;
+      vp.addEventListener("pointerdown", function(e){
+        if(e.pointerType !== "mouse" || e.button !== 0) return;
+        if(vp.scrollWidth <= vp.clientWidth + 1) return;   // 스크롤할 게 없으면 무시
+        down = true; moved = 0; sx = e.clientX; sl = vp.scrollLeft;
+        vp.classList.add("dragging");
+        stop();
+        e.preventDefault();
+      });
+      vp.addEventListener("pointermove", function(e){
+        if(!down) return;
+        var dx = e.clientX - sx;
+        if(Math.abs(dx) > moved) moved = Math.abs(dx);
+        vp.scrollLeft = sl - dx;
+      });
+      function end(){
+        if(!down) return;
+        down = false;
+        vp.classList.remove("dragging");
+        if(moved > 5){
+          vp.addEventListener("click", function swallow(ev){
+            ev.preventDefault(); ev.stopPropagation();
+            vp.removeEventListener("click", swallow, true);
+          }, true);
+        }
+        idle(3500);
+        wrap();
+      }
+      vp.addEventListener("pointerup", end);
+      vp.addEventListener("pointercancel", end);
+      vp.addEventListener("pointerleave", end);
+      // 이미지·링크의 기본 드래그가 스와이프를 가로채지 않도록
+      vp.addEventListener("dragstart", function(e){ e.preventDefault(); });
+    })();
     start();
     })(list[s]);
     }
