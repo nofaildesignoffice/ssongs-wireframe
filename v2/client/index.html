@@ -397,7 +397,9 @@ table.wt tbody tr:hover{background:#FAFAFA}
    데스크탑: track 이 원래 그리드 그대로. JS 복제본만 감춘다.
    모바일  : flex 가로 스크롤 + --mobper 개수만큼 노출          */
 /* 데스크탑에서는 스크롤 컨테이너가 아니어야 한다 — .slider .viewport 보다 특이성을 높인다 */
-.slider.mobsl .viewport{overflow:visible;scroll-snap-type:none;margin:0;padding:0}
+.slider.mobsl{position:static}
+.slider.mobsl .viewport{overflow:visible;scroll-snap-type:none;margin:0;padding:0;cursor:auto}
+.slider.mobsl .track > *{scroll-snap-align:none}
 .mobsl .sbtn{display:none}
 @media(min-width:768px){
   .mobsl .track > [aria-hidden="true"]{display:none}}
@@ -451,7 +453,7 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .slider .viewport.dragging{cursor:grabbing;scroll-behavior:auto;user-select:none}
 .slider .viewport.dragging a{pointer-events:none}
 @media(hover:none){.slider .viewport{cursor:auto}}
-.slider .track{display:flex;gap:16px}
+.slider:not(.mobsl) .track{display:flex;gap:16px}
 .slider .track > *{scroll-snap-align:start}
 .sbtn{position:absolute;top:38%;z-index:3;width:38px;height:38px;border-radius:50%;
   border:1px solid var(--border2);background:var(--white);color:var(--dim);
@@ -468,7 +470,7 @@ table.wt tbody tr:hover{background:#FAFAFA}
   .hero .slider .viewport{margin:0;padding:0}}
 @media(max-width:560px){
   .slider .viewport{margin:0 -15px 0 0;padding:0 15px 0 0}
-  .slider .track{gap:12px}
+  .slider:not(.mobsl) .track{gap:12px}
   .hero .slider .viewport{margin:0;padding:0}}
 .rankcard{width:230px;flex:none;position:relative;
   border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;background:var(--white)}
@@ -484,7 +486,7 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .rankcard .pr{font-size:14px;font-weight:700;margin-top:5px}
 .rankcard .sm{font-size:12px;color:var(--lt);margin-top:4px}
 
-.setrow{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.setrow{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 @media(max-width:1100px){.setrow{grid-template-columns:repeat(2,1fr);gap:14px}}
 /* 모바일 2열 × 2행 = 4개 전부 노출 */
 @media(max-width:900px){.setrow{grid-template-columns:repeat(2,1fr);gap:12px}}
