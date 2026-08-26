@@ -614,6 +614,19 @@ table.wt td.au,table.wt td.dt{color:var(--gray);font-size:12.5px;
 
 /* FAQ */
 .faqfilter{margin-bottom:26px}
+/* FAQ 분류 칩 — 줄바꿈 없이 가로 1줄 스크롤 (필터 알약 바와 동일한 거동) */
+.faqfilter .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;
+  scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;
+  cursor:grab}
+.faqfilter .chips::-webkit-scrollbar{display:none}
+.faqfilter .chips.dragging{cursor:grabbing;user-select:none}
+.faqfilter .chip{flex:none}
+/* 오른쪽만 화면 끝까지 흘린다 — 왼쪽은 섹션 여백 유지 */
+/* 페이드는 실제로 넘칠 때만 — 칩이 다 들어가는 폭에서는 마지막 칩이 흐려진다 */
+@media(max-width:767px){
+  .faqfilter .chips{margin:0 -15px 0 0;padding:0 15px 2px 0;
+    mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}}
+@media(hover:none){.faqfilter .chips{cursor:auto}}
 
 /* 1:1 문의 */
 .inqgrid{display:grid;grid-template-columns:1fr 320px;gap:38px;align-items:start}
@@ -749,6 +762,45 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
       window.scrollTo(0,0);
     }
   
+  // 가로 스크롤 칩 바(FAQ 분류 등) 마우스 드래그
+  function initChipDrag(){
+    document.querySelectorAll(".faqfilter .chips, .fpills").forEach(function(el){
+      if(el.dataset.dragready) return; el.dataset.dragready = "1";
+      var down = false, moved = 0, sx = 0, sl = 0, want = 0, raf = 0;
+      function apply(){ raf = 0; if(!down) return; el.scrollLeft = want; }
+      el.addEventListener("pointerdown", function(e){
+        if(e.pointerType !== "mouse" || e.button !== 0) return;
+        if(el.scrollWidth <= el.clientWidth + 1) return;
+        down = true; moved = 0; sx = e.clientX; sl = el.scrollLeft; want = sl;
+        el.classList.add("dragging");
+        try{ el.setPointerCapture(e.pointerId); }catch(err){}
+        e.preventDefault();
+      });
+      el.addEventListener("pointermove", function(e){
+        if(!down) return;
+        var dx = e.clientX - sx;
+        if(Math.abs(dx) > moved) moved = Math.abs(dx);
+        want = sl - dx;
+        if(!raf) raf = requestAnimationFrame(apply);
+      });
+      function end(e){
+        if(!down) return;
+        down = false;
+        if(raf){ cancelAnimationFrame(raf); raf = 0; }
+        try{ if(e && e.pointerId != null) el.releasePointerCapture(e.pointerId); }catch(err){}
+        el.classList.remove("dragging");
+        if(moved > 5){
+          el.addEventListener("click", function swallow(ev){
+            ev.preventDefault(); ev.stopPropagation();
+            el.removeEventListener("click", swallow, true);
+          }, true);
+        }
+      }
+      el.addEventListener("pointerup", end);
+      el.addEventListener("pointercancel", end);
+      el.addEventListener("dragstart", function(e){ e.preventDefault(); });
+    });
+  }
   // 정렬 드롭다운 — 기본 최신순
   document.addEventListener("click", function(ev){
     var t = ev.target; if(!t.closest) return;
@@ -1174,6 +1226,7 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
     render();
     initFade();
     syncAllSummaries();
+    initChipDrag();
         initSliders();
   })();
   </script>
