@@ -376,19 +376,25 @@ table.wt tbody tr:hover{background:#FAFAFA}
   transition:opacity .18s,transform .18s}
 .hero .dots button[aria-current="true"]{opacity:1;transform:scale(1.5)}
 @media(prefers-reduced-motion:reduce){.hero .dots button{transition:none}}
-/* 모바일 — 1:1 유지, 여백·라운딩 복귀 */
+/* 모바일 — 데스크탑과 동일한 풀블리드 크로스페이드, 높이는 화면 가득 */
 @media(max-width:767px){
-  .hero{padding:14px 15px 0}
-  .hero .slider{max-width:var(--maxw);margin:0 auto}
-  .hero .viewport{aspect-ratio:1/1;height:auto;min-height:0;max-height:none;
-    border-radius:12px}
-  .herocard{border-radius:12px}
-  .hero .dots{display:none}
-  /* 모바일은 1:1 안에 들어가야 하므로 하단 정렬 + 축소 */
-  .herotxt{align-items:flex-end;padding:0 20px 26px}
-  .heroeye{font-size:11px;margin-bottom:9px}
-  .herosub{font-size:13.5px;margin-top:9px}
-  .herocta{height:42px;padding:0 18px;margin-top:16px;font-size:13.5px}}
+  .hero{padding:0}
+  .hero .slider{max-width:none;margin:0}
+  .hero .viewport{aspect-ratio:auto;
+    height:calc(100svh - var(--navh));min-height:420px;max-height:none;
+    border-radius:0}
+  .herocard{border-radius:0}
+  /* 도트는 데스크탑과 같은 우측 세로 배치, 위치만 안쪽으로 */
+  .hero .dots{display:flex;right:14px;gap:9px}
+  .hero .dots button{width:6px;height:6px}
+  /* 카피도 데스크탑처럼 세로 중앙 */
+  .herotxt{align-items:center;padding:0 20px}
+  .heroeye{font-size:11px;letter-spacing:.12em;margin-bottom:11px}
+  .herosub{font-size:14px;margin-top:11px;max-width:26ch}
+  .herocta{height:44px;padding:0 19px;margin-top:20px;font-size:14px}}
+/* 주소창이 없는 브라우저(구형)를 위한 보정 */
+@supports not (height:100svh){
+  @media(max-width:767px){.hero .viewport{height:calc(100vh - var(--navh))}}}
 .devlab{font-size:19px;font-weight:800;margin-bottom:18px}
 @media(max-width:560px){.devlab{font-size:16px;margin-bottom:14px}}
 
