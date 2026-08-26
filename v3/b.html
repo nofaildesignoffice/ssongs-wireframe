@@ -341,6 +341,23 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .hero{position:relative;padding:0}
 .hero > *{max-width:none}                      /* .wsec > * 의 maxw 해제 */
 .hero .slider{max-width:none;margin:0}
+
+/* ── 메인: GNB 를 히어로 위에 겹침 ─────────────────────────────
+   맨 위에서는 투명, 조금이라도 스크롤하면 흰색으로 굳는다. */
+#r-main .wnav{position:fixed;left:0;right:0;top:0;background:transparent;
+  transition:background .22s ease,box-shadow .22s ease}
+body.navsolid #r-main .wnav{background:var(--white);
+  box-shadow:0 1px 0 rgba(0,0,0,.06)}
+/* 모바일 메뉴를 펼치면 투명 바 아래 흰 패널이 붙어 어색하다 — 같이 흰색으로 */
+body.navopen #r-main .wnav{background:var(--white)}
+/* GNB 가 자리를 차지하지 않으므로 히어로는 화면 전체 높이 */
+#r-main .hero .viewport{height:100svh}
+@supports not (height:100svh){#r-main .hero .viewport{height:100vh}}
+/* 겹친 상태에서 카피가 GNB 밑에 깔리지 않도록 위쪽 여유 */
+#r-main .herotxt{padding-top:var(--navh)}
+/* 드롭다운은 투명 배경 위에서도 읽혀야 한다 */
+#r-main .wdrop{background:var(--white)}
+
 /* 히어로는 가로 이동이 아니라 제자리 크로스페이드 — 뷰포트가 높이를 잡고
    슬라이드는 그 위에 겹쳐 쌓인다 */
 .hero .viewport{position:relative;overflow:hidden;scroll-snap-type:none;
@@ -812,6 +829,7 @@ body.srcon .srclegend{display:block}
     var hb=document.querySelectorAll(".hamb");
     for(var i=0;i<hb.length;i++) hb[i].setAttribute("aria-expanded","false");
     window.scrollTo(0,0);
+    navScroll();
   }
 
   // 가로 스크롤 칩 바(FAQ 분류 등) 마우스 드래그
@@ -853,6 +871,12 @@ body.srcon .srclegend{display:block}
       el.addEventListener("dragstart", function(e){ e.preventDefault(); });
     });
   }
+  // 메인 GNB — 맨 위에서는 투명, 스크롤하면 흰색
+  function navScroll(){
+    document.body.classList.toggle("navsolid", window.scrollY > 40);
+  }
+  window.addEventListener("scroll", navScroll, { passive: true });
+  navScroll();
   // 정렬 드롭다운 — 기본 최신순
   document.addEventListener("click", function(ev){
     var t = ev.target; if(!t.closest) return;
