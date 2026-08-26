@@ -151,14 +151,17 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   .fpill.on svg{opacity:.85}
   .fpill[hidden]{display:none}
 
-  /* ── 펼침 상태: 바텀시트 ── */
-  .filterbar{position:fixed;left:0;right:0;bottom:0;z-index:120;
+  /* ── 펼침 상태: 바텀시트 ──
+     기본 .filterbar 규칙이 소스 뒤에 있으므로 .fwrap 으로 특이성을 올린다 */
+  .fwrap .filterbar{position:fixed;left:0;right:0;bottom:0;z-index:120;
     max-height:82svh;display:flex;flex-direction:column;
-    border:0;border-radius:16px 16px 0 0;padding:0;
+    border:0;padding:0;
+    border-top-left-radius:16px;border-top-right-radius:16px;
+    border-bottom-left-radius:0;border-bottom-right-radius:0;
     box-shadow:0 -8px 30px rgba(0,0,0,.16);
     transform:translateY(101%);visibility:hidden;
     transition:transform .28s cubic-bezier(.32,.72,0,1),visibility .28s}
-  body.fopen .filterbar{transform:none;visibility:visible}
+  body.fopen .fwrap .filterbar{transform:none;visibility:visible}
   body.fopen{overflow:hidden}
 
   .fsheet-head{display:flex;align-items:center;justify-content:space-between;
@@ -188,7 +191,7 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   .fbackdrop{display:block;position:fixed;inset:0;z-index:119;
     background:rgba(0,0,0,.42);opacity:0;visibility:hidden;
     transition:opacity .28s,visibility .28s}
-  body.fopen .fbackdrop{opacity:1;visibility:visible}
+  body.fopen .fbackdrop,.fbackdrop.son{opacity:1;visibility:visible}
 }
 @media(prefers-reduced-motion:reduce){
   .filterbar,.fbackdrop{transition:none}
@@ -240,12 +243,30 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
 .sortopt.on::after{content:"✓";float:right;margin-left:10px}
 @media(prefers-reduced-motion:reduce){.sortmenu{transition:none}}
 
+
+/* 모바일 — 정렬도 필터와 같은 바텀시트로 */
+@media(max-width:767px){
+  .sortwrap .sortmenu{position:fixed;left:0;right:0;bottom:0;top:auto;
+    z-index:120;min-width:0;padding:8px 0 max(10px,env(safe-area-inset-bottom));
+    border:0;border-top-left-radius:16px;border-top-right-radius:16px;
+    border-bottom-left-radius:0;border-bottom-right-radius:0;
+    box-shadow:0 -8px 30px rgba(0,0,0,.16);
+    transform:translateY(101%);opacity:1;visibility:hidden;
+    transition:transform .28s cubic-bezier(.32,.72,0,1),visibility .28s}
+  .sortwrap.open .sortmenu{transform:none;visibility:visible}
+  .sortmenu::before{content:"정렬";display:block;font-size:15px;font-weight:800;
+    color:var(--ink);padding:8px 18px 12px;border-bottom:1px solid var(--border)}
+  .sortopt{font-size:15px;padding:15px 18px}
+  .sortopt.on::after{margin-left:12px;font-size:14px}
+  body.sopen{overflow:hidden}
+}
+@media(prefers-reduced-motion:reduce){.sortwrap .sortmenu{transition:none}}
+
 .resbar{display:flex;justify-content:space-between;align-items:center;gap:12px;
   margin-top:18px;font-size:13.5px;color:var(--dim)}
 .resbar b{font-size:16px;font-weight:800}
 .dim{color:var(--lt);font-size:12.5px;font-weight:400}
 @media(max-width:767px){
-  .filterbar{padding:2px 14px}
   .frow{flex-direction:column;gap:8px;padding:11px 0;align-items:stretch}
   .fkey{width:auto;padding-top:0;font-size:11.5px;letter-spacing:.02em}
   .fval{width:100%}
@@ -774,7 +795,9 @@ body.srcon .srclegend{display:block}
       document.querySelectorAll(".sortwrap.open").forEach(function(x){
         x.classList.remove("open");
         var b = x.querySelector(".sortbtn"); if(b) b.setAttribute("aria-expanded","false"); });
-      if(!wasOpen){ w.classList.add("open"); btn.setAttribute("aria-expanded","true"); }
+      if(!wasOpen){ w.classList.add("open"); btn.setAttribute("aria-expanded","true");
+        document.body.classList.add("sopen"); backdrop().classList.add("son"); }
+      else { document.body.classList.remove("sopen"); if(fbd) fbd.classList.remove("son"); }
       return; }
     var opt = t.closest(".sortopt");
     if(opt){ ev.preventDefault();
@@ -784,12 +807,16 @@ body.srcon .srclegend{display:block}
       var cur = wrap.querySelector(".sortcur");
       if(cur) cur.textContent = opt.getAttribute("data-sort");
       wrap.classList.remove("open");
+      document.body.classList.remove("sopen");
+      if(fbd) fbd.classList.remove("son");
       var sb = wrap.querySelector(".sortbtn");
       if(sb) sb.setAttribute("aria-expanded","false");
       return; }
     document.querySelectorAll(".sortwrap.open").forEach(function(x){
       x.classList.remove("open");
       var b = x.querySelector(".sortbtn"); if(b) b.setAttribute("aria-expanded","false"); });
+    document.body.classList.remove("sopen");
+    if(fbd) fbd.classList.remove("son");
   });
   // 모바일 필터 바텀시트 — 767px 이하에서만 동작
   var fbd = null;
@@ -823,6 +850,11 @@ body.srcon .srclegend{display:block}
   }
   function closeSheet(){
     document.body.classList.remove("fopen");
+    document.body.classList.remove("sopen");
+    if(fbd) fbd.classList.remove("son");
+    document.querySelectorAll(".sortwrap.open").forEach(function(x){
+      x.classList.remove("open");
+      var b = x.querySelector(".sortbtn"); if(b) b.setAttribute("aria-expanded","false"); });
     document.querySelectorAll(".ficon[aria-expanded="true"]").forEach(function(b){
       b.setAttribute("aria-expanded","false"); });
   }
@@ -873,7 +905,7 @@ body.srcon .srclegend{display:block}
       if(bar) setTimeout(function(){ syncPills(bar); }, 0); }
   });
   document.addEventListener("keydown", function(ev){
-    if(ev.key === "Escape" && document.body.classList.contains("fopen")) closeSheet();
+    if(ev.key === "Escape" && (document.body.classList.contains("fopen") || document.body.classList.contains("sopen"))) closeSheet();
   });
   // 크로스페이드 슬라이더 — 제자리에서 겹치며 전환 (히어로 전용)
   function initFade(){
@@ -1059,7 +1091,7 @@ body.srcon .srclegend{display:block}
   var items = Array.prototype.slice.call(track.children);
   var n = items.length; if (!n) return;
   items.forEach(function(el){ var c = el.cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); });
-  var timer = null, idleT = null, wrapT = null;
+  var timer = null, idleT = null, wrapT = null, dragging = false;
   function stepW(){
   var el = track.children[0];
   var g = parseFloat(getComputedStyle(track).gap) || 16;
@@ -1067,11 +1099,13 @@ body.srcon .srclegend{display:block}
   }
   function baseW(){ return stepW() * n; }
   function wrap(){
+  if (dragging) return;
   var b = baseW(); if (!b) return;
   if (vp.scrollLeft >= b) vp.scrollLeft -= b;
   else if (vp.scrollLeft < 0) vp.scrollLeft += b;
   }
   function onScroll(){
+  if (dragging) return;
   clearTimeout(wrapT);
   wrapT = setTimeout(wrap, 130);          // 스크롤이 멈춘 뒤에만 되감아 튐을 막는다
   }
@@ -1126,24 +1160,30 @@ body.srcon .srclegend{display:block}
   }
   // 데스크탑 마우스 드래그 — 터치는 브라우저 기본 스크롤에 맡긴다
   (function(){
-    var down = false, moved = 0, sx = 0, sl = 0;
+    var down = false, moved = 0, sx = 0, sl = 0, want = 0, raf = 0;
+    function apply(){ raf = 0; if(!down) return; vp.scrollLeft = want; }
     vp.addEventListener("pointerdown", function(e){
       if(e.pointerType !== "mouse" || e.button !== 0) return;
-      if(vp.scrollWidth <= vp.clientWidth + 1) return;   // 스크롤할 게 없으면 무시
-      down = true; moved = 0; sx = e.clientX; sl = vp.scrollLeft;
+      if(vp.scrollWidth <= vp.clientWidth + 1) return;
+      down = true; moved = 0; sx = e.clientX; sl = vp.scrollLeft; want = sl;
+      dragging = true;
       vp.classList.add("dragging");
       stop();
+      try{ vp.setPointerCapture(e.pointerId); }catch(err){}
       e.preventDefault();
     });
     vp.addEventListener("pointermove", function(e){
       if(!down) return;
       var dx = e.clientX - sx;
       if(Math.abs(dx) > moved) moved = Math.abs(dx);
-      vp.scrollLeft = sl - dx;
+      want = sl - dx;
+      if(!raf) raf = requestAnimationFrame(apply);
     });
-    function end(){
+    function end(e){
       if(!down) return;
       down = false;
+      if(raf){ cancelAnimationFrame(raf); raf = 0; }
+      try{ if(e && e.pointerId != null) vp.releasePointerCapture(e.pointerId); }catch(err){}
       vp.classList.remove("dragging");
       if(moved > 5){
         vp.addEventListener("click", function swallow(ev){
@@ -1151,13 +1191,11 @@ body.srcon .srclegend{display:block}
           vp.removeEventListener("click", swallow, true);
         }, true);
       }
+      setTimeout(function(){ dragging = false; wrap(); }, 60);
       idle(3500);
-      wrap();
     }
     vp.addEventListener("pointerup", end);
     vp.addEventListener("pointercancel", end);
-    vp.addEventListener("pointerleave", end);
-    // 이미지·링크의 기본 드래그가 스와이프를 가로채지 않도록
     vp.addEventListener("dragstart", function(e){ e.preventDefault(); });
   })();
   start();
