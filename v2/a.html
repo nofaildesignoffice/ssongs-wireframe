@@ -447,7 +447,7 @@ table.wt tbody tr:hover{background:#FAFAFA}
 .slider .viewport.dragging a{pointer-events:none}
 @media(hover:none){.slider .viewport{cursor:auto}}
 .slider:not(.mobsl) .track{display:flex;gap:16px}
-.slider .track > *{scroll-snap-align:start}
+.slider .track > *{scroll-snap-align:start;scroll-snap-stop:always}
 .sbtn{position:absolute;top:38%;z-index:3;width:38px;height:38px;border-radius:50%;
   border:1px solid var(--border2);background:var(--white);color:var(--dim);
   display:flex;align-items:center;justify-content:center;cursor:pointer;
@@ -1167,7 +1167,11 @@ body.srcon .srclegend{display:block}
   if ("onscrollend" in window) vp.addEventListener("scrollend", wrap);
   function slide(dir){
   if (!sl.offsetParent) return;
-  vp.scrollBy({ left: dir * stepW(), behavior: "smooth" });
+  // 상대 이동(scrollBy)은 오차가 쌓여 이전 카드가 살짝 남는다.
+  // 현재 위치를 카드 인덱스로 환산해 절대 좌표로 이동한다.
+  var w = stepW(); if (!w) return;
+  var i = Math.round(vp.scrollLeft / w) + dir;
+  vp.scrollTo({ left: i * w, behavior: "smooth" });
   }
   function start(){
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
