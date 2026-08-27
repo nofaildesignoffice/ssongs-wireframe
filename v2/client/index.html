@@ -911,7 +911,7 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
     document.querySelectorAll(".sortwrap.open").forEach(function(x){
       x.classList.remove("open");
       var b = x.querySelector(".sortbtn"); if(b) b.setAttribute("aria-expanded","false"); });
-    document.querySelectorAll(".ficon[aria-expanded=\"true\"]").forEach(function(b){
+    document.querySelectorAll(".ficon[aria-expanded='true']").forEach(function(b){
       b.setAttribute("aria-expanded","false"); });
   }
   // 각 축의 선택 상태를 알약 칩에 반영한다
