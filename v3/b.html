@@ -984,7 +984,10 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 
   /* ── 모바일 배치 — GNB 다음에 스트립, 그 아래 히어로 ────────────
      DOM 은 히어로 뒤에 있지만 order 로 앞으로 끌어올린다 */
-  #r-main{display:flex;flex-direction:column}
+  /* ⚠ #r-main (1,0,0) 은 라우터가 쓰는 .route[hidden]{display:none} (0,1,1)
+     보다 특이성이 높다. 그냥 두면 다른 페이지로 이동해도 메인이 안 사라져
+     라우팅이 통째로 깨진다. :not([hidden]) 으로 숨김 상태를 비켜간다. */
+  #r-main:not([hidden]){display:flex;flex-direction:column}
   #r-main > *{order:4}
   #r-main > .tbar{order:0}
   #r-main > .wnav{order:1}
