@@ -1152,6 +1152,20 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   .wfoot .fbot{margin-top:16px}
 }
 
+
+/* ── 모바일 2행 메뉴 — 최상단 접힘 · 스크롤하면 펼침 ─────────────── */
+@media(max-width:900px){
+  .wnav > .wmenu{height:0;opacity:0;border-top-color:transparent;
+    transition:height .24s ease,opacity .18s ease,border-top-color .24s ease}
+  body.navsolid .wnav > .wmenu{height:45px;opacity:1;
+    border-top-color:var(--border)}
+  /* 서랍을 열면 메뉴 줄은 접힌 채로 둔다 — 같은 메뉴가 두 번 보일 이유가 없다 */
+  body.navopen:not(.navsolid) .wnav > .wmenu{height:0;opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .wnav > .wmenu{transition:none}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
