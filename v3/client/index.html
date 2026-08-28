@@ -1061,6 +1061,21 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     background-position:center}
 }
 
+
+/* ── 원형 스트립 — 위아래 여백을 같게 ─────────────────────────────
+   .wsec.tight 의 위 패딩과 정확히 맞춘다. */
+.wsec.circ{padding-bottom:26px}
+@media(max-width:900px){.wsec.circ{padding-bottom:20px}}
+@media(max-width:560px){.wsec.circ{padding-bottom:16px}}
+
+/* ── 모바일 히어로 — 3:4 종횡비 고정 ──────────────────────────────
+   높이를 뷰포트(100svh/100vh)로 잡으면 모바일 브라우저가 주소창을
+   감췄다 폈다 할 때마다 높이가 흔들린다. 뷰포트와 무관한 비율로 고정한다. */
+@media(max-width:900px){
+  #r-main .hero .viewport{aspect-ratio:3/4;height:auto;
+    min-height:0;max-height:none}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
