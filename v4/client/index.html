@@ -1222,23 +1222,11 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 
 
 
-/* ── 히어로 — 운영몰 실제 배너 (데스크탑 1920x780 · 모바일 700x1200) ──
-   카피가 이미지에 인쇄된 완성 배너라 우리 오버레이 카피는 감춘다. */
-.heropic{display:contents}
-.herocard.hasimg .herotxt{display:none}
-.herocard.hasimg::after{display:none}
 
-/* 배너 원본 비율에 프레임을 맞춘다.
-   풀스크린(약 1.6)에 12:5 배너를 넣으면 좌우가 잘려 카피가 날아간다.
-   운영몰도 이 비율로 노출하고 있고, 배너 자체가 그 비율로 디자인돼 있다. */
-#r-main .hero .viewport{height:auto;aspect-ratio:1920/780;
-  min-height:0;max-height:none}
-@supports not (height:100svh){
-  #r-main .hero .viewport{height:auto}}
-@media(max-width:900px){
-  #r-main .hero .viewport{height:auto;aspect-ratio:700/1200;
-    min-height:0;max-height:none}
-}
+/* ── 히어로 — 운영몰 실제 배너 (데스크탑 1920x780 · 모바일 700x1200) ──
+   <picture> 래퍼가 레이아웃에 끼어들지 않게만 한다.
+   카피/CTA/높이는 건드리지 않는다 — 요청은 이미지 교체뿐이었다. */
+.heropic{display:contents}
 
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
