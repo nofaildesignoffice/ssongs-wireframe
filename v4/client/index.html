@@ -2264,6 +2264,14 @@ html{overflow-x:hidden;overflow-x:clip}
         if(grp && !c.closest(".filterbar")){
           Array.prototype.forEach.call(grp.querySelectorAll(".chip"), function(x){
             x.classList.toggle("on", x === c); });
+        // FAQ 분류 칩 — 고른 분류의 질문만 남긴다
+        if(grp && c.closest(".faqfilter")){
+        var want = c.textContent.trim();
+        var box = c.closest(".csbody") || document;
+        Array.prototype.forEach.call(box.querySelectorAll(".faqsec.tagged"), function(sc){
+        sc.hidden = !(want === "전체" || sc.getAttribute("aria-label") === want);
+        });
+        }
         } else {
           c.classList.toggle("on");
         }
