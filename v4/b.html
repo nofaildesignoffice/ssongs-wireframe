@@ -1601,6 +1601,19 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     padding:26px 15px}
 }
 
+
+/* ── 꼼지락 카피 카드 — 모바일 전용 배경 ───────────────────────────
+   모바일은 카드가 4:3 이라 세로로 긴 bg2.jpg 가 크게 잘려 글자 뒤로
+   공룡·화산이 올라왔다. 가로형 일러스트로 바꾼다 (왼쪽 위가 빈 하늘).
+   카드 1.33 보다 이미지가 가로로 길어(1.51) 좌우가 12퍼센트쯤 잘리지만
+   가운데 기준으로도 왼쪽 하늘은 남는다.
+   background-image 와 position 만 덮어써 색·cover·반복은 원래 것을 쓴다. */
+@media(max-width:900px){
+  .kkomcard{
+    background-image:url("https://nofaildesignoffice.github.io/ssongs-wireframe/v4/img/kkom/bgm.jpg");
+    background-position:center}
+}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
