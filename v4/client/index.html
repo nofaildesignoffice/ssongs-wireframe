@@ -1251,6 +1251,31 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
    나중에 되돌리려면 이 한 줄만 지우면 된다. */
 .wsec.alt{background:var(--white)}
 
+
+/* ══ 푸터 — 흰 배경 ════════════════════════════════════════════════
+   어두운 배경 전제로 잡혀 있던 색을 흰 배경 기준으로 덮어쓴다. */
+.wfoot{background:var(--white);color:var(--dim)}
+.wfoot b{color:var(--black)}
+.wfoot p{color:var(--lt)}
+/* 로고 PNG 는 검은 글자다. 어두운 배경에서 쓰려고 반전시켜 뒀던 걸 되돌린다 */
+.wfoot .logoimg{filter:none}
+/* 구분선 */
+.wfoot .fcol{border-top-color:var(--border)}
+.wfoot .fpolicy{border-top-color:var(--border)}
+.wfoot .fbot{border-top-color:var(--border)}
+/* 아코디언 + / − */
+.wfoot .fhead::after{color:var(--lt)}
+/* 사업자정보확인 · 계좌 복사 버튼 */
+.wfoot .bizchk,.wfoot .acccopy{border-color:var(--border2);color:var(--gray)}
+.wfoot .bizchk:hover,.wfoot .acccopy:hover{border-color:var(--ink);color:var(--black)}
+/* 대표전화 · 상담시간 · 계좌번호 */
+.wfoot .ftel{color:var(--black)}
+.wfoot .fhour{color:var(--lt)}
+.wfoot .accno{color:var(--dim)}
+/* SOCIALS */
+.wfoot .soc a{color:var(--gray)}
+.wfoot .soc a:hover{color:var(--black)}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
