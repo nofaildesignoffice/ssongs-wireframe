@@ -1777,6 +1777,7 @@ body.srcon .srclegend{display:block}
 
 
 
+
   // ── 스크롤 여운 — 굴리는 동안은 기본 스크롤 그대로, 멈춘 뒤에만 미끄러진다 ──
   (function(){
     var mm = window.matchMedia;
@@ -1788,7 +1789,7 @@ body.srcon .srclegend{display:block}
     // FRICTION — 여운이 줄어드는 비율. 클수록 오래 미끄러진다
     // CAP      — 초기 속도 상한 (프레임당 px). 세게 굴려도 과하게 안 튄다
     // IDLE     — 이만큼 휠이 없으면 '멈췄다'고 본다
-    var GAIN = 0.06, FRICTION = 0.85, CAP = 45, IDLE = 80, MINV = 1.2, STOP = 0.4;
+    var GAIN = 0.10, FRICTION = 0.87, CAP = 55, IDLE = 80, MINV = 1.2, STOP = 0.4;
 
     var recent = [], timer = null, vel = 0, pos = 0, running = false;
 
