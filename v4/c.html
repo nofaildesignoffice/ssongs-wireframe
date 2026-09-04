@@ -1698,6 +1698,29 @@ html{overflow-x:hidden;overflow-x:clip}
 #r-main .wnav .wicons a:hover{color:var(--navink,var(--black))}
 #r-main .wnav .hamb{color:var(--navink,var(--dim))}
 
+
+/* ── 히어로 페이징 — 알약형, 카피 버튼 아래 ────────────────────────
+   JS 가 점 묶음을 현재 슬라이드의 카피 블록 안으로 옮긴다. 흐름 안에
+   들어가므로 절대 좌표 없이 CTA 버튼 바로 아래에 붙는다.
+   색은 --heroink 를 읽는다 — 기본값이 검정이라 밝은 배너에서는 검정,
+   어두운 배너에서 카피가 흰색으로 뒤집히면 알약도 같이 흰색이 된다.
+   늘어나는 건 width 애니메이션이다. scaleX 로는 모서리 둥글기까지 늘어나
+   찌그러진다. 점 서너 개짜리라 레이아웃 부담도 없다. */
+.hero .dots{position:static;transform:none;right:auto;top:auto;
+  flex-direction:row;align-items:center;gap:7px;margin-top:26px}
+.hero .dots button{width:8px;height:8px;border-radius:999px;
+  background:var(--heroink,var(--ink));opacity:.26;transform:none;
+  transition:width .34s cubic-bezier(.22,.61,.36,1),opacity .2s ease}
+.hero .dots button[aria-current="true"]{width:34px;opacity:1;transform:none}
+.hero .dots button:hover{opacity:.55}
+.hero .dots button[aria-current="true"]:hover{opacity:1}
+@media(max-width:767px){
+  .hero .dots{display:flex;right:auto;gap:6px;margin-top:20px}
+  .hero .dots button{width:7px;height:7px}
+  .hero .dots button[aria-current="true"]{width:28px}
+}
+@media(prefers-reduced-motion:reduce){.hero .dots button{transition:none}}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -1951,6 +1974,10 @@ body.srcon .srclegend{display:block}
         if(dots) Array.prototype.forEach.call(dots.children, function(b, k){
           b.setAttribute("aria-current", k === cur ? "true" : "false"); });
       }
+        if(dots){
+          var host = items[cur].querySelector(".herotxt .inner");
+          if(host && dots.parentNode !== host) host.appendChild(dots);
+        }
       function start(){
         if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         clearInterval(timer);
