@@ -1771,6 +1771,18 @@ html{overflow-x:hidden;overflow-x:clip}
   #r-main .hero .herotxt{padding-top:6vh}
 }
 
+
+/* ── 터치 기기 — 히어로 CTA 호버 상태를 기본과 같게 ────────────────
+   터치는 한 번 누르면 :hover 가 남는다(sticky hover). 채움 효과는
+   @media(hover:hover) 로 묶여 있는데 색을 바꾸는 규칙은 묶이지 않아,
+   밝은 배너에서 '투명 배경 + 흰 글씨' 가 되어 글자가 사라진 것처럼 보였다. */
+@media(hover:none){
+  .herocta:hover,.herocard .herocta:hover{
+    background:transparent;
+    color:var(--heroink,var(--ink));
+    border-color:var(--heroink,var(--ink))}
+}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
