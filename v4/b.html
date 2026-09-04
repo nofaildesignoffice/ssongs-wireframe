@@ -1990,6 +1990,14 @@ body.navopen #r-brand .wnav{background:var(--white)}
 @media(max-width:900px){.wpill{display:none}}
 @media(prefers-reduced-motion:reduce){.wpill{transition:none}}
 
+
+/* 히어로 컨트롤 — 이전 · 일시정지 · 다음 묶음 */
+.heroctl .hgrp{display:flex;align-items:center;gap:2px}
+.heronav{appearance:none;border:0;background:transparent;cursor:pointer;
+  padding:4px 3px;line-height:0;color:var(--heroink,var(--ink));opacity:.5;
+  transition:opacity .2s ease}
+.heronav:hover{opacity:1}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -2261,6 +2269,8 @@ body.srcon .srclegend{display:block}
 
       var PAUSE_SVG = '<svg viewBox="0 0 12 12" width="11" height="11" fill="currentColor" aria-hidden="true"><rect x="2" y="1.4" width="2.7" height="9.2" rx="0.7"></rect><rect x="7.3" y="1.4" width="2.7" height="9.2" rx="0.7"></rect></svg>';
       var PLAY_SVG = '<svg viewBox="0 0 12 12" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M3 1.5 L10.3 6 L3 10.5 Z"></path></svg>';
+      var PREV_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>';
+      var NEXT_SVG = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>';
       var dots = null, ctl = null, pbtn = null;
       if(sl.getAttribute("data-dots")){
         dots = document.createElement("div");
@@ -2290,7 +2300,21 @@ body.srcon .srclegend{display:block}
           setPB();
         });
         setPB();
-        ctl.appendChild(pbtn);
+        // 이전 · 일시정지 · 다음 을 한 묶음으로 — 컨트롤 줄 간격(16px)이
+        // 그대로 걸리면 세 버튼이 넓게 흩어진다.
+        var grp = document.createElement("div");
+        grp.className = "hgrp";
+        function navBtn(svg, dir, label){
+          var b = document.createElement("button");
+          b.type = "button"; b.className = "heronav";
+          b.innerHTML = svg; b.setAttribute("aria-label", label);
+          b.addEventListener("click", function(){ show(cur + dir); idle(5000); });
+          return b;
+        }
+        grp.appendChild(navBtn(PREV_SVG, -1, "이전 슬라이드"));
+        grp.appendChild(pbtn);
+        grp.appendChild(navBtn(NEXT_SVG, 1, "다음 슬라이드"));
+        ctl.appendChild(grp);
         sl.appendChild(ctl);
       }
       show(0);
