@@ -1743,30 +1743,22 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 
 
 
-  // ── 스크롤 여운 — 굴리는 동안은 기본 스크롤 그대로, 멈춘 뒤에만 미끄러진다 ──
+
+  // ── 스크롤 끝 여운 — 멈춘 순간 한 번만 네이티브 smooth 스크롤을 건다 ──
   (function(){
     var mm = window.matchMedia;
     if (!mm) return;
     if (mm("(prefers-reduced-motion: reduce)").matches) return;
     if (!mm("(pointer: fine)").matches) return;   // 모바일은 네이티브 관성이 낫다
+    if (!("scrollBehavior" in document.documentElement.style)) return;
 
-    // GAIN     — 멈추기 직전 이동량의 몇 배를 초기 속도로 삼을지
-    // FRICTION — 여운이 줄어드는 비율. 클수록 오래 미끄러진다
-    // CAP      — 초기 속도 상한 (프레임당 px). 세게 굴려도 과하게 안 튄다
-    // IDLE     — 이만큼 휠이 없으면 '멈췄다'고 본다
-    var GAIN = 0.10, FRICTION = 0.87, CAP = 55, IDLE = 80, MINV = 1.2, STOP = 0.4;
+    // GLIDE — 멈추기 직전 이동량의 몇 배를 더 미끄러뜨릴지
+    // MAXD  — 여운 거리 상한. 세게 굴려도 과하게 안 날아간다
+    // MIND  — 이보다 짧으면 여운을 걸지 않는다 (한 칸 살짝 굴린 경우)
+    // IDLE  — 이만큼 휠이 없으면 '멈췄다'고 본다
+    var GLIDE = 0.62, MAXD = 420, MIND = 12, IDLE = 80, WINDOW = 120;
 
-    var recent = [], timer = null, vel = 0, pos = 0, running = false;
-
-    // ⚠ scrollHeight 읽기는 레이아웃을 강제로 다시 계산시킨다.
-    // 이 페이지는 라우트 26벌 + 이미지 200장이라 프레임마다 읽으면 여운이 버벅인다.
-    // 여운 시작 때 한 번만 재고 캐시한다.
-    var limit = 0;
-    function measure(){
-      limit = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-      return limit;
-    }
-    function clamp(v){ return Math.max(0, Math.min(v, limit)); }
+    var recent = [], timer = null;
 
     // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
     // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와 집계가 틀어진다
@@ -1777,45 +1769,29 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
       return d;                                              // pixel
     }
 
-    function halt(){ vel = 0; running = false; recent = []; clearTimeout(timer); }
+    function cancel(){ clearTimeout(timer); recent = []; }
 
-    function tick(){
-      if (!running) return;
-      vel = vel * FRICTION;
-      if (Math.abs(vel) < STOP){ halt(); return; }
-      var next = clamp(pos + vel);
-      if (next === pos){ halt(); return; }      // 위아래 끝에 닿음
-      pos = next;
-      window.scrollTo(0, pos);
-      requestAnimationFrame(tick);
-    }
-
-    // 휠이 멎었다 — 직전 이동량으로 속도를 잡아 여운을 시작한다
     function release(){
       var now = (window.performance ? performance.now() : Date.now());
       var sum = 0;
       for (var i = 0; i < recent.length; i++){
-        if (now - recent[i].t < 120) sum += recent[i].d;
+        if (now - recent[i].t < WINDOW) sum += recent[i].d;
       }
       recent = [];
-      var v = sum * GAIN;
-      if (v > CAP) v = CAP;
-      if (v < -CAP) v = -CAP;
-      if (Math.abs(v) < MINV) return;
-      measure();
-      vel = v;
-      pos = window.scrollY;
-      if (!running){ running = true; requestAnimationFrame(tick); }
+      var d = sum * GLIDE;
+      if (d > MAXD) d = MAXD;
+      if (d < -MAXD) d = -MAXD;
+      if (Math.abs(d) < MIND) return;
+      // 한 번만 호출한다. 이후 애니메이션은 브라우저(컴포지터)가 돌린다
+      window.scrollBy({ top: d, left: 0, behavior: "smooth" });
     }
 
     // 세로로 스스로 스크롤되는 영역이면 집계하지 않는다.
-    // getComputedStyle 로 조상을 타고 오르는 건 비싸다 — 휠은 초당 수십 번
-    // 들어오므로 직전 대상의 결과를 캐시해 한 번만 계산한다.
+    // getComputedStyle 로 조상을 타고 오르는 건 비싸다 — 직전 결과를 캐시한다
     var lastEl = null, lastHit = false;
     function inVScroller(el){
       if (el === lastEl) return lastHit;
-      lastEl = el;
-      lastHit = walkV(el);
+      lastEl = el; lastHit = walkV(el);
       return lastHit;
     }
     function walkV(el){
@@ -1831,27 +1807,22 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     }
 
     // preventDefault 를 하지 않는다 — 스크롤 자체는 브라우저가 그대로 처리한다.
-    // 그래서 passive 로 붙일 수 있고, 시작 반응이 기본 스크롤과 완전히 같다
+    // 그래서 passive 로 붙고, 시작 반응이 기본 스크롤과 완전히 같다
     window.addEventListener("wheel", function(e){
       if (e.ctrlKey) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (inVScroller(e.target)) return;
-      halt();                                   // 굴리는 중에는 여운을 끈다
+      clearTimeout(timer);
       var now = (window.performance ? performance.now() : Date.now());
       recent.push({ t: now, d: px(e) });
       if (recent.length > 24) recent.shift();
       timer = setTimeout(release, IDLE);
     }, { passive: true });
 
-    // 사용자가 다른 방식으로 개입하면 여운을 끊는다
-    window.addEventListener("pointerdown", halt, { passive: true });
-    window.addEventListener("keydown", halt, { passive: true });
-    window.addEventListener("hashchange", halt);
-    window.addEventListener("resize", function(){ lastEl = null; if (running) measure(); },
-                            { passive: true });
-    window.addEventListener("scroll", function(){
-      if (!running) pos = window.scrollY;
-    }, { passive: true });
+    window.addEventListener("pointerdown", cancel, { passive: true });
+    window.addEventListener("keydown", cancel, { passive: true });
+    window.addEventListener("hashchange", cancel);
+    window.addEventListener("resize", function(){ lastEl = null; }, { passive: true });
   })();
 </script>
 </body>
