@@ -1742,6 +1742,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 
 
 
+
   // ── 스크롤 여운 — 굴리는 동안은 기본 스크롤 그대로, 멈춘 뒤에만 미끄러진다 ──
   (function(){
     var mm = window.matchMedia;
@@ -1757,10 +1758,15 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 
     var recent = [], timer = null, vel = 0, pos = 0, running = false;
 
-    function maxScroll(){
-      return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    // ⚠ scrollHeight 읽기는 레이아웃을 강제로 다시 계산시킨다.
+    // 이 페이지는 라우트 26벌 + 이미지 200장이라 프레임마다 읽으면 여운이 버벅인다.
+    // 여운 시작 때 한 번만 재고 캐시한다.
+    var limit = 0;
+    function measure(){
+      limit = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      return limit;
     }
-    function clamp(v){ return Math.max(0, Math.min(v, maxScroll())); }
+    function clamp(v){ return Math.max(0, Math.min(v, limit)); }
 
     // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
     // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와 집계가 틀어진다
@@ -1796,13 +1802,23 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
       if (v > CAP) v = CAP;
       if (v < -CAP) v = -CAP;
       if (Math.abs(v) < MINV) return;
+      measure();
       vel = v;
       pos = window.scrollY;
       if (!running){ running = true; requestAnimationFrame(tick); }
     }
 
-    // 세로로 스스로 스크롤되는 영역이면 집계하지 않는다
+    // 세로로 스스로 스크롤되는 영역이면 집계하지 않는다.
+    // getComputedStyle 로 조상을 타고 오르는 건 비싸다 — 휠은 초당 수십 번
+    // 들어오므로 직전 대상의 결과를 캐시해 한 번만 계산한다.
+    var lastEl = null, lastHit = false;
     function inVScroller(el){
+      if (el === lastEl) return lastHit;
+      lastEl = el;
+      lastHit = walkV(el);
+      return lastHit;
+    }
+    function walkV(el){
       while (el && el !== document.body && el !== document.documentElement){
         if (el.nodeType === 1){
           var s = getComputedStyle(el);
@@ -1831,6 +1847,8 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     window.addEventListener("pointerdown", halt, { passive: true });
     window.addEventListener("keydown", halt, { passive: true });
     window.addEventListener("hashchange", halt);
+    window.addEventListener("resize", function(){ lastEl = null; if (running) measure(); },
+                            { passive: true });
     window.addEventListener("scroll", function(){
       if (!running) pos = window.scrollY;
     }, { passive: true });
