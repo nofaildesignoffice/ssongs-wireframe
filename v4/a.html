@@ -1345,6 +1345,18 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   .wsec[aria-label="카테고리"]{padding-top:0}
 }
 
+
+/* ── 꼼지락 카드 — 상자를 벗기고 이미지 아래 텍스트로 ─────────────
+   상품 카드와 같은 처리. 다크 섹션이라 글자색은 흰색 그대로 둔다. */
+.kcard{border:0;background:transparent;border-radius:0;overflow:visible}
+/* 카드가 잘라주던 라운딩을 이미지가 직접 갖는다 */
+.kcard .ph{border-radius:var(--r2);overflow:hidden}
+/* 본문은 안쪽 패딩 대신 이미지와의 간격만 */
+.kcard .b{padding:10px 0 0}
+@media(max-width:767px){
+  .kcard .b{padding:9px 0 0}
+}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
