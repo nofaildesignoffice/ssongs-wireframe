@@ -2256,7 +2256,18 @@ html{overflow-x:hidden;overflow-x:clip}
         return;
       }
       var c=t.closest(".chip");
-      if(c && !c.closest(".wdrop")){ c.classList.toggle("on"); }
+      if(c && !c.closest(".wdrop")){
+        // 상품 필터(.filterbar)의 칩만 여러 개를 켤 수 있다 —
+        // 세대 17·16 을 같이 보는 식이 정상이다.
+        // 그 밖의 분류 칩(후기 · FAQ · 상품 Q&A)은 하나만 고른다.
+        var grp = c.closest(".chips");
+        if(grp && !c.closest(".filterbar")){
+          Array.prototype.forEach.call(grp.querySelectorAll(".chip"), function(x){
+            x.classList.toggle("on", x === c); });
+        } else {
+          c.classList.toggle("on");
+        }
+      }
     });
     // 자동전환 무한루프 슬라이더 — 스크롤 기반이라 모바일 스와이프가 그대로 동작한다
     function initSliders(){
