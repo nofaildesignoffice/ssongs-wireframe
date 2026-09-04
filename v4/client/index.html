@@ -2078,6 +2078,24 @@ body.navopen #r-brand .wnav{background:var(--white)}
   .abnums{grid-template-columns:1fr}
 }
 
+
+/* ══ 브랜드 소개 — 지표·공정 박스 ═════════════════════════════════
+   .wsec.alt 이 흰색이 된 뒤로 흰 카드는 배경에 묻힌다.
+   다른 카드들과 같은 테두리로 박스를 세운다. */
+.abnum{border:1px solid var(--border);text-align:center;padding:30px 20px}
+.abnum b{margin:0 auto}
+.abnum strong,.abnum span{text-align:center}
+
+.abstep{border:1px solid var(--border);border-radius:var(--r2);
+  background:var(--white);padding:24px 22px}
+
+@media(max-width:900px){
+  /* 설명 문장이 길어 2칸으로는 줄이 계속 접힌다 — 한 줄에 한 장씩 */
+  .absteps{grid-template-columns:1fr}
+  .abstep{padding:18px 18px}
+  .abnum{padding:22px 16px}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
