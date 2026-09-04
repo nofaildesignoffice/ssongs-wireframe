@@ -1728,6 +1728,28 @@ html{overflow-x:hidden;overflow-x:clip}
 }
 @media(prefers-reduced-motion:reduce){.hero .dots button{transition:none}}
 
+
+/* ── 히어로 컨트롤 줄 — 페이징 + 일시정지 ──────────────────────────
+   레퍼런스처럼 한 줄에 나란히. 색은 --heroink 를 따라간다. */
+.heroctl{display:flex;align-items:center;gap:16px;margin-top:26px}
+.hero .dots{margin-top:0}
+.heroplay{appearance:none;border:0;background:transparent;cursor:pointer;
+  padding:4px;line-height:0;color:var(--heroink,var(--ink));opacity:.5;
+  transition:opacity .2s ease}
+.heroplay:hover{opacity:1}
+@media(max-width:767px){
+  .heroctl{gap:13px;margin-top:20px}
+}
+
+/* ── 카피 블록 높이를 슬라이드마다 같게 ────────────────────────────
+   세로 가운데 정렬이라 블록 높이가 달라지면 글자와 버튼이 위아래로
+   움직인다. 본문 줄 수가 배너마다 달라 생기는 문제라, 가장 긴 배너의
+   줄 수만큼 최소 높이를 잡아 둔다 (데스크탑 2줄 · 모바일 3줄). */
+.herosub{line-height:1.55;min-height:calc(1.55em * 2)}
+@media(max-width:767px){
+  .herosub{min-height:calc(1.55em * 3)}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
@@ -1931,7 +1953,7 @@ html{overflow-x:hidden;overflow-x:clip}
       var track = sl.querySelector(".track");
       var items = Array.prototype.slice.call(track.children);
       var n = items.length; if(!n) return;
-      var cur = 0, timer = null, idleT = null;
+      var cur = 0, timer = null, idleT = null, paused = false;
       items[0].classList.add("on");
 
       function show(i){
@@ -1941,13 +1963,15 @@ html{overflow-x:hidden;overflow-x:clip}
           b.setAttribute("aria-current", k === cur ? "true" : "false"); });
         // 점 묶음을 현재 슬라이드의 카피 블록 안으로 옮긴다 — 흐름 안에
         // 들어가야 CTA 버튼 바로 아래에 붙고, 카피 길이가 달라도 따라간다.
-        if(dots){
+        if(ctl){
           var host = items[cur].querySelector(".herotxt .inner");
-          if(host && dots.parentNode !== host) host.appendChild(dots);
+          if(host && ctl.parentNode !== host) host.appendChild(ctl);
         }
       }
       function start(){
         if(window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        // 사용자가 멈춰 둔 상태면 마우스가 히어로를 벗어나도 다시 돌지 않는다
+        if(paused) return;
         clearInterval(timer);
         timer = setInterval(function(){ if(sl.offsetParent) show(cur + 1); },
                             parseInt(sl.getAttribute("data-auto"), 10) || 5000);
@@ -1956,7 +1980,9 @@ html{overflow-x:hidden;overflow-x:clip}
       function idle(ms){ stop(); clearTimeout(idleT);
                          idleT = setTimeout(start, ms || 4000); }
 
-      var dots = null;
+      var PAUSE_SVG = '<svg viewBox="0 0 12 12" width="11" height="11" fill="currentColor" aria-hidden="true"><rect x="2" y="1.4" width="2.7" height="9.2" rx="0.7"></rect><rect x="7.3" y="1.4" width="2.7" height="9.2" rx="0.7"></rect></svg>';
+      var PLAY_SVG = '<svg viewBox="0 0 12 12" width="11" height="11" fill="currentColor" aria-hidden="true"><path d="M3 1.5 L10.3 6 L3 10.5 Z"></path></svg>';
+      var dots = null, ctl = null, pbtn = null;
       if(sl.getAttribute("data-dots")){
         dots = document.createElement("div");
         dots.className = "dots";
@@ -1969,7 +1995,24 @@ html{overflow-x:hidden;overflow-x:clip}
           b.addEventListener("click", function(){ show(idx); idle(5000); });
           dots.appendChild(b);
         })(d);
-        sl.appendChild(dots);
+        ctl = document.createElement("div");
+        ctl.className = "heroctl";
+        ctl.appendChild(dots);
+        pbtn = document.createElement("button");
+        pbtn.type = "button"; pbtn.className = "heroplay";
+        function setPB(){
+          pbtn.innerHTML = paused ? PLAY_SVG : PAUSE_SVG;
+          pbtn.setAttribute("aria-label", paused ? "자동전환 재생" : "자동전환 멈춤");
+          pbtn.setAttribute("aria-pressed", paused ? "true" : "false");
+        }
+        pbtn.addEventListener("click", function(){
+          paused = !paused;
+          if(paused){ stop(); clearTimeout(idleT); } else { start(); }
+          setPB();
+        });
+        setPB();
+        ctl.appendChild(pbtn);
+        sl.appendChild(ctl);
       }
       show(0);
 
