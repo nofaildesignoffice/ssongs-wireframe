@@ -1412,7 +1412,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 .kkomcard{position:relative;border-radius:var(--r2);overflow:hidden;
   display:flex;flex-direction:column;align-items:flex-start;
   padding:36px 32px;
-  background:#E79AAC url("https://nofaildesignoffice.github.io/ssongs-wireframe/v4/img/kkom/bg.jpg")
+  background:#E8859B url("https://nofaildesignoffice.github.io/ssongs-wireframe/v4/img/kkom/bg2.jpg")
     center bottom/cover no-repeat}
 /* 오버레이 없이 일러스트를 그대로 보여준다. 글자가 놓이는 위쪽은
    분홍 하늘(밝기 172)이라 어두운 글씨가 읽힌다. */
@@ -1436,11 +1436,12 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 .kcard .ph{background:var(--ph);color:var(--phic)}
 .kcard .b strong{color:var(--black)}
 .kcard .b span{color:var(--gray)}
-/* 2) 좌측 카피 카드 — 오버레이 없이 분홍 하늘 위에 어두운 글씨.
-   버튼은 기본 .btn.sec (흰 배경 · 검정 글씨) 그대로 둔다. */
-.kkomcard,.kkomcard .wh{color:var(--black)}
-.kkomcard .weyebrow{color:rgba(26,26,26,.55)}
-.kkomcard .wsub,.kkomcard .wmicro{color:rgba(26,26,26,.68)}
+/* 2) 좌측 카피 카드 — 오버레이 없이 분홍 하늘 위에 흰 글씨.
+   ⚠ 글자 자리 평균 밝기 154 → 흰 글씨 대비 약 2.8:1.
+     헤드라인(30px/800)은 읽히지만 12px 마이크로 카피는 약하다. */
+.kkomcard,.kkomcard .wh{color:var(--white)}
+.kkomcard .weyebrow{color:rgba(255,255,255,.72)}
+.kkomcard .wsub,.kkomcard .wmicro{color:rgba(255,255,255,.86)}
 
 
 /* ── 꼼지락 카드 캡션 — 이름 + 개수를 가로 한 줄로 ─────────────────
@@ -1498,6 +1499,28 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
    여백은 다른 카드 본문(.wcard/.rankcard/.setcard .body)과 같은 값. */
 .setcard .bmeta{padding:10px 0 0}
 @media(max-width:767px){.setcard .bmeta{padding:9px 0 0}}
+
+
+/* ── 브랜드관 보기 버튼 — 왼쪽에서 차오르는 호버 ───────────────────
+   배경을 지우고 테두리만 남긴다. 호버하면 #EAC569 가 좌→우로 찬다.
+   width 가 아니라 scaleX 를 쓴다 — width 는 매 프레임 레이아웃을 다시
+   잡아 끊긴다. isolation:isolate 로 쌓임 맥락을 만들어야 z-index:-1 인
+   채움층이 버튼 뒤로만 가고 카드 배경 뒤로 빠지지 않는다. */
+.kkomcard .btn.sec{position:relative;isolation:isolate;overflow:hidden;
+  background:transparent;color:var(--white);border-color:var(--white);
+  transition:color .42s cubic-bezier(.22,.61,.36,1),
+             border-color .42s cubic-bezier(.22,.61,.36,1)}
+.kkomcard .btn.sec::before{content:"";position:absolute;inset:0;z-index:-1;
+  background:#EAC569;transform:scaleX(0);transform-origin:left center;
+  transition:transform .42s cubic-bezier(.22,.61,.36,1)}
+@media(hover:hover){
+  .kkomcard .btn.sec:hover::before{transform:scaleX(1)}
+  /* #EAC569 는 밝은 금색이라 흰 글씨가 묻힌다 — 채워지면 검정으로 */
+  .kkomcard .btn.sec:hover{color:var(--black);border-color:#EAC569}
+}
+@media(prefers-reduced-motion:reduce){
+  .kkomcard .btn.sec,.kkomcard .btn.sec::before{transition:none}
+}
 
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
