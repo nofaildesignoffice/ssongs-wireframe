@@ -1775,43 +1775,45 @@ body.srcon .srclegend{display:block}
 
 
 
-  // ── 관성 스크롤 — 휠을 굴리면 스르륵 밀려가며 감속해 멈춘다 ──────
+
+  // ── 스크롤 여운 — 굴린 만큼 바로 가고, 뒤에 조금 더 미끄러진다 ────
   (function(){
     var mm = window.matchMedia;
     if (!mm) return;
     if (mm("(prefers-reduced-motion: reduce)").matches) return;
     if (!mm("(pointer: fine)").matches) return;   // 모바일은 네이티브 관성이 낫다
 
-    // EASE  — 클수록 빨리 따라잡는다 (작을수록 미끄럽고 느리게 도착)
-    // BOOST — 한 번 굴릴 때 이동량 배수. 네이티브보다 굼떠 보이지 않게 살짝 올린다
-    var target = 0, cur = 0, running = false, EASE = 0.20, BOOST = 1.15;
-
-    // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
-    // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와
-    // 화면이 거의 안 움직인다 — '렉 걸린 것 같다'의 정체다.
-    function px(e){
-      var d = e.deltaY;
-      if (e.deltaMode === 1) return d * 18;                 // line
-      if (e.deltaMode === 2) return d * window.innerHeight;  // page
-      return d;                                             // pixel
-    }
+    // TAIL     — 굴린 양의 몇 배가 여운으로 더 밀릴지 (0 이면 여운 없음)
+    // FRICTION — 여운이 줄어드는 비율. 클수록 오래 미끄러진다
+    var TAIL = 0.09, FRICTION = 0.84, STOP = 0.4;
+    var pos = 0, vel = 0, running = false;
 
     function maxScroll(){
       return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     }
     function clamp(v){ return Math.max(0, Math.min(v, maxScroll())); }
 
-    function tick(){
-      var d = target - cur;
-      if (Math.abs(d) < 0.5){ cur = target; running = false; }
-      else { cur += d * EASE; }
-      window.scrollTo(0, cur);
-      if (running) requestAnimationFrame(tick);
+    // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
+    // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와 거의 안 움직인다
+    function px(e){
+      var d = e.deltaY;
+      if (e.deltaMode === 1) return d * 18;                  // line
+      if (e.deltaMode === 2) return d * window.innerHeight;  // page
+      return d;                                              // pixel
     }
 
-    // 세로로 스스로 스크롤되는 영역(푸터 서랍 등)이면 넘기지 않는다.
-    // 가로 전용 스크롤러(원형 스트립·2행 메뉴·상품 슬라이더)는 건너뛴다 —
-    // 그 위에서 휠을 굴려도 사용자가 기대하는 건 '페이지가 내려가는 것'이다.
+    function tick(){
+      vel = vel * FRICTION;
+      if (Math.abs(vel) < STOP){ vel = 0; running = false; return; }
+      var next = clamp(pos + vel);
+      if (next === pos){ vel = 0; running = false; return; }   // 위아래 끝에 닿음
+      pos = next;
+      window.scrollTo(0, pos);
+      requestAnimationFrame(tick);
+    }
+
+    // 세로로 스스로 스크롤되는 영역이면 넘기지 않는다.
+    // 가로 전용 스크롤러 위에서의 세로 휠은 페이지를 내리는 게 기대 동작이다
     function inVScroller(el){
       while (el && el !== document.body && el !== document.documentElement){
         if (el.nodeType === 1){
@@ -1825,27 +1827,32 @@ body.srcon .srclegend{display:block}
     }
 
     window.addEventListener("wheel", function(e){
-      if (e.ctrlKey || e.defaultPrevented) return;      // 핀치 줌은 건드리지 않는다
-      // 가로가 우세한 휠(트랙패드 좌우 스와이프)은 그대로 흘려보낸다.
-      // 안 그러면 원형 스트립·2행 메뉴를 옆으로 못 넘긴다
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (e.ctrlKey || e.defaultPrevented) return;          // 핀치 줌은 그대로
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;  // 좌우 스와이프는 통과
       if (inVScroller(e.target)) return;
-      var mx = maxScroll();
-      if (mx <= 0) return;
+      if (maxScroll() <= 0) return;
+
+      var d = px(e);
       e.preventDefault();
-      if (!running){ cur = window.scrollY; target = cur; }
-      target = clamp(target + px(e) * BOOST);
+
+      // 1) 굴린 만큼 이 프레임에 그대로 반영 — 시작 반응이 네이티브와 같아진다
+      pos = clamp(window.scrollY + d);
+      window.scrollTo(0, pos);
+
+      // 2) 남은 여운. 같은 방향이면 쌓이고 반대 방향이면 즉시 끊는다
+      if (vel * d < 0) vel = 0;
+      vel = vel + d * TAIL;
+
       if (!running){ running = true; requestAnimationFrame(tick); }
     }, { passive: false });
 
-    // 우리가 굴리는 중이 아닐 때는 바깥 스크롤(키보드·라우트 이동)을 따라간다
+    // 여운 중이 아닐 때는 바깥 스크롤(키보드·라우트 이동)을 따라간다
     window.addEventListener("scroll", function(){
-      if (!running){ cur = target = window.scrollY; }
+      if (!running) pos = window.scrollY;
     }, { passive: true });
 
-    // 라우트가 바뀌면 즉시 멈춘다 — scrollTo(0,0) 과 싸우지 않게
     window.addEventListener("hashchange", function(){
-      running = false; cur = target = 0;
+      vel = 0; running = false; pos = 0;
     });
   })();
 </script>
