@@ -2002,10 +2002,16 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     var vp = sl.querySelector(".viewport"), track = sl.querySelector(".track");
     var items = Array.prototype.slice.call(track.children);
     var n = items.length; if (!n) return;
-    // 복제 두 벌 — 한 벌만 붙이면 세게 밀었을 때 되감기 전에 스크롤 끝에
-    // 부딪혀 한 번 멈춘다 (원본 7장 · 한 화면 3.5장 기준 끝이 10.5장 지점).
-    for (var cp = 0; cp < 2; cp++)
-      items.forEach(function(el){ var c = el.cloneNode(true); c.setAttribute("aria-hidden","true"); track.appendChild(c); });
+    // 복제를 앞뒤로 한 벌씩 — [복제][원본][복제].
+    // 시작 위치를 가운데 세트에 두면 좌우 양쪽에 세트 하나씩 여유가 생겨
+    // 어느 방향으로 밀어도 스크롤 끝에 부딪히지 않는다.
+    var _pre = document.createDocumentFragment(), _post = document.createDocumentFragment();
+    items.forEach(function(el){
+      var a1 = el.cloneNode(true); a1.setAttribute("aria-hidden","true"); _pre.appendChild(a1);
+      var a2 = el.cloneNode(true); a2.setAttribute("aria-hidden","true"); _post.appendChild(a2);
+    });
+    track.insertBefore(_pre, track.firstChild);
+    track.appendChild(_post);
     var timer = null, idleT = null, wrapT = null, dragging = false;
     function stepW(){
     var el = track.children[0];
@@ -2013,18 +2019,43 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     return el.getBoundingClientRect().width + g;
     }
     function baseW(){ return stepW() * n; }
+    function scrollable(){ return vp.scrollWidth > vp.clientWidth + 1; }
+    // 가운데 세트 [b, 2b) 안에 머물게 한다. 옮기는 폭이 정확히 세트 하나라
+    // 화면에 보이는 카드는 그대로다 — 되감기가 눈에 띄지 않는다.
     function wrap(){
-    if (dragging) return;
+    if (dragging || !scrollable()) return;
     var b = baseW(); if (!b) return;
-    if (vp.scrollLeft >= b) vp.scrollLeft -= b;
-    else if (vp.scrollLeft < 0) vp.scrollLeft += b;
+    if (vp.scrollLeft >= 2 * b) vp.scrollLeft -= b;
+    else if (vp.scrollLeft < b * 0.75) vp.scrollLeft += b;
+    }
+    var homed = false;
+    function home(){                      // 시작 위치를 가운데 세트로
+    if (homed || !scrollable()) return;
+    var b = baseW(); if (!b) return;
+    vp.scrollLeft = b;
+    if (vp.scrollLeft > 0) homed = true;
     }
     function onScroll(){
     if (dragging) return;
+    // 스크롤 도중이라도 물리적 끝에 카드 한 장 반 이내로 다가가면 즉시
+    // 되감는다. 관성이 되감기보다 빨라도 벽에 닿지 않는다.
+    if (scrollable()){
+      var b = baseW(), s = stepW();
+      if (b && s){
+        if (vp.scrollLeft > vp.scrollWidth - vp.clientWidth - s * 1.5) vp.scrollLeft -= b;
+        else if (vp.scrollLeft < s * 1.5) vp.scrollLeft += b;
+      }
+    }
     clearTimeout(wrapT);
-    wrapT = setTimeout(wrap, 130);          // 스크롤이 멈춘 뒤에만 되감아 튐을 막는다
+    wrapT = setTimeout(wrap, 130);          // 평소에는 스크롤이 멈춘 뒤에만 — 관성 도중에 옮기면 튄다
     }
     vp.addEventListener("scroll", onScroll, { passive: true });
+    // 숨어 있는 라우트 안이면 초기에 자리를 못 잡는다 — 몇 번 더 시도한다
+    home();
+    requestAnimationFrame(home);
+    setTimeout(home, 400);
+    setTimeout(home, 1500);
+    window.addEventListener("resize", home);
     if ("onscrollend" in window) vp.addEventListener("scrollend", wrap);
     function slide(dir){
     if (!sl.offsetParent) return;
