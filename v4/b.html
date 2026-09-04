@@ -1776,17 +1776,21 @@ body.srcon .srclegend{display:block}
 
 
 
-  // ── 스크롤 여운 — 굴린 만큼 바로 가고, 뒤에 조금 더 미끄러진다 ────
+
+  // ── 스크롤 여운 — 굴리는 동안은 기본 스크롤 그대로, 멈춘 뒤에만 미끄러진다 ──
   (function(){
     var mm = window.matchMedia;
     if (!mm) return;
     if (mm("(prefers-reduced-motion: reduce)").matches) return;
     if (!mm("(pointer: fine)").matches) return;   // 모바일은 네이티브 관성이 낫다
 
-    // TAIL     — 굴린 양의 몇 배가 여운으로 더 밀릴지 (0 이면 여운 없음)
+    // GAIN     — 멈추기 직전 이동량의 몇 배를 초기 속도로 삼을지
     // FRICTION — 여운이 줄어드는 비율. 클수록 오래 미끄러진다
-    var TAIL = 0.09, FRICTION = 0.84, STOP = 0.4;
-    var pos = 0, vel = 0, running = false;
+    // CAP      — 초기 속도 상한 (프레임당 px). 세게 굴려도 과하게 안 튄다
+    // IDLE     — 이만큼 휠이 없으면 '멈췄다'고 본다
+    var GAIN = 0.06, FRICTION = 0.85, CAP = 45, IDLE = 80, MINV = 1.2, STOP = 0.4;
+
+    var recent = [], timer = null, vel = 0, pos = 0, running = false;
 
     function maxScroll(){
       return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -1794,7 +1798,7 @@ body.srcon .srclegend{display:block}
     function clamp(v){ return Math.max(0, Math.min(v, maxScroll())); }
 
     // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
-    // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와 거의 안 움직인다
+    // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와 집계가 틀어진다
     function px(e){
       var d = e.deltaY;
       if (e.deltaMode === 1) return d * 18;                  // line
@@ -1802,18 +1806,37 @@ body.srcon .srclegend{display:block}
       return d;                                              // pixel
     }
 
+    function halt(){ vel = 0; running = false; recent = []; clearTimeout(timer); }
+
     function tick(){
+      if (!running) return;
       vel = vel * FRICTION;
-      if (Math.abs(vel) < STOP){ vel = 0; running = false; return; }
+      if (Math.abs(vel) < STOP){ halt(); return; }
       var next = clamp(pos + vel);
-      if (next === pos){ vel = 0; running = false; return; }   // 위아래 끝에 닿음
+      if (next === pos){ halt(); return; }      // 위아래 끝에 닿음
       pos = next;
       window.scrollTo(0, pos);
       requestAnimationFrame(tick);
     }
 
-    // 세로로 스스로 스크롤되는 영역이면 넘기지 않는다.
-    // 가로 전용 스크롤러 위에서의 세로 휠은 페이지를 내리는 게 기대 동작이다
+    // 휠이 멎었다 — 직전 이동량으로 속도를 잡아 여운을 시작한다
+    function release(){
+      var now = (window.performance ? performance.now() : Date.now());
+      var sum = 0;
+      for (var i = 0; i < recent.length; i++){
+        if (now - recent[i].t < 120) sum += recent[i].d;
+      }
+      recent = [];
+      var v = sum * GAIN;
+      if (v > CAP) v = CAP;
+      if (v < -CAP) v = -CAP;
+      if (Math.abs(v) < MINV) return;
+      vel = v;
+      pos = window.scrollY;
+      if (!running){ running = true; requestAnimationFrame(tick); }
+    }
+
+    // 세로로 스스로 스크롤되는 영역이면 집계하지 않는다
     function inVScroller(el){
       while (el && el !== document.body && el !== document.documentElement){
         if (el.nodeType === 1){
@@ -1826,33 +1849,25 @@ body.srcon .srclegend{display:block}
       return false;
     }
 
+    // preventDefault 를 하지 않는다 — 스크롤 자체는 브라우저가 그대로 처리한다.
+    // 그래서 passive 로 붙일 수 있고, 시작 반응이 기본 스크롤과 완전히 같다
     window.addEventListener("wheel", function(e){
-      if (e.ctrlKey || e.defaultPrevented) return;          // 핀치 줌은 그대로
-      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;  // 좌우 스와이프는 통과
+      if (e.ctrlKey) return;
+      if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
       if (inVScroller(e.target)) return;
-      if (maxScroll() <= 0) return;
+      halt();                                   // 굴리는 중에는 여운을 끈다
+      var now = (window.performance ? performance.now() : Date.now());
+      recent.push({ t: now, d: px(e) });
+      if (recent.length > 24) recent.shift();
+      timer = setTimeout(release, IDLE);
+    }, { passive: true });
 
-      var d = px(e);
-      e.preventDefault();
-
-      // 1) 굴린 만큼 이 프레임에 그대로 반영 — 시작 반응이 네이티브와 같아진다
-      pos = clamp(window.scrollY + d);
-      window.scrollTo(0, pos);
-
-      // 2) 남은 여운. 같은 방향이면 쌓이고 반대 방향이면 즉시 끊는다
-      if (vel * d < 0) vel = 0;
-      vel = vel + d * TAIL;
-
-      if (!running){ running = true; requestAnimationFrame(tick); }
-    }, { passive: false });
-
-    // 여운 중이 아닐 때는 바깥 스크롤(키보드·라우트 이동)을 따라간다
+    // 사용자가 다른 방식으로 개입하면 여운을 끊는다
+    window.addEventListener("pointerdown", halt, { passive: true });
+    window.addEventListener("keydown", halt, { passive: true });
+    window.addEventListener("hashchange", halt);
     window.addEventListener("scroll", function(){
       if (!running) pos = window.scrollY;
     }, { passive: true });
-
-    window.addEventListener("hashchange", function(){
-      vel = 0; running = false; pos = 0;
-    });
   })();
 </script>
