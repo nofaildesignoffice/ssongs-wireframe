@@ -1228,6 +1228,23 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
    카피/CTA/높이는 건드리지 않는다 — 요청은 이미지 교체뿐이었다. */
 .heropic{display:contents}
 
+
+/* ══ 상품 카드 — 상자를 벗기고 이미지 아래 텍스트로 ═══════════════
+   후기 카드(.revcard)와 같은 형태. 테두리·배경·안쪽 패딩을 걷어낸다. */
+.wcard,.rankcard,.setcard{
+  border:0;background:transparent;border-radius:0;overflow:visible}
+.wcard:hover,.rankcard:hover,.setcard:hover{border-color:transparent}
+/* 카드가 잘라주던 라운딩을 이미지가 직접 갖는다 */
+.wcard > .ph,.rankcard > .ph,.setcard > .ph{
+  border-radius:var(--r1);overflow:hidden}
+/* 본문은 안쪽 패딩 대신 이미지와의 간격만 */
+.wcard .body,.rankcard .body,.setcard .body{padding:10px 0 0}
+@media(max-width:767px){
+  .wcard .body,.rankcard .body,.setcard .body{padding:9px 0 0}
+}
+/* 순위 배지는 이미지 위에 얹혀 있으므로 살짝 안쪽으로 */
+.rankcard .no{left:8px;top:8px}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
