@@ -1497,6 +1497,15 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 }
 
 
+
+/* ── 원형 스트립 — 모바일에서는 호버로 들썩이지 않는다 ────────────
+   터치 기기는 탭하면 호버가 남아(sticky hover) 버튼이 올라간 채 멈춘다.
+   데스크탑 규칙은 그대로 두고 여기서만 되돌린다. */
+@media(hover:none),(max-width:900px){
+  .circ__i:hover .circ__ph{transform:none}
+  .circ__ph{transition:none}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
