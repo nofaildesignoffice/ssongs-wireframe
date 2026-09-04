@@ -1965,6 +1965,31 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .wdraw .dwlogo.logoimg{position:static;left:auto;right:auto;top:auto;
   transform:none;margin:0;display:block;width:96px;height:24px}
 
+
+/* ── GNB 알약 — 현재 메뉴를 감싸고 호버 따라 미끄러진다 ────────────
+   밑줄과 현재 페이지 표시선을 걷어내고 알약 하나로 대신한다.
+   알약은 글자 뒤(z-index 0), 링크는 그 위(z-index 1)에 둔다. */
+@media(min-width:901px){
+  .wnav > .wmenu{position:relative}
+  .wpill{position:absolute;left:0;top:50%;height:38px;border-radius:80px;
+    background:var(--ink);z-index:0;opacity:0;pointer-events:none;
+    transform:translate(var(--x,0px),-50%);
+    transition:transform .34s cubic-bezier(.22,.61,.36,1),
+               width .34s cubic-bezier(.22,.61,.36,1),opacity .18s ease}
+  .wnav > .wmenu > a,.wnav > .wmenu > .shopwrap{position:relative;z-index:1}
+  /* 알약이 덮은 메뉴는 흰 글씨 — 호버 색 규칙보다 뒤·같은 깊이로 잡는다 */
+  .wmenu a.onpill,
+  #r-main .wnav .wmenu > a.onpill:hover,
+  #r-main .wnav .wmenu > .shopwrap > a.onpill:hover,
+  #r-brand .wnav .wmenu > a.onpill:hover,
+  #r-brand .wnav .wmenu > .shopwrap > a.onpill:hover{color:var(--white)}
+  /* 가로선 제거 — 호버 밑줄과 현재 페이지 표시선 둘 다 */
+  .wmenu > a::after,.wmenu > .shopwrap > a::after{display:none}
+  .wmenu a.cur{box-shadow:none}
+}
+@media(max-width:900px){.wpill{display:none}}
+@media(prefers-reduced-motion:reduce){.wpill{transition:none}}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -2743,5 +2768,63 @@ body.srcon .srclegend{display:block}
     });
     apply();
   })();
+
+// ── GNB 알약 — 현재 메뉴를 감싸고, 호버하면 미끄러져 옮겨간다 ──
+// 메뉴마다 하나씩 두지 않고 .wmenu 에 하나만 두고 자리를 옮긴다.
+// left/width 를 직접 바꾸면 매 프레임 레이아웃을 다시 잡으므로
+// transform 과 width 만 움직인다.
+(function(){
+  Array.prototype.forEach.call(document.querySelectorAll(".wnav > .wmenu"), function(menu){
+    if(menu.dataset.pill) return; menu.dataset.pill = "1";
+    var pill = document.createElement("span");
+    pill.className = "wpill"; pill.setAttribute("aria-hidden", "true");
+    menu.insertBefore(pill, menu.firstChild);
+    function items(){
+      return menu.querySelectorAll(":scope > a, :scope > .shopwrap > a");
+    }
+    function current(){
+      return menu.querySelector(":scope > a.cur, :scope > .shopwrap > a.cur");
+    }
+    function moveTo(el, anim){
+      var list = items();
+      if(!el || window.innerWidth < 901){
+        pill.style.opacity = "0";
+        Array.prototype.forEach.call(list, function(a){ a.classList.remove("onpill"); });
+        return;
+      }
+      var m = menu.getBoundingClientRect(), r = el.getBoundingClientRect();
+      // 숨겨진 라우트 안이면 크기가 0 이라 위치를 못 잡는다 — 보일 때 다시 잰다
+      if(!r.width){ pill.style.opacity = "0"; return; }
+      if(!anim) pill.style.transition = "none";
+      pill.style.opacity = "1";
+      pill.style.width = Math.round(r.width + 30) + "px";
+      // x 만 넘기고 세로 중앙(-50퍼센트)은 CSS 가 갖는다 —
+      // 여기에 퍼센트 기호를 쓰면 빌드의 문자열 포맷이 깨진다.
+      pill.style.setProperty("--x", Math.round(r.left - m.left - 15) + "px");
+      if(!anim){ void pill.offsetWidth; pill.style.transition = ""; }
+      Array.prototype.forEach.call(list, function(a){
+        a.classList.toggle("onpill", a === el); });
+    }
+    function reset(anim){ moveTo(current(), anim); }
+    Array.prototype.forEach.call(items(), function(a){
+      a.addEventListener("mouseenter", function(){ moveTo(a, true); });
+    });
+    menu.addEventListener("mouseleave", function(){ reset(true); });
+    window.addEventListener("resize", function(){ reset(false); });
+    // 라우트가 바뀌어 이 메뉴가 보이게 되면 그때 자리를 잡는다.
+    // 라우터가 언제 숨김을 푸는지에 기대지 않도록 몇 번 더 시도한다.
+    function placeSoon(){
+      requestAnimationFrame(function(){ reset(false); });
+      setTimeout(function(){ reset(false); }, 120);
+      setTimeout(function(){ reset(false); }, 400);
+    }
+    window.addEventListener("hashchange", placeSoon);
+    menu.addEventListener("mouseenter", function(){
+      if(pill.style.opacity !== "1") reset(false); });
+    reset(false);
+    // 웹폰트가 늦게 오면 글자 폭이 바뀐다 — 그때 다시 맞춘다
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ reset(false); });
+  });
+})();
 
 </script>
