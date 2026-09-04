@@ -1472,8 +1472,10 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 /* ══ 히어로 +50px · 원형 스트립 절반 겹치기 (데스크탑) ════════════
    모바일은 스트립이 GNB~히어로 사이로 order 이동해 있어 대상이 아니다. */
 @media(min-width:901px){
-  /* 알약이 걸칠 여유 50px */
-  #r-main .hero .viewport{height:calc(100svh + 50px)}
+  /* 알약이 걸칠 여유 50px. svh 가 아니라 vh 로 잰다.
+     ⚠ .hero .viewport 에 max-height:900px 상한이 걸려 있어 세로 900px 를
+       넘는 모니터에서는 높이가 900px 에서 잘렸다. 상한을 푼다. */
+  #r-main .hero .viewport{height:calc(100vh + 50px);max-height:none}
 
   /* 알약 높이 = 원 88 + 간격 11 + 이름 17 + 상하 여백 52 = 168px.
      그 절반만큼 섹션을 끌어올려 위아래로 정확히 반씩 걸친다.
@@ -1494,10 +1496,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 @media(min-width:901px) and (max-width:1060px){
   .circwrap{gap:18px;padding-left:28px;padding-right:28px}
 }
-/* 주소창 단위를 모르는 브라우저 보정 */
-@supports not (height:100svh){
-  @media(min-width:901px){#r-main .hero .viewport{height:calc(100vh + 50px)}}
-}
+
 
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
