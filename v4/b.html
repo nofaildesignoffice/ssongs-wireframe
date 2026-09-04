@@ -1333,6 +1333,13 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   .prow b{font-size:14px}
 }
 
+
+/* ── 카테고리 그리드 — 데스크탑 위 여백 제거 ─────────────────────
+   순서가 바뀌어도 따라가도록 nth-of-type 이 아니라 aria-label 로 집는다. */
+@media(min-width:901px){
+  .wsec[aria-label="카테고리"]{padding-top:0}
+}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
