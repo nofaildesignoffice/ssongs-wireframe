@@ -1918,7 +1918,11 @@ html{overflow-x:hidden;overflow-x:clip}
 .bhero .weyebrow{color:rgba(26,26,26,.6)}
 .bhero .wh{font-size:clamp(26px,3.2vw,42px);font-weight:800;letter-spacing:-.03em;
   line-height:1.24;color:var(--ink);margin:0 0 14px}
-.bhero .wsub{color:rgba(26,26,26,.76);font-size:15px;margin:0;max-width:38ch}
+/* 줄바꿈은 <br> 로만 — max-width 로 좁히면 문장 끝이 한 줄 더 넘어간다.
+   ch 는 숫자 '0' 폭 기준이라 한글에는 실제보다 훨씬 좁게 걸린다.
+   화면이 좁아 어쩔 수 없이 넘어갈 때는 단어 사이에서 끊는다. */
+.bhero .wsub{color:rgba(26,26,26,.76);font-size:15px;margin:0;
+  max-width:none;word-break:keep-all}
 
 /* GNB 를 히어로 위에 얹는다 — 메인과 같은 규칙. 메인은 데스크탑만이지만
    여기는 모바일도 겹친다. */
@@ -1932,7 +1936,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
   .wsec.bhero{aspect-ratio:3/4;background-image:url("https://nofaildesignoffice.github.io/ssongs-wireframe/v4/img/brand/hero-m.jpg")}
   /* 모바일 GNB 는 2행(60 + 45)이라 그만큼 더 내린다 */
   .bherotxt{padding:calc(var(--barh) + 105px + 22px) 20px 0}
-  .bhero .wsub{font-size:14px;max-width:30ch}
+  .bhero .wsub{font-size:14px}
 }
 @media(max-width:560px){
   .bherotxt{padding:calc(var(--barh) + 105px + 16px) 15px 0}
