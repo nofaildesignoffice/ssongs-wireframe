@@ -1614,9 +1614,11 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 @media(hover:hover) and (min-width:901px){
   /* 1차 메뉴에만 — 하위메뉴 링크(.wdrop a)에는 밑줄을 그리지 않는다 */
   .wmenu > a,.wmenu > .shopwrap > a{position:relative}
+  /* 현재 페이지 표시선(.cur 의 inset 0 -2px)과 같은 자리·같은 굵기 —
+     링크 상자 맨 아래, 2px. 호버와 활성이 같은 선에 놓인다. */
   .wmenu > a::after,.wmenu > .shopwrap > a::after{
-    content:"";position:absolute;left:0;right:0;bottom:16px;
-    height:1px;background:currentColor;pointer-events:none;
+    content:"";position:absolute;left:0;right:0;bottom:0;
+    height:2px;background:currentColor;pointer-events:none;
     transform:scaleX(0);transform-origin:center;
     transition:transform .28s cubic-bezier(.22,.61,.36,1)}
   .wmenu > a:hover::after,.wmenu > .shopwrap > a:hover::after{transform:scaleX(1)}
