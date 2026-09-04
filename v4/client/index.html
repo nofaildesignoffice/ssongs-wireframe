@@ -1738,6 +1738,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   })();
   
 
+
   // ── 관성 스크롤 — 휠을 굴리면 스르륵 밀려가며 감속해 멈춘다 ──────
   (function(){
     var mm = window.matchMedia;
@@ -1745,7 +1746,19 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
     if (mm("(prefers-reduced-motion: reduce)").matches) return;
     if (!mm("(pointer: fine)").matches) return;   // 모바일은 네이티브 관성이 낫다
 
-    var target = 0, cur = 0, running = false, EASE = 0.13;
+    // EASE  — 클수록 빨리 따라잡는다 (작을수록 미끄럽고 느리게 도착)
+    // BOOST — 한 번 굴릴 때 이동량 배수. 네이티브보다 굼떠 보이지 않게 살짝 올린다
+    var target = 0, cur = 0, running = false, EASE = 0.20, BOOST = 1.15;
+
+    // 휠 단위가 브라우저·장치마다 다르다. 픽셀로 통일하지 않으면
+    // deltaMode 가 line(1) 인 환경에서 deltaY 가 3 정도로 들어와
+    // 화면이 거의 안 움직인다 — '렉 걸린 것 같다'의 정체다.
+    function px(e){
+      var d = e.deltaY;
+      if (e.deltaMode === 1) return d * 18;                 // line
+      if (e.deltaMode === 2) return d * window.innerHeight;  // page
+      return d;                                             // pixel
+    }
 
     function maxScroll(){
       return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
@@ -1785,7 +1798,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
       if (mx <= 0) return;
       e.preventDefault();
       if (!running){ cur = window.scrollY; target = cur; }
-      target = clamp(target + e.deltaY);
+      target = clamp(target + px(e) * BOOST);
       if (!running){ running = true; requestAnimationFrame(tick); }
     }, { passive: false });
 
