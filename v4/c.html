@@ -1882,6 +1882,15 @@ html{overflow-x:hidden;overflow-x:clip}
   .wsec.tight:has(> .cshead) + .wsec:has(> .chips){padding-top:12px}
 }
 
+
+/* ── 섹션 제목 바로 뒤 필터 박스 ───────────────────────────────────
+   여백 규칙이 h3.wh 에만 있어 h2.wh 아래는 0 이었다. h2.wh 에 일괄로 주면
+   부제(.wsub)가 따라오는 섹션까지 벌어지므로, 제목 바로 뒤에 필터가 오는
+   경우만 겨눈다. 값은 다른 필터 페이지의 '타이틀 아래 20px' 과 같게. */
+.wsec > .wh + .fwrap{margin-top:20px}
+@media(max-width:900px){.wsec > .wh + .fwrap{margin-top:16px}}
+@media(max-width:560px){.wsec > .wh + .fwrap{margin-top:12px}}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
