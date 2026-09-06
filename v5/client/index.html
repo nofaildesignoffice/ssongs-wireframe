@@ -3269,6 +3269,13 @@ body.navopen #r-brand .wnav{background:var(--white)}
         if(on) applyKind(s.closest(".route") || document, on.getAttribute("data-val"));
       });
     }
+    // 박스에 찍을 문구 — 고른 게 없으면 축 이름, 있으면 고른 값.
+    // .ctlv 는 한 줄 말줄임이라 두 개까지만 적고 나머지는 '외 N' 으로 접는다
+    function ctlText(names, lab){
+      if(!names.length) return lab;
+      if(names.length <= 2) return names.join(", ");
+      return names.slice(0, 2).join(", ") + " 외 " + (names.length - 2);
+    }
     function syncCtl(w){
       var bar = w.querySelector(".filterbar"); if(!bar) return;
       var names = picked(bar);
@@ -3279,13 +3286,9 @@ body.navopen #r-brand .wnav{background:var(--white)}
       }
       var v = w.querySelector(".ctlv");
       var n = w.querySelector(".fbyn");
-      if(n){                                  // 조건 축 묶음은 개수만 보여준다
-        n.textContent = String(names.length);
-        n.hidden = !names.length;
-        if(v) v.textContent = lab;
-      } else if(v){
-        v.textContent = names.length ? names.join(", ") : lab;
-      }
+      // 조건 축 묶음도 단일 축 박스와 같은 규칙 — 개수 뱃지 대신 고른 값을 찍는다
+      if(n) n.hidden = true;
+      if(v) v.textContent = ctlText(names, lab);
       if(names.length) w.classList.add("on"); else w.classList.remove("on");
     }
     // 기기·세대·제품은 하나만 고르는 축이라 다시 눌러도 꺼지지 않는다.
