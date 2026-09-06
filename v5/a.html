@@ -2274,9 +2274,12 @@ body.navopen #r-brand .wnav{background:var(--white)}
 /* ══ v5 정렬 버튼 — 다른 컨트롤과 같은 치수 ═════════════════════════
    .wsel 기본값은 31px·13px 이라 컨트롤 줄에서 혼자 작았다.
    .wsel 은 다른 곳에서도 쓰므로 .ctlbar 안으로만 좁힌다. */
+/* button 은 text-align:center 가 기본이라 .sortcur 가 폭을 다 먹어도
+   글자가 가운데로 간다 — 다른 컨트롤(.ctlbtn)과 같이 왼쪽으로 붙인다. */
 .ctlbar .sortwrap .wsel{height:48px;min-height:48px;padding:0 15px;
   gap:9px;border:1px solid var(--border);border-radius:var(--r1);
-  font-size:14px;font-weight:500;color:var(--ink);background:var(--white)}
+  font-size:14px;font-weight:500;color:var(--ink);background:var(--white);
+  text-align:left}
 .ctlbar .sortwrap .wsel svg{flex:none;opacity:.55;transition:transform .16s}
 .ctlbar .sortwrap.open .wsel{border-color:var(--black)}
 .ctlbar .sortwrap.open .wsel svg{transform:rotate(180deg)}
