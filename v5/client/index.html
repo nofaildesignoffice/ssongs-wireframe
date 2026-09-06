@@ -2307,12 +2307,11 @@ body.navopen #r-brand .wnav{background:var(--white)}
   /* 개수 칸을 고정해 모든 페이지에서 첫 박스가 같은 x 에서 시작한다.
      '1,852개' 가 가장 길고, 나머지는 오른쪽 여백으로 남는다. */
   .ctlcnt{flex:0 0 168px;padding-right:24px}
-  /* 남는 폭을 똑같이 나눠 갖는다 — 박스가 2개든 4개든 서로 같은 폭.
-     상한을 두지 않으면 박스가 2개뿐인 페이지에서 571px 짜리 버튼이 된다. */
-  .fwrap.ctl,.fwrap.ctl.fby,.ctlbar .sortwrap{
-    flex:1 1 0;width:auto;min-width:0;max-width:340px}
-  /* 상한에 걸려 남는 폭은 정렬 왼쪽에 몬다 — 정렬은 늘 오른쪽 끝 */
-  .ctlbar .sortwrap{margin-left:auto}
+  /* 남는 폭을 똑같이 나눠 갖는다 — 박스 수와 상관없이 서로 같은 폭이고
+     줄 끝까지 꽉 찬다. 상한을 두면 남는 폭이 중간 여백으로 남는다.
+     기타 악세사리에 종류가 들어와 어느 페이지든 최소 3박스(≤377px)라
+     상한 없이도 버튼이 과하게 넓어지지 않는다. */
+  .fwrap.ctl,.fwrap.ctl.fby,.ctlbar .sortwrap{flex:1 1 0;width:auto;min-width:0}
 }
 
 .route[hidden]{display:none}
