@@ -177,7 +177,9 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
     box-shadow:0 -8px 30px rgba(0,0,0,.16);
     transform:translateY(101%);visibility:hidden;
     transition:transform .28s cubic-bezier(.32,.72,0,1),visibility .28s}
-  body.fopen .fwrap .filterbar{transform:none;visibility:visible}
+  /* 연 것만 올라온다 — 컨트롤마다 .fwrap 이 하나씩이라
+     body.fopen 만으로는 페이지의 시트가 전부 겹쳐 열린다 */
+  body.fopen .fwrap.sheetopen .filterbar{transform:none;visibility:visible}
   body.fopen{overflow:hidden}
 
   .fsheet-head{display:flex;align-items:center;justify-content:space-between;
@@ -2417,6 +2419,10 @@ body.navopen #r-brand .wnav{background:var(--white)}
   function openSheet(wrap, idx){
     if(!wrap) return;
     backdrop();
+    // 연 것만 표시한다 — 컨트롤마다 .fwrap 이 하나씩이라 표식이 없으면 전부 열린다
+    document.querySelectorAll(".fwrap.sheetopen").forEach(function(x){
+      x.classList.remove("sheetopen"); });
+    wrap.classList.add("sheetopen");
     document.body.classList.add("fopen");
     var ic = wrap.querySelector(".ficon");
     if(ic) ic.setAttribute("aria-expanded","true");
@@ -2433,6 +2439,8 @@ body.navopen #r-brand .wnav{background:var(--white)}
   }
   function closeSheet(){
     document.body.classList.remove("fopen");
+    document.querySelectorAll(".fwrap.sheetopen").forEach(function(x){
+      x.classList.remove("sheetopen"); });
     document.body.classList.remove("sopen");
     if(fbd) fbd.classList.remove("son");
     document.querySelectorAll(".sortwrap.open").forEach(function(x){
