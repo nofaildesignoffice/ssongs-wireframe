@@ -2325,6 +2325,20 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .ctlpanel .frow.muted{opacity:.55}
 .ctlpanel .anyfit{font-size:12px;color:var(--lt)}
 
+
+/* ── 서브페이지 2행 메뉴 — 아래쪽 가로선 ─────────────────────────
+   메인(#r-main)은 제외한다. 접혔다 펴지는 줄이라 선을 그으면
+   히어로 위에 줄만 남는다. */
+@media(max-width:900px){
+  .route:not(#r-main) > .wnav > .wmenu{border-bottom:1px solid var(--border)}
+  /* 아티스트 컬렉션은 GNB 가 히어로 위에 투명하게 얹힌다 —
+     흰 배경이 될 때만 위·아래 선을 켠다 */
+  .route#r-brand > .wnav > .wmenu{border-top-color:transparent;
+    border-bottom-color:transparent}
+  body.navsolid .route#r-brand > .wnav > .wmenu{border-top-color:var(--border);
+    border-bottom-color:var(--border)}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
