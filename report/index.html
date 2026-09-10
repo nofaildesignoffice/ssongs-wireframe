@@ -1,0 +1,725 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>쏭스 필터 축 재설계</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#FBFAF7;
+  --surface:#FFFFFF;
+  --sunk:#F3F1EC;
+  --ink:#17181A;
+  --ink2:#53575C;
+  --ink3:#84888D;
+  --rule:#DFDCD4;
+  --rule2:#EDEAE3;
+  --ok:#2E6B52;
+  --ok-bg:#E4EFE9;
+  --block:#9C3B2A;
+  --block-bg:#F6E6E1;
+  --warn:#856313;
+  --warn-bg:#F4ECD8;
+  --sel:#17181A;
+
+  --f-sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,monospace;
+
+  --w:min(100% - 40px, 1080px);
+  --prose:66ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141517;
+    --surface:#1B1D20;
+    --sunk:#202225;
+    --ink:#E9E7E2;
+    --ink2:#A9ACB0;
+    --ink3:#787C81;
+    --rule:#33363A;
+    --rule2:#26292C;
+    --ok:#7FC3A4;
+    --ok-bg:#1D2E27;
+    --block:#E09079;
+    --block-bg:#33221E;
+    --warn:#D9B45E;
+    --warn-bg:#302819;
+    --sel:#E9E7E2;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141517;
+  --surface:#1B1D20;
+  --sunk:#202225;
+  --ink:#E9E7E2;
+  --ink2:#A9ACB0;
+  --ink3:#787C81;
+  --rule:#33363A;
+  --rule2:#26292C;
+  --ok:#7FC3A4;
+  --ok-bg:#1D2E27;
+  --block:#E09079;
+  --block-bg:#33221E;
+  --warn:#D9B45E;
+  --warn-bg:#302819;
+  --sel:#E9E7E2;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--f-sans);font-size:15.5px;line-height:1.72;
+  font-weight:400;letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+}
+.wrap{width:var(--w);margin:0 auto}
+p{margin:0 0 1em;max-width:var(--prose)}
+p:last-child{margin-bottom:0}
+strong{font-weight:600}
+em{font-style:normal;background:var(--sunk);padding:0 .28em;border-radius:2px}
+a{color:inherit}
+
+/* ── 머리말 ─────────────────────────────────────────── */
+header.doc{
+  border-bottom:1.5px solid var(--ink);
+  padding:56px 0 22px;margin-bottom:0;
+}
+.kicker{
+  font-family:var(--f-mono);font-size:11.5px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);
+  margin:0 0 18px;
+}
+h1{
+  font-size:clamp(30px,5.2vw,46px);line-height:1.14;font-weight:600;
+  letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance;max-width:16ch;
+}
+.dek{font-size:17px;color:var(--ink2);max-width:56ch;margin:0 0 30px;line-height:1.6}
+.meta{
+  display:flex;flex-wrap:wrap;gap:0 34px;
+  font-family:var(--f-mono);font-size:11.5px;color:var(--ink3);
+  letter-spacing:.01em;
+}
+.meta b{font-weight:500;color:var(--ink2)}
+
+/* ── 요약 ──────────────────────────────────────────── */
+.summary{padding:34px 0 42px;border-bottom:1px solid var(--rule)}
+.finds{display:grid;gap:14px;margin:0 0 34px;max-width:var(--prose)}
+.find{display:grid;grid-template-columns:22px 1fr;gap:14px;align-items:baseline}
+.find .n{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;
+}
+.find p{margin:0}
+
+.figs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+  border-top:1px solid var(--rule);
+}
+.fig{
+  padding:18px 20px 16px 0;border-right:1px solid var(--rule2);
+}
+.fig:last-child{border-right:0}
+.fig .v{
+  font-family:var(--f-mono);font-size:27px;font-weight:500;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;
+}
+.fig .v small{font-size:14px;font-weight:400;color:var(--ink3);margin-left:2px}
+.fig .k{display:block;margin-top:9px;font-size:12.5px;color:var(--ink2);line-height:1.45}
+
+/* ── 섹션 ──────────────────────────────────────────── */
+section{
+  padding:52px 0;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:70px minmax(0,1fr);gap:0 24px;
+}
+section > .sn{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  letter-spacing:.04em;padding-top:7px;
+}
+section > .sbody{min-width:0}
+h2{
+  font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.28;
+  margin:0 0 8px;text-wrap:balance;
+}
+.sublede{color:var(--ink2);font-size:15px;margin:0 0 30px;max-width:58ch}
+h3{
+  font-size:13px;font-weight:600;letter-spacing:.02em;margin:38px 0 12px;
+  color:var(--ink);
+}
+h3:first-of-type{margin-top:0}
+h3 .hn{font-family:var(--f-mono);color:var(--ink3);margin-right:8px;font-weight:500}
+
+/* ── 표 ────────────────────────────────────────────── */
+.tw{overflow-x:auto;margin:0 0 8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+caption{
+  caption-side:bottom;text-align:left;font-size:12px;color:var(--ink3);
+  padding-top:10px;line-height:1.55;
+}
+th,td{
+  text-align:left;padding:9px 14px 9px 0;
+  border-bottom:1px solid var(--rule2);vertical-align:top;
+}
+th{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  border-bottom:1px solid var(--rule);padding-bottom:8px;white-space:nowrap;
+}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;padding-right:20px}
+tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+td code,.mono{font-family:var(--f-mono);font-size:12.5px}
+.dim{color:var(--ink3)}
+
+/* ── 태그 ──────────────────────────────────────────── */
+.tag{
+  display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.06em;padding:2px 7px;border-radius:2px;white-space:nowrap;
+  line-height:1.5;
+}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-block{background:var(--block-bg);color:var(--block)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-flat{background:var(--sunk);color:var(--ink2)}
+
+/* ── 분류 트리 ──────────────────────────────────────── */
+.tree{
+  font-family:var(--f-mono);font-size:12.5px;line-height:1.95;
+  background:var(--surface);border:1px solid var(--rule);
+  padding:20px 22px;overflow-x:auto;white-space:pre;
+  color:var(--ink2);
+}
+.tree b{font-weight:500;color:var(--ink)}
+.tree .k-prod{color:var(--ink);font-weight:500}
+.tree .k-axis{color:var(--ok);font-weight:500}
+.tree .k-promo{color:var(--warn);font-weight:500}
+.tree .c{color:var(--ink3)}
+.legend{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;
+  font-size:12px;color:var(--ink2);
+}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:9px;height:9px;border-radius:1px;display:block;flex:none}
+
+/* ── 막대 ──────────────────────────────────────────── */
+.bars{display:grid;gap:9px;margin:0 0 8px;max-width:640px}
+.bar{display:grid;grid-template-columns:132px 1fr 62px;gap:12px;align-items:center}
+.bar .bl{font-size:13px;color:var(--ink2)}
+.bar .bt{height:16px;background:var(--sunk);border-radius:1px;overflow:hidden}
+.bar .bf{height:100%;background:var(--ink);border-radius:1px}
+.bar .bf.alt{background:var(--ink3)}
+.bar .bv{
+  font-family:var(--f-mono);font-size:12.5px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--ink2);
+}
+
+/* ── 층 다이어그램 ───────────────────────────────────── */
+.stack{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface);margin:0 0 10px}
+.layer{
+  display:grid;grid-template-columns:88px minmax(0,1fr) 168px;gap:20px;
+  padding:18px 20px;border-bottom:1px solid var(--rule2);align-items:start;
+}
+.layer:last-child{border-bottom:0}
+.layer .ln{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);padding-top:3px;
+}
+.layer .lt{font-weight:600;font-size:14.5px;margin:0 0 3px}
+.layer .ld{font-size:13px;color:var(--ink2);margin:0;line-height:1.6;max-width:46ch}
+.layer .lo{font-size:12.5px;line-height:1.6}
+.layer .lo b{display:block;font-weight:600;font-size:12.5px;margin-bottom:2px}
+.layer.hot{background:var(--sunk)}
+
+/* ── 지금 / 바꾼 뒤 대비 ─────────────────────────────── */
+.compare{
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid var(--rule);background:var(--surface);margin:0 0 10px;
+}
+.cc{padding:20px 22px;min-width:0}
+.cc + .cc{border-left:1px solid var(--rule)}
+.cc .ct{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;margin:0 0 16px;
+}
+.cc.now .ct{color:var(--block)}
+.cc.aft .ct{color:var(--ok)}
+.cs{
+  display:grid;grid-template-columns:15px minmax(0,1fr);gap:0 11px;
+  margin:0 0 13px;font-size:13.2px;line-height:1.6;
+}
+.cs:last-of-type{margin-bottom:0}
+.cs .m{font-family:var(--f-mono);font-size:12px;line-height:1.75}
+.cs.no .m{color:var(--block)}
+.cs.yes .m{color:var(--ok)}
+.cs .tx{margin:0}
+.cs .why{
+  grid-column:2;font-size:12.5px;color:var(--ink3);line-height:1.58;
+  border-left:2px solid var(--rule2);padding-left:11px;margin-top:6px;
+}
+.cc .tot{
+  margin-top:17px;padding-top:12px;border-top:1px solid var(--rule2);
+  font-family:var(--f-mono);font-size:11.5px;color:var(--ink2);letter-spacing:.02em;
+}
+@media (max-width:760px){
+  .compare{grid-template-columns:1fr}
+  .cc + .cc{border-left:0;border-top:1px solid var(--rule)}
+}
+
+/* ── 절차 ──────────────────────────────────────────── */
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:0}
+ol.steps li{
+  counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:16px;
+  padding:15px 0;border-bottom:1px solid var(--rule2);align-items:baseline;
+}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{
+  content:counter(s);font-family:var(--f-mono);font-size:12px;font-weight:600;
+  color:var(--ink3);font-variant-numeric:tabular-nums;
+}
+ol.steps .st{font-weight:600;display:block;margin-bottom:2px;font-size:14.5px}
+ol.steps .sd{font-size:13.5px;color:var(--ink2);line-height:1.62;max-width:56ch}
+ol.steps .who{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--ink3);margin-left:8px;
+}
+
+/* ── 안건 ──────────────────────────────────────────── */
+.agenda{display:grid;gap:0;border-top:1px solid var(--rule)}
+.item{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 150px;gap:0 18px;
+  padding:20px 0;border-bottom:1px solid var(--rule2);align-items:start;
+}
+.item .q{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;padding-top:2px;
+}
+.item .qt{font-weight:600;font-size:15px;margin:0 0 5px;line-height:1.45}
+.item .qd{font-size:13.5px;color:var(--ink2);margin:0;line-height:1.62;max-width:52ch}
+.item .qr{font-size:12.5px;color:var(--ink2);line-height:1.55;padding-top:2px}
+.item .qr b{
+  display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);font-weight:500;margin-bottom:4px;
+}
+
+/* ── 용어 ──────────────────────────────────────────── */
+.gloss{
+  padding:38px 0 46px;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:70px minmax(0,1fr);gap:0 24px;
+}
+.gloss > .sn{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  letter-spacing:.04em;padding-top:5px;
+}
+.gloss .ghead{font-size:19px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px}
+.gloss .gsub{font-size:13.5px;color:var(--ink2);margin:0 0 22px;max-width:56ch}
+.gterms{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));
+  gap:0 40px;margin:0;
+}
+.gt{padding:12px 0;border-bottom:1px solid var(--rule2);scroll-margin-top:24px}
+.gt dt{font-weight:600;font-size:13.5px;margin:0 0 3px;letter-spacing:-.01em}
+.gt dt .en{font-family:var(--f-mono);font-size:11px;color:var(--ink3);font-weight:400;margin-left:6px}
+.gt dd{margin:0;font-size:13px;color:var(--ink2);line-height:1.62}
+.gt dd code{font-family:var(--f-mono);font-size:11.5px}
+.gt:target{background:var(--sunk);box-shadow:0 0 0 9px var(--sunk);border-radius:1px}
+
+/* 본문 안 용어 표시 — 눌러서 풀이로 이동 */
+a.gl{
+  text-decoration:none;color:inherit;
+  border-bottom:1px dotted var(--ink3);cursor:help;
+}
+a.gl:hover{border-bottom-color:var(--ink);border-bottom-style:solid}
+.tree a.gl{border-bottom-color:currentColor;opacity:.95}
+
+/* ── 주석 ──────────────────────────────────────────── */
+.note{
+  border-left:2px solid var(--rule);padding:2px 0 2px 18px;margin:24px 0;
+  font-size:13.5px;color:var(--ink2);max-width:58ch;line-height:1.68;
+}
+.note b{color:var(--ink);font-weight:600}
+
+footer.doc{
+  padding:38px 0 64px;font-family:var(--f-mono);font-size:11.5px;
+  color:var(--ink3);line-height:1.9;
+}
+footer.doc b{font-weight:500;color:var(--ink2)}
+
+@media (max-width:760px){
+  body{font-size:15px}
+  section{grid-template-columns:1fr;gap:0}
+  section > .sn{padding:0 0 10px}
+  .layer{grid-template-columns:1fr;gap:8px}
+  .layer .ln{padding-top:0}
+  .item{grid-template-columns:26px 1fr;gap:0 14px}
+  .item .qr{grid-column:2;padding-top:12px}
+  .bar{grid-template-columns:104px 1fr 54px;gap:9px}
+  .fig{border-right:0;border-bottom:1px solid var(--rule2);padding-right:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="doc">
+  <p class="kicker">노페일디자인 × (주)쏭스디자인 · 논의용 브리프</p>
+  <h1>상품등록이 곧 필터가 되게</h1>
+  <p class="dek">필터 값을 따로 관리하지 않는다. 상품등록에서 이미 기입하는 옵션과 분류를 그대로 읽어, 옵션값이 하나 늘면 사용자 화면의 필터 칩도 하나 는다. 그 구조를 지금 데이터 위에 세울 수 있는지 실측했다.</p>
+  <div class="meta">
+    <span><b>작성</b> 2026-09-10</span>
+    <span><b>데이터</b> 상품 엑셀 2026-08-20 · 2,146행 · 92컬럼</span>
+    <span><b>대상</b> 내 제품 찾기 · SHOP 5개 목록</span>
+    <span><b>상태</b> 반영 전 · 논의 단계</span>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="finds">
+    <div class="find"><span class="n">01</span><p><strong>구조 자체는 됩니다.</strong> <a class="gl" href="#g-optname">옵션명</a>을 축으로, <a class="gl" href="#g-optval">옵션값</a>을 칩으로 읽으면 상품등록에 값을 하나 추가할 때 필터 칩이 하나 늘어납니다. 별도 관리 대장도, 스킨 수정도 필요 없습니다.</p></div>
+    <div class="find"><span class="n">02</span><p><strong>단, 지금 데이터에 그대로 걸면 축 463개 · 칩 2,858개가 나옵니다.</strong> 「기종」이라는 한 축을 <strong>20가지 이름</strong>으로 부르고 있고, 「아이폰16」과 「아이폰 16」이 서로 다른 칩이 됩니다. 실제로 갈라져 있는 기종이 96개입니다.</p></div>
+    <div class="find"><span class="n">03</span><p><strong>원인이 명확하고, 해법이 카페24 안에 있습니다.</strong> <a class="gl" href="#g-optset">옵션세트</a>가 <strong>1,938건 전부 비어 있습니다.</strong> 지금은 상품마다 옵션명을 새로 타이핑하고 있습니다. 세트를 쓰면 이름과 값이 저절로 통일되고, 세트에 값을 추가하는 것이 곧 필터 칩을 추가하는 일이 됩니다.</p></div>
+    <div class="find"><span class="n">04</span><p><strong>모든 축을 옵션으로 옮길 수는 없습니다.</strong> 기종(케이스 92%)과 색상(카드지갑 70%)은 옵션에서 바로 나옵니다. 반면 형태·부착은 애초에 옵션이 아니라 분류에 있고(97~100%), 테마는 양쪽 다 부족합니다(31~38%). <strong>축마다 소스를 지정</strong>해야 합니다.</p></div>
+  </div>
+
+  <div class="figs">
+    <div class="fig"><span class="v">463</span><span class="k">지금 쓰이는 옵션명<br><span class="dim">그대로 읽으면 축 463개</span></span></div>
+    <div class="fig"><span class="v">2,858</span><span class="k">지금 쓰이는 옵션값<br><span class="dim">그대로 읽으면 칩 2,858개</span></span></div>
+    <div class="fig"><span class="v">0</span><span class="k">옵션세트 사용<br><span class="dim">1,938건 전부 개별 입력</span></span></div>
+    <div class="fig"><span class="v">96</span><span class="k">표기가 갈린 기종<br><span class="dim">같은 기종이 2~3개 칩으로</span></span></div>
+  </div>
+</div>
+
+<!-- ══ 용어 ══════════════════════════════════════════ -->
+<div class="gloss">
+  <div class="sn">§ 0</div>
+  <div>
+    <p class="ghead">이 문서에 나오는 말</p>
+    <p class="gsub">본문에서 <a class="gl" href="#g-optname">점선이 그어진 말</a>은 눌러서 여기로 올 수 있습니다. 카페24 관리자 화면에서 부르는 이름과 맞췄습니다.</p>
+    <dl class="gterms">
+
+      <div class="gt" id="g-optname"><dt>옵션명 <span class="en">옵션 항목</span></dt>
+        <dd>상품등록 화면에서 옵션을 만들 때 왼쪽에 적는 항목 이름. 「기종」·「색상」 같은 것입니다. 필터에서는 <b>줄(<a class="gl" href="#g-axis">축</a>)</b>이 됩니다.</dd></div>
+
+      <div class="gt" id="g-optval"><dt>옵션값</dt>
+        <dd>그 항목 안에 넣는 선택지. 「아이폰16」·「파스텔블루」 같은 것입니다. 필터에서는 <b>버튼(<a class="gl" href="#g-chip">칩</a>)</b>이 됩니다.</dd></div>
+
+      <div class="gt" id="g-optset"><dt>옵션세트</dt>
+        <dd>카페24가 제공하는 기능. 자주 쓰는 옵션 묶음을 미리 만들어 두고 상품등록 때 불러 씁니다. 상품마다 새로 타이핑하지 않으므로 이름과 값이 저절로 같아집니다. <b>이 몰은 지금 하나도 쓰고 있지 않습니다.</b></dd></div>
+
+      <div class="gt" id="g-axis"><dt>축</dt>
+        <dd>필터의 한 줄, 즉 하나의 기준. 「형태」·「기종」·「가격」이 각각 축입니다.</dd></div>
+
+      <div class="gt" id="g-chip"><dt>칩 <span class="en">chip</span></dt>
+        <dd>축 안에 들어 있는 선택지 하나. 눌러서 고르는 알약 모양 버튼입니다.</dd></div>
+
+      <div class="gt" id="g-cov"><dt>커버리지</dt>
+        <dd>그 목록의 상품 중 해당 축의 <b>어느 칩엔가 걸리는 비율</b>. 67%라면 나머지 33%는 어느 칩을 눌러도 안 나옵니다. 낮을수록 "필터를 켰더니 상품이 사라진다"가 됩니다.</dd></div>
+
+      <div class="gt" id="g-tree"><dt>분류 트리</dt>
+        <dd>카페24 관리자의 「상품분류」 전체 구조. 큰 분류 아래 작은 분류가 가지처럼 뻗어 있어 트리라고 부릅니다. 이 몰은 101개가 쓰이고 있습니다.</dd></div>
+
+      <div class="gt" id="g-depth"><dt>깊이 <span class="en">depth</span></dt>
+        <dd>트리에서 몇 번째 단인지. 「폰 케이스」는 깊이 1, 「폰 케이스 &gt; 투명 케이스」는 깊이 2입니다. 이 몰은 4단까지 있습니다.</dd></div>
+
+      <div class="gt" id="g-root"><dt>루트 분류 <span class="en">root</span></dt>
+        <dd>트리 맨 위 단(깊이 1)의 분류. 「폰 케이스」·「카드지갑」처럼 아래에 하위를 거느리는 큰 분류입니다.</dd></div>
+
+      <div class="gt" id="g-ancestor"><dt>조상 분류 <span class="en">ancestor</span></dt>
+        <dd>어떤 분류보다 위에 있는 단 전부. 「폰 케이스 &gt; 투명 케이스 &gt; 그래픽 젤리」에서 앞의 둘이 조상입니다. 부모·할아버지를 한꺼번에 부르는 말입니다.</dd></div>
+
+      <div class="gt" id="g-expand"><dt>조상 전개</dt>
+        <dd>상품에 배정된 분류를 보고 <b>그 위쪽 단까지 자동으로 채워 넣는</b> 처리. 「에어팟 케이스」에 든 상품을 「이어폰케이스」에도 든 것으로 계산해 주는 일입니다. 카페24가 이걸 안 해주므로 필터를 만들 때 직접 해야 합니다.</dd></div>
+
+      <div class="gt" id="g-belong"><dt>귀속</dt>
+        <dd>상품이 어느 분류에 들어가 있는 상태. 한 상품을 여러 분류에 동시에 넣을 수 있어서, 이 몰은 상품당 평균 4.5개에 귀속돼 있습니다.</dd></div>
+
+      <div class="gt" id="g-cateno"><dt>분류번호 <span class="en">cate_no</span></dt>
+        <dd>분류마다 붙는 고유 숫자. 「카드지갑」은 <code>110</code>, 「체인지톡」은 <code>67</code>입니다. 이름을 바꿔도 번호는 그대로라 시스템은 번호로 상품을 찾습니다.</dd></div>
+
+      <div class="gt" id="g-index"><dt>인덱스 <span class="en">product-index.json</span></dt>
+        <dd>상품 목록을 미리 뽑아 만들어 두는 데이터 파일. 카페24가 속성으로 거르는 기능을 제공하지 않아, 이 파일을 화면이 읽어서 직접 거릅니다. 상품이 바뀌면 다시 만들어 올려야 합니다.</dd></div>
+
+      <div class="gt" id="g-norm"><dt>표기 통일 <span class="en">정규화</span></dt>
+        <dd>같은 뜻인데 여러 갈래로 적힌 것을 하나로 맞추는 일. 「아이폰16」과 「아이폰 16」을 한 기종으로 합치는 것입니다.</dd></div>
+
+
+
+      <div class="gt" id="g-live"><dt>진열상태 Y</dt>
+        <dd>지금 쇼핑몰 화면에 노출 중인 상품. 이 문서의 모든 집계는 진열 중인 1,938건 기준이고 숨김(N) 208건은 뺐습니다.</dd></div>
+
+    </dl>
+  </div>
+</div>
+
+<!-- ══ 1 ══════════════════════════════════════════════ -->
+<section>
+  <div class="sn">§ 1</div>
+  <div class="sbody">
+    <h2>필터 재료는 두 군데에 들어 있다</h2>
+    <p class="sublede">상품등록에서 기입하는 것 중 필터로 쓸 수 있는 건 <a class="gl" href="#g-tree">분류</a>와 <a class="gl" href="#g-optname">옵션</a> 둘입니다. 성격이 달라서 담기는 축도 다릅니다.</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th></th><th>분류</th><th>옵션</th></tr></thead>
+        <tbody>
+          <tr><td>담는 것</td><td>이 상품이 <strong>무엇인가</strong><br><span class="dim">스탠딩 카드지갑 · 맥세이프 체인지톡</span></td><td>사는 사람이 <strong>무엇을 고르는가</strong><br><span class="dim">기종 · 색상 · 디자인</span></td></tr>
+          <tr><td>상품 하나에</td><td>여러 개 <a class="gl" href="#g-belong">귀속</a> 가능 <span class="dim">(평균 4.5개)</span></td><td>항목 1~3개 <span class="dim">(평균 1.18개)</span></td></tr>
+          <tr><td>값이 느는 방식</td><td>분류를 새로 만든다</td><td>옵션값을 한 줄 추가한다</td></tr>
+          <tr><td>부수 효과</td><td>쇼핑몰 메뉴와 주소가 함께 생긴다 <span class="dim">(검색 유입)</span></td><td>없음 <span class="dim">(구매 화면에만 영향)</span></td></tr>
+          <tr><td>지금 규모</td><td>101개 · <a class="gl" href="#g-depth">깊이</a> 4단</td><td>옵션명 463종 · 옵션값 2,858종</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="hn">1-1</span>옵션은 이렇게 들어가 있다</h3>
+    <p>엑셀의 「옵션입력」 칸을 그대로 옮기면 이런 모양입니다. <code class="mono">옵션명{값|값|값}</code> 형식이고, <code class="mono">//</code> 로 항목이 나뉩니다.</p>
+    <div class="tree"><span class="c">쏭스 맥세이프 포켓 투명 케이스 청사과 시리즈</span>
+  <b>맥-UV포켓기종</b>{아이폰16 프로맥스|아이폰16 프로|아이폰16 플러스|아이폰16|아이폰15 프로맥스|…}
+  <span class="c">//</span><b>디자인</b>{001 청사과 라벨|002 청사과 인덱스|003 청사과 팩|004 청사과 영수증|005 청사과 아카이브}
+   <span class="c">└ 항목 이름</span>  <span class="c">└ 값. 이 하나하나가 필터 칩 후보다</span></div>
+    <p style="margin-top:16px">값 쪽에는 쓸 만한 정보가 충분히 들어 있습니다. <strong>문제는 왼쪽 항목 이름입니다.</strong></p>
+
+    <h3><span class="hn">1-2</span>제품군마다 옵션에 무엇이 들어 있나</h3>
+    <p>같은 축이라도 제품군에 따라 옵션에 있기도 하고 없기도 합니다. 이 표가 <strong>어느 축을 옵션에서 뽑을 수 있는지</strong>를 정합니다.</p>
+    <div class="tw">
+      <table>
+        <caption>해당 옵션 항목을 가진 상품의 비율. <a class="gl" href="#g-live">진열</a> 1,938건 기준. 카드지갑·체인지톡의 기종 0%는 결함이 아니라 정상입니다 — 기종을 안 가리는 제품입니다.</caption>
+        <thead><tr><th>제품군</th><th class="num">상품</th><th class="num">기종</th><th class="num">색상</th><th class="num">디자인 · 테마</th><th class="num">세트 추가</th></tr></thead>
+        <tbody>
+          <tr><td>케이스</td><td class="num">529</td><td class="num"><strong>92%</strong></td><td class="num dim">5%</td><td class="num">38%</td><td class="num dim">14%</td></tr>
+          <tr><td>카드지갑</td><td class="num">340</td><td class="num dim">—</td><td class="num"><strong>70%</strong></td><td class="num dim">12%</td><td class="num dim">14%</td></tr>
+          <tr><td>체인지톡</td><td class="num">881</td><td class="num dim">—</td><td class="num dim">7%</td><td class="num">31%</td><td class="num dim">—</td></tr>
+          <tr><td>이어폰케이스</td><td class="num">153</td><td class="num"><strong>58%</strong></td><td class="num dim">16%</td><td class="num">31%</td><td class="num dim">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>읽는 법.</b> 굵은 숫자만 옵션에서 바로 필터를 뽑을 수 있습니다. <b>기종은 케이스에서, 색상은 카드지갑에서</b> 나옵니다. 테마는 31~38%라 옵션만으로는 부족하고, 형태·부착은 옵션에 아예 없습니다 — 그건 분류에 들어 있습니다(§3).</div>
+  </div>
+</section>
+
+<!-- ══ 2 ══════════════════════════════════════════════ -->
+<section>
+  <div class="sn">§ 2</div>
+  <div class="sbody">
+    <h2>옵션을 지금 그대로 읽으면 생기는 일</h2>
+    <p class="sublede">「옵션명을 축으로, 옵션값을 칩으로」 를 오늘 데이터에 그대로 적용해 봤습니다.</p>
+
+    <h3><span class="hn">2-1</span>한 축을 스무 가지 이름으로 부르고 있다</h3>
+    <p>「기종」을 묻는 옵션 항목의 이름을 전부 뽑았습니다. 하는 일은 전부 같습니다 — 살 사람에게 기종을 고르게 하는 것.</p>
+    <div class="tree"><b>기종</b> <span class="c">225개</span>          <b>UV포켓기종</b> <span class="c">28개</span>              <b>갤럭시 기종</b> <span class="c">2개</span>
+<b>도어 그래픽스 가능기종</b> <span class="c">99개</span>  <b>젤리 UV 가능기종</b> <span class="c">27개</span>         <b>아이폰 기종</b> <span class="c">2개</span>
+<b>맥-UV포켓기종</b> <span class="c">43개</span>       <b>z플립 포켓 기종</b> <span class="c">21개</span>          <b>젤리 가능기종</b> <span class="c">2개</span>
+<b>맥세이프 도어범퍼 케이스 기종</b> <span class="c">42개</span> <b>하드 그래픽스 가능기종</b> <span class="c">18개</span>     <b>에어범퍼 기종</b> <span class="c">1개</span>
+<b>기본기종(UV포켓가능기종)</b> <span class="c">34개</span>  <b>UV포켓 가능기종</b> <span class="c">6개</span>           <b>하드 일체형 기종</b> <span class="c">1개</span>
+<b>이어폰 기종</b> <span class="c">32개</span>         <b>맥세이프 리얼에폭시 케이스 기종</b> <span class="c">2개</span>  <b>기본기종</b> <span class="c">1개</span>
+                        <b>CC하이브리드 기종</b> <span class="c">2개</span>         <b>포켓 케이스 기종</b> <span class="c">1개</span>
+
+<span class="c">→ 그대로 읽으면 「기종」 줄이 아니라 <b>20개의 서로 다른 줄</b>이 생긴다</span></div>
+    <p style="margin-top:16px">전체로 보면 옵션명이 <strong>463종</strong>입니다. 색상은 44가지 이름, 테마·디자인 계열은 29가지 이름으로 흩어져 있습니다.</p>
+
+    <h3><span class="hn">2-2</span>값도 갈라져 있다</h3>
+    <p>같은 기종을 띄어쓰기만 달리해서 적은 경우입니다. <a class="gl" href="#g-norm">표기 통일</a>이 안 된 상태입니다. 필터에서는 <strong>서로 다른 칩 두 개</strong>가 됩니다.</p>
+    <div class="tw">
+      <table>
+        <caption>기종 옵션값 320종 중, 띄어쓰기만 무시해도 116종이 합쳐집니다. 실제로 갈라져 있는 기종이 96개입니다.</caption>
+        <thead><tr><th>이렇게 적힌 것</th><th class="num">상품</th><th>또 이렇게도 적힌 것</th><th class="num">상품</th><th>합치면</th></tr></thead>
+        <tbody>
+          <tr><td><code class="mono">아이폰16</code></td><td class="num">211</td><td><code class="mono">아이폰 16</code></td><td class="num">96</td><td class="num">307</td></tr>
+          <tr><td><code class="mono">아이폰16 프로맥스</code></td><td class="num">210</td><td><code class="mono">아이폰 16 프로맥스</code></td><td class="num">96</td><td class="num">307</td></tr>
+          <tr><td><code class="mono">갤럭시 S25 울트라</code></td><td class="num">188</td><td><code class="mono">갤럭시S25울트라</code></td><td class="num">99</td><td class="num">287</td></tr>
+          <tr><td><code class="mono">아이폰 11 프로</code></td><td class="num">131</td><td><code class="mono">아이폰11프로</code></td><td class="num">106</td><td class="num">237</td></tr>
+          <tr><td><code class="mono">아이폰 XR</code></td><td class="num">138</td><td><code class="mono">아이폰XR</code></td><td class="num">105</td><td class="num">243</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note"><b>이건 사람의 실수가 아닙니다.</b> 상품마다 옵션을 손으로 새로 적으니 그때그때 띄어쓰기가 달라지는 것이 당연합니다. 규칙을 더 강하게 지키라고 요구할 일이 아니라, <b>손으로 적을 일 자체를 없애야</b> 합니다.</div>
+  </div>
+</section>
+
+<!-- ══ 3 ══════════════════════════════════════════════ -->
+<section>
+  <div class="sn">§ 3</div>
+  <div class="sbody">
+    <h2>해법은 카페24 안에 이미 있다 — 옵션세트</h2>
+    <p class="sublede">카페24에는 옵션 묶음을 미리 만들어 두고 상품등록 때 불러 쓰는 기능이 있습니다. 이 몰은 쓰고 있지 않습니다.</p>
+
+    <div class="tw">
+      <table>
+        <caption>엑셀 「옵션세트명」 칸 실측. 진열 1,938건 전부 비어 있습니다.</caption>
+        <thead><tr><th>항목</th><th>실측</th><th>뜻</th></tr></thead>
+        <tbody>
+          <tr><td>옵션세트 사용</td><td class="mono"><strong>0 / 1,938</strong></td><td>상품마다 옵션명을 새로 타이핑하고 있다</td></tr>
+          <tr><td>옵션 표시방식</td><td class="mono">S 1,851 · C 85</td><td>대부분 분리형. 세트로 옮기기 좋은 형태다</td></tr>
+          <tr><td>상품당 옵션 항목</td><td class="mono">평균 1.18 · 최대 3</td><td>묶음이 단순해서 세트 개수가 적게 나온다</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="hn">3-1</span>세트를 쓰면 무엇이 달라지나</h3>
+    <div class="compare">
+      <div class="cc now">
+        <p class="ct">지금 — 상품마다 직접 입력</p>
+        <div class="cs no"><span class="m">✗</span><p class="tx">등록할 때마다 항목 이름을 새로 적는다</p>
+          <p class="why">그래서 「기종」이 20가지 이름이 됐습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">값 표기가 그때그때 달라진다</p>
+          <p class="why">「아이폰16」 / 「아이폰 16」이 같이 존재합니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">새 기종이 나오면 상품 수백 개를 일일이 고친다</p></div>
+        <p class="tot">축 463개 · 칩 2,858개</p>
+      </div>
+      <div class="cc aft">
+        <p class="ct">세트 도입 후</p>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">등록할 때 세트를 고르기만 한다</p>
+          <p class="why">이름과 값이 세트에 적힌 그대로 들어갑니다. 틀릴 여지가 없습니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">세트에 값 한 줄을 추가하면 그 세트를 쓰는 상품에 반영된다</p>
+          <p class="why">아이폰17이 나오면 「케이스 기종」 세트에 한 줄 추가. 그 세트를 쓰는 상품 전부에 붙습니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">그 값이 그대로 필터 칩이 된다</p></div>
+        <p class="tot">축 6~8개 · 칩은 값 그대로</p>
+      </div>
+    </div>
+    <div class="note"><b>확인이 필요한 한 가지.</b> 옵션세트를 고쳤을 때 <b>이미 등록된 상품에 어디까지 일괄 반영되는지</b>는 카페24 관리자에서 실제로 눌러 봐야 확정됩니다. 반영 범위에 따라 §5의 순서가 달라지므로, 회의 전에 테스트 상품 하나로 확인해 두면 좋겠습니다.</div>
+
+    <h3><span class="hn">3-2</span>필요한 세트는 몇 개인가</h3>
+    <p>지금 463개 이름을 하는 일 기준으로 묶으면 이 정도로 수렴합니다. 세트 이름이 곧 필터 줄 이름이 됩니다.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>세트 이름 <span class="dim">= 필터 줄</span></th><th>들어갈 값</th><th class="num">해당 상품</th><th>지금 흩어진 이름 수</th></tr></thead>
+        <tbody>
+          <tr><td><strong>케이스 기종</strong></td><td>아이폰 / 갤럭시 / Z플립 세대 · 모델</td><td class="num">487</td><td class="num">18종</td></tr>
+          <tr><td><strong>이어폰 기종</strong></td><td>에어팟 / 버즈 계열</td><td class="num">88</td><td class="num">2종</td></tr>
+          <tr><td><strong>색상</strong></td><td>파스텔블루 · 비비드핑크 …</td><td class="num">413</td><td class="num">44종</td></tr>
+          <tr><td><strong>테마</strong></td><td>꼼지락 · 푸드 · 반려동물 …</td><td class="num">403</td><td class="num">29종</td></tr>
+          <tr><td><strong>세트 추가</strong></td><td>체인지톡 추가 · 필름 추가 …</td><td class="num">222</td><td class="num">9종</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:14px" class="dim">「디자인」처럼 상품마다 값이 전부 다른 항목(값 502종)은 필터 축으로 부적합합니다. 세트로 묶지 않고 지금처럼 개별 입력으로 두면 됩니다 — 필터가 읽지 않을 뿐 구매 화면은 그대로입니다.</p>
+  </div>
+</section>
+
+<!-- ══ 4 ══════════════════════════════════════════════ -->
+<section>
+  <div class="sn">§ 4</div>
+  <div class="sbody">
+    <h2>축마다 소스를 지정한다</h2>
+    <p class="sublede">옵션에 없는 축이 있습니다. 그 축은 분류에서 읽습니다. 어느 쪽이든 <strong>값이 늘면 칩이 느는 것</strong>은 같습니다.</p>
+
+    <div class="tw">
+      <table>
+        <caption><a class="gl" href="#g-cov">커버리지</a>는 그 목록에서 어느 칩엔가 걸리는 상품 비율입니다. 「신규 필터값 추가」는 쏭스 측에서 값을 하나 늘릴 때 하는 일입니다.</caption>
+        <thead><tr><th>축</th><th>어느 목록</th><th>읽을 소스</th><th class="num">커버리지</th><th>신규 필터값 추가 = </th></tr></thead>
+        <tbody>
+          <tr><td><strong>기종</strong></td><td>케이스 · 이어폰</td><td><span class="tag t-ok">옵션</span> 「케이스 기종」 세트</td><td class="num">92%</td><td>세트에 기종 한 줄 추가</td></tr>
+          <tr><td><strong>색상</strong></td><td>카드지갑</td><td><span class="tag t-ok">옵션</span> 「색상」 세트</td><td class="num">70%</td><td>세트에 색 한 줄 추가</td></tr>
+          <tr><td><strong>형태</strong></td><td>카드지갑</td><td><span class="tag t-flat">분류</span> <a class="gl" href="#g-cateno"><code>110</code></a> 하위</td><td class="num">97%</td><td>하위 분류 하나 생성</td></tr>
+          <tr><td><strong>부착</strong></td><td>체인지톡</td><td><span class="tag t-flat">분류</span> <code>117</code>·<code>148</code></td><td class="num">100%</td><td>하위 분류 하나 생성</td></tr>
+          <tr><td><strong>맥세이프</strong></td><td>전 목록</td><td><span class="tag t-flat">분류</span> <code>56</code>·<code>147</code></td><td class="num">88%</td><td>—<span class="dim"> (있음/없음 고정)</span></td></tr>
+          <tr><td><strong>테마</strong></td><td>케이스 · 체인지톡</td><td><span class="tag t-warn">옵션</span> 「테마」 세트 <span class="dim">— 값 채움 필요</span></td><td class="num">31~38%</td><td>세트에 테마 한 줄 추가</td></tr>
+          <tr><td><strong>가격</strong></td><td>전 목록</td><td><span class="tag t-flat">판매가</span></td><td class="num">100%</td><td>—<span class="dim"> (구간 고정)</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note"><b>테마만 지금 값이 비어 있습니다.</b> 커버리지 31~38%라, 세트를 만들어도 상품 절반 이상이 어느 칩에도 안 걸립니다. 8월에 대표님이 주신 11종안(파스텔·비비드·모노톤·뉴트럴·도트·스트라이프·플로럴·체크·마블텍스처·그래픽·캐릭터)을 이 세트의 값으로 쓰고, 상품에 값을 넣는 작업이 함께 필요합니다. 케이스 기준으로 파스텔 1건 · 뉴트럴 3건 · 마블텍스처 5건이라 특히 얇습니다.</div>
+
+    <h3><span class="hn">4-1</span>분류 쪽에서 한 가지 주의</h3>
+    <p>분류에서 읽는 축(형태 · 부착 · 맥세이프)에는 함정이 하나 있습니다. 카페24는 상품에 <a class="gl" href="#g-ancestor">조상 분류</a>를 자동으로 넣어 주지 않습니다. 배정된 분류만 그대로 적습니다.</p>
+    <div class="tree"><span class="c">상품 A</span>  <b>56|147|231|110|209|230|146</b>   <span class="c">← 루트 110 포함 ✓</span>
+<span class="c">상품 B</span>  <b>101|71</b>                        <span class="c">← 「이어폰케이스 &gt; 에어팟」인데 루트 111 없음 ✗</span></div>
+    <p style="margin-top:16px"><a class="gl" href="#g-root">루트 분류</a>만 보면 진열 상품의 <strong>30%(584건)</strong>가 어느 제품군에도 안 걸립니다. <a class="gl" href="#g-expand">조상까지 펼치면</a> 해석 불가가 22건(1.1%)으로 줄어듭니다. <strong>인덱스를 만들 때 상품 엑셀과 분류 엑셀 두 장을 함께 읽어야</strong> 하는 이유입니다.</p>
+
+    <h3><span class="hn">4-2</span>정리하면 이런 흐름이 됩니다</h3>
+    <div class="stack">
+      <div class="layer">
+        <div class="ln">쏭스</div>
+        <div><p class="lt">상품등록에서 값을 넣는다</p><p class="ld">옵션세트를 골라 상품을 등록하거나, 세트에 값을 한 줄 추가한다. 분류에서 읽는 축이면 하위 분류를 하나 만든다. <strong>지금 하고 있는 일과 같습니다.</strong></p></div>
+        <div class="lo"><b>카페24 관리자</b><span class="dim">별도 대장 없음</span></div>
+      </div>
+      <div class="layer hot">
+        <div class="ln">갱신</div>
+        <div><p class="lt">엑셀 두 장을 받아 <a class="gl" href="#g-index">인덱스</a>를 만든다</p><p class="ld">상품 엑셀 · 분류 엑셀을 스크립트에 넣으면 <code class="mono">product-index.json</code>이 나온다. 축 이름과 칩 목록과 개수를 전부 데이터에서 뽑는다.</p></div>
+        <div class="lo"><b>스크립트 · 인계</b><span class="dim">받기 · 돌리기 · 올리기</span></div>
+      </div>
+      <div class="layer">
+        <div class="ln">사용자 화면</div>
+        <div><p class="lt">인덱스에 있는 대로 칩을 그린다</p><p class="ld">칩 목록을 스킨에 적어 두지 않는다. 새 값이 들어오면 칩이 생기고, 상품이 늘면 숫자가 오른다. <strong>스킨은 축이 몇 개든 그대로 둡니다.</strong></p></div>
+        <div class="lo"><b>스킨 · 1회 구축</b><span class="dim">이후 무수정</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5 ══════════════════════════════════════════════ -->
+<section>
+  <div class="sn">§ 5</div>
+  <div class="sbody">
+    <h2>실행 순서</h2>
+    <p class="sublede">기존 상품 데이터를 지우거나 바꾸지 않습니다. 옵션은 세트로 갈아 끼우고, 분류는 추가만 합니다.</p>
+    <ol class="steps">
+      <li><div><span class="st">옵션세트 반영 범위를 확인한다<span class="who">먼저 · 30분</span></span><span class="sd">테스트 상품 하나로, 세트를 고쳤을 때 기존 상품에 어디까지 일괄 반영되는지 확인합니다. 결과에 따라 3단계의 작업량이 크게 갈립니다.</span></div></li>
+      <li><div><span class="st">세트 5개를 만든다<span class="who">쏭스 · 반나절</span></span><span class="sd">케이스 기종 · 이어폰 기종 · 색상 · 테마 · 세트 추가. 값 표기는 이때 한 번만 정하면 이후로는 고를 뿐입니다.</span></div></li>
+      <li><div><span class="st">기존 상품을 세트로 옮긴다<span class="who">쏭스 · 분량 큼</span></span><span class="sd">기종 587건 · 색상 413건 · 테마 403건. 옵션값은 그대로 살리고 항목 이름만 세트로 맞추는 작업입니다. 1단계 결과에 따라 일괄 처리로 줄어들 수 있습니다.</span></div></li>
+      <li><div><span class="st">테마 값을 채운다<span class="who">쏭스 · 별도 판단</span></span><span class="sd">유일하게 새로 정보를 넣어야 하는 축입니다. 11종안 기준. 이 단계를 건너뛰면 테마 축만 빼고 나머지는 그대로 갑니다.</span></div></li>
+      <li><div><span class="st">인덱스 생성 스크립트와 필터 스킨을 만든다<span class="who">노페일 · 병행</span></span><span class="sd">2~4단계와 동시에 진행합니다. 스킨은 축 목록을 갖지 않고 인덱스를 읽어 그리도록 만듭니다.</span></div></li>
+      <li><div><span class="st">갱신 절차를 인계한다<span class="who">노페일</span></span><span class="sd">엑셀 받기 → 스크립트 → 업로드. 화면 캡처가 든 문서와 함께 넘깁니다.</span></div></li>
+    </ol>
+    <div class="note"><b>3단계가 이 계획의 무게중심입니다.</b> 1단계 확인 결과가 「세트 수정이 기존 상품에 일괄 반영된다」로 나오면 반나절 작업이고, 「신규 등록분부터만 적용된다」로 나오면 상품을 나눠 옮기는 계획이 따로 필요합니다. 그래서 1단계를 회의 전에 해두시길 권합니다.</div>
+  </div>
+</section>
+
+<!-- ══ 6 ══════════════════════════════════════════════ -->
+<section style="border-bottom:1.5px solid var(--ink)">
+  <div class="sn">§ 6</div>
+  <div class="sbody">
+    <h2>회의에서 정할 것</h2>
+    <p class="sublede">앞 항목이 뒤 항목의 전제가 됩니다. 위에서부터 다루는 편이 빠릅니다.</p>
+    <div class="agenda">
+      <div class="item">
+        <span class="q">01</span>
+        <div><p class="qt">옵션세트로 전환할 것인가</p><p class="qd">전환하지 않으면 옵션값을 필터로 자동 반영하는 구조 자체가 성립하지 않습니다. 축 463개를 손으로 묶어 두는 대장이 생기고, 그건 지금과 같은 상태입니다.</p></div>
+        <div class="qr"><b>제안</b>전환 · 세트 5개</div>
+      </div>
+      <div class="item">
+        <span class="q">02</span>
+        <div><p class="qt">세트 값 표기를 어떻게 확정할 것인가</p><p class="qd">「아이폰16」인지 「아이폰 16」인지. 한 번 정하면 이후 등록은 고르기만 하므로 다시 갈릴 일이 없습니다. 상품 상세 화면에 그대로 보이는 글자라 판매 화면 기준으로 정해야 합니다.</p></div>
+        <div class="qr"><b>필요</b>쏭스 표기 확정</div>
+      </div>
+      <div class="item">
+        <span class="q">03</span>
+        <div><p class="qt">기존 상품을 어디까지 옮길 것인가</p><p class="qd">전량인지, 주력 제품군부터인지. 안 옮긴 상품은 필터에서 빠지므로 목록에서 안 보이는 것이 아니라 <strong>칩을 눌렀을 때 안 나오게</strong> 됩니다.</p></div>
+        <div class="qr"><b>필요</b>범위 · 일정</div>
+      </div>
+      <div class="item">
+        <span class="q">04</span>
+        <div><p class="qt">테마 축을 이번에 넣을 것인가</p><p class="qd">유일하게 새 정보 입력이 필요한 축입니다. 11종안 기준 케이스 커버리지 65% · 카드지갑 90%. 넣지 않으면 나머지 축만으로 출발하고, 나중에 세트에 값을 채우면 그때 자동으로 붙습니다.</p></div>
+        <div class="qr"><b>보류 중</b>8/24 제시 · 미반영</div>
+      </div>
+      <div class="item">
+        <span class="q">05</span>
+        <div><p class="qt">분류에서 읽는 축을 그대로 둘 것인가</p><p class="qd">형태 · 부착 · 맥세이프는 분류에 잘 들어 있어 옮길 이유가 없습니다. 다만 맥세이프는 분류 <code class="mono">56</code>·<code class="mono">146</code> 두 트리에 610건·529건이 중복돼 있어 정리가 필요합니다.</p></div>
+        <div class="qr"><b>제안</b>유지 · 중복만 정리</div>
+      </div>
+      <div class="item">
+        <span class="q">06</span>
+        <div><p class="qt">인덱스 갱신 주기와 담당</p><p class="qd">신상품 등록 시마다인지 주 1회인지. 갱신 전까지 새 옵션값은 필터에 안 나옵니다. 담당자를 정해 인계 문서에 넣습니다.</p></div>
+        <div class="qr"><b>필요</b>담당자 지정</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="doc">
+  <div><b>데이터 출처</b> ssongsstore_20260820_454_532c.csv (2,146행 · 92컬럼) · _docs/분류매핑표.csv (101분류)</div>
+  <div><b>집계 기준</b> 진열상태 Y 1,938건 · 옵션입력 칸 파싱 (옵션명 463종 · 옵션값 2,858종)</div>
+  <div><b>상태</b> 논의용 초안 — 확정 전까지 와이어프레임에 반영하지 않음</div>
+</footer>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>쏭스 분류 필터 지도</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#FBFAF7; --surface:#FFFFFF; --sunk:#F3F1EC;
+  --ink:#17181A; --ink2:#53575C; --ink3:#84888D;
+  --rule:#DFDCD4; --rule2:#EDEAE3;
+  --ok:#2E6B52; --ok-bg:#E4EFE9; --ok-line:#BCD9C9;
+  --block:#9C3B2A; --block-bg:#F6E6E1;
+  --warn:#856313; --warn-bg:#F4ECD8;
+  --f-sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,monospace;
+  --w:min(100% - 40px, 1180px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141517; --surface:#1B1D20; --sunk:#202225;
+    --ink:#E9E7E2; --ink2:#A9ACB0; --ink3:#787C81;
+    --rule:#33363A; --rule2:#26292C;
+    --ok:#7FC3A4; --ok-bg:#1D2E27; --ok-line:#2E5343;
+    --block:#E09079; --block-bg:#33221E;
+    --warn:#D9B45E; --warn-bg:#302819;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141517; --surface:#1B1D20; --sunk:#202225;
+  --ink:#E9E7E2; --ink2:#A9ACB0; --ink3:#787C81;
+  --rule:#33363A; --rule2:#26292C;
+  --ok:#7FC3A4; --ok-bg:#1D2E27; --ok-line:#2E5343;
+  --block:#E09079; --block-bg:#33221E;
+  --warn:#D9B45E; --warn-bg:#302819;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--f-sans);font-size:15px;line-height:1.7;
+  letter-spacing:-.005em;word-break:keep-all;-webkit-font-smoothing:antialiased;
+}
+.wrap{width:var(--w);margin:0 auto}
+p{margin:0 0 1em}
+p:last-child{margin-bottom:0}
+b,strong{font-weight:600}
+
+/* ── 머리말 ── */
+header.doc{border-bottom:1.5px solid var(--ink);padding:52px 0 22px}
+.kicker{
+  font-family:var(--f-mono);font-size:11.5px;font-weight:500;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink3);margin:0 0 16px;
+}
+h1{
+  font-size:clamp(29px,5vw,44px);line-height:1.14;font-weight:600;
+  letter-spacing:-.03em;margin:0 0 13px;text-wrap:balance;max-width:15ch;
+}
+.dek{font-size:16.5px;color:var(--ink2);max-width:58ch;margin:0 0 28px;line-height:1.6}
+.meta{
+  display:flex;flex-wrap:wrap;gap:0 32px;font-family:var(--f-mono);
+  font-size:11.5px;color:var(--ink3);
+}
+.meta b{font-weight:500;color:var(--ink2)}
+
+/* ── 숫자 ── */
+.summary{padding:0;border-bottom:1px solid var(--rule)}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.fig{padding:22px 20px 22px 0;border-right:1px solid var(--rule2)}
+.fig:last-child{border-right:0}
+.fig .v{
+  font-family:var(--f-mono);font-size:29px;font-weight:500;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;
+}
+.fig .v small{font-size:15px;font-weight:400;color:var(--ink3)}
+.fig .k{display:block;margin-top:9px;font-size:12.5px;color:var(--ink2);line-height:1.45}
+.dim{color:var(--ink3)}
+
+/* ── 읽는 법 ── */
+.howto{padding:34px 0 40px;border-bottom:1px solid var(--rule)}
+.ghead{font-size:18px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px}
+.gsub{font-size:14px;color:var(--ink2);margin:0 0 20px;max-width:62ch}
+.sample{
+  background:var(--surface);border:1px solid var(--rule);
+  padding:18px 20px 16px;margin:0 0 20px;
+}
+.sample .row{border:0;padding:0;background:none}
+.ann{
+  display:flex;flex-wrap:wrap;gap:6px 26px;margin-top:14px;padding-top:13px;
+  border-top:1px dashed var(--rule);font-size:12.5px;color:var(--ink2);
+}
+.ann span{display:inline-flex;align-items:center;gap:8px}
+.ann i{width:16px;height:2px;display:block;flex:none}
+.ann i.a1{background:var(--ink)}
+.ann i.a2{background:var(--ok)}
+.legend2{
+  display:flex;flex-direction:column;gap:7px;font-size:12.5px;color:var(--ink2);
+}
+.legend2 .tag{margin-right:8px}
+
+/* ── 태그 ── */
+.tag{
+  display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.05em;padding:2px 7px;border-radius:2px;white-space:nowrap;line-height:1.55;
+}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-block{background:var(--block-bg);color:var(--block)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-flat{background:var(--sunk);color:var(--ink2)}
+
+/* ── 제품군 블록 ── */
+section.grp{
+  padding:40px 0;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:210px minmax(0,1fr);gap:0 32px;align-items:start;
+}
+.ghd{position:sticky;top:20px}
+.ghd h2{
+  font-size:21px;font-weight:600;letter-spacing:-.025em;margin:0 0 6px;line-height:1.25;
+}
+.ghd .gk{
+  display:inline-block;font-family:var(--f-mono);font-size:10px;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  border:1px solid var(--rule);border-radius:2px;padding:1px 6px;
+  vertical-align:middle;margin-left:2px;
+}
+.ghd .gd{font-size:13px;color:var(--ink2);margin:0 0 10px;line-height:1.55}
+.ghd .gn{
+  font-family:var(--f-mono);font-size:11.5px;color:var(--ink3);margin:0;
+  font-variant-numeric:tabular-nums;
+}
+.ghd .gn b{color:var(--ink2);font-weight:500}
+
+/* ── 필터 줄 ── */
+.rows{display:grid;gap:0;min-width:0}
+.row{
+  display:grid;grid-template-columns:minmax(0,230px) minmax(0,1fr) 122px;
+  gap:6px 20px;padding:15px 0;border-bottom:1px solid var(--rule2);align-items:start;
+}
+.rows .row:first-child{padding-top:0}
+.rows .row:last-child{border-bottom:0;padding-bottom:0}
+.rowname{font-weight:600;font-size:14.5px;line-height:1.4;min-width:0}
+.crumb{
+  display:block;font-family:var(--f-mono);font-size:10.5px;font-weight:400;
+  color:var(--ink3);letter-spacing:.01em;margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.rowmeta{
+  display:block;font-family:var(--f-mono);font-size:11px;font-weight:400;
+  color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums;
+}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;min-width:0}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--ok-line);border-radius:999px;
+  padding:3px 5px 3px 11px;font-size:12.5px;line-height:1.5;
+  background:var(--surface);color:var(--ink);max-width:100%;
+}
+.chip b{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  background:var(--ok-bg);color:var(--ok);border-radius:999px;
+  padding:1px 6px;font-variant-numeric:tabular-nums;
+}
+.mark{display:flex;flex-wrap:wrap;gap:4px;align-content:flex-start}
+.why{
+  grid-column:2 / -1;margin:2px 0 0;font-size:12.5px;color:var(--ink3);
+  line-height:1.55;
+}
+
+/* 판정별 — 문제 있는 줄은 칩을 죽인다 */
+.row.r-dup .chip,.row.r-near .chip,.row.r-gap .chip,.row.r-thin .chip{
+  border-color:var(--rule);color:var(--ink3);
+}
+.row.r-dup .chip b,.row.r-near .chip b,.row.r-gap .chip b,.row.r-thin .chip b{
+  background:var(--sunk);color:var(--ink3);
+}
+.row.r-dup .rowname,.row.r-near .rowname,.row.r-gap .rowname,.row.r-thin .rowname{
+  color:var(--ink2);
+}
+
+/* ── 마무리 ── */
+section.closing{padding:44px 0 0;border-bottom:0}
+section.closing h2{font-size:23px;font-weight:600;letter-spacing:-.025em;margin:0 0 24px}
+.sum2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:0 40px}
+.col{min-width:0}
+.ct2{
+  font-family:var(--f-mono);font-size:11px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;margin:0 0 12px;padding-bottom:9px;
+  border-bottom:1px solid var(--rule);
+}
+.ct2.ok{color:var(--ok)}
+.ct2.warn{color:var(--warn)}
+.lst{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.lst li{
+  padding:9px 0;border-bottom:1px solid var(--rule2);
+  display:grid;grid-template-columns:minmax(0,1fr);gap:1px;
+}
+.lst li:last-child{border-bottom:0}
+.lst li b{font-size:13.5px;font-weight:600}
+.lst li span{font-size:12.5px;color:var(--ink3);line-height:1.5}
+
+.note{
+  border-left:2px solid var(--rule);padding:2px 0 2px 18px;margin:34px 0 0;
+  font-size:13.5px;color:var(--ink2);max-width:66ch;line-height:1.68;
+}
+.note b{color:var(--ink);font-weight:600}
+
+footer.doc{
+  padding:38px 0 60px;font-family:var(--f-mono);font-size:11.5px;
+  color:var(--ink3);line-height:1.9;
+}
+footer.doc b{font-weight:500;color:var(--ink2)}
+
+@media (max-width:900px){
+  section.grp{grid-template-columns:1fr;gap:18px 0}
+  .ghd{position:static}
+  .row{grid-template-columns:1fr;gap:8px}
+  .mark{grid-row:1;justify-self:start}
+  .why{grid-column:1}
+  .fig{border-right:0;border-bottom:1px solid var(--rule2);padding-right:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+<header class="doc">
+  <p class="kicker">(주)쏭스디자인 · 상품 분류 실측</p>
+  <h1>어느 분류가 필터가 되나</h1>
+  <p class="dek">지금 카페24에 등록돼 있는 분류 101개를 그대로 펼쳐, 필터 줄이 될 수 있는 것과 없는 것을 표시했습니다. 새로 만들 것은 없습니다 — 이미 있는 것만 봅니다.</p>
+  <div class="meta">
+    <span><b>기준</b> 상품 엑셀 2026-08-20 · 진열 1,938건</span>
+    <span><b>분류</b> 101개 · 깊이 4단</span>
+    <span><b>작성</b> 2026-09-10</span>
+  </div>
+</header>
+
+<div class="summary">
+  <div class="figs">
+    <div class="fig"><span class="v">27</span><span class="k">필터 줄이 될 수 있는 분류<br><span class="dim">하위가 2개 이상인 분류</span></span></div>
+    <div class="fig"><span class="v">16</span><span class="k">그중 바로 쓸 수 있는 것<br><span class="dim">중복 없고 빠짐 없음</span></span></div>
+    <div class="fig"><span class="v">11</span><span class="k">손봐야 하는 것<br><span class="dim">중복 · 구멍 · 너무 작음</span></span></div>
+    <div class="fig"><span class="v">98<small>%</small></span><span class="k">평균 커버리지<br><span class="dim">하위에 걸리는 상품 비율</span></span></div>
+  </div>
+</div>
+
+<div class="howto">
+  <p class="ghead">읽는 법</p>
+  <p class="gsub">분류 하나가 <b>필터 줄</b>이 되고, 그 아래 하위 분류들이 <b>칩</b>이 됩니다. 아래는 실제로 필터에 나올 모양 그대로 그렸습니다.</p>
+  <div class="sample">
+    <div class="row">
+      <span class="rowname">카드지갑 &gt; 맥세이프<span class="rowmeta">338개 · 커버 100%</span></span>
+      <span class="chips"><span class="chip">맥_3카드팩+원형톡<b>99</b></span><span class="chip">맥_3카드팩 (기본)<b>79</b></span><span class="chip">맥_3카드팩 스탠딩<b>66</b></span></span>
+    </div>
+    <div class="ann">
+      <span><i class="a1"></i>이게 <b>줄 이름</b> — 분류 이름 그대로</span>
+      <span><i class="a2"></i>이게 <b>칩</b> — 하위 분류 이름과 상품수 그대로</span>
+    </div>
+  </div>
+  <div class="legend2">
+    <span class="tag t-ok">바로 사용</span> 손볼 것 없이 그대로 필터가 된다
+    <span class="tag t-warn">중복 · 거의 중복</span> 다른 줄과 상품이 같다. 둘 중 하나만 쓴다
+    <span class="tag t-block">구멍 · 너무 작음</span> 하위에 안 걸린 상품이 많거나 규모가 작다
+    <span class="tag t-flat">사용 중</span> 지금 와이어프레임이 이미 쓰고 있는 줄
+  </div>
+</div>
+
+<section class="grp">
+  <div class="ghd">
+    <h2>체인지톡 <span class="gk">제품군</span></h2>
+    <p class="gd">체인지톡 목록에서 쓸 줄</p>
+    <p class="gn"><b>881</b>개 상품 · 필터 줄 후보 3개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        체인지톡
+        <span class="rowmeta">881개 · 커버 100% · 칩 5</span>
+      </span>
+      <span class="chips">
+        <span class="chip">아크릴체인지톡<b>443</b></span>
+        <span class="chip">맥세이프 체인지톡<b>347</b></span>
+        <span class="chip">버블톡<b>62</b></span>
+        <span class="chip">에폭시체인지톡<b>17</b></span>
+        <span class="chip">스탠딩체인지톡<b>12</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span><span class="tag t-flat">사용 중</span></span>
+    </div>
+    <div class="row r-near">
+      <span class="rowname">
+        맥세이프 체인지톡
+        <span class="rowmeta">347개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_아크릴톡<b>344</b></span>
+        <span class="chip">맥_에폭시톡<b>2</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">거의 중복</span><span class="tag t-flat">사용 중</span></span>
+      <p class="why">「맥세이프 &gt; 맥세이프 체인지톡」와 91% 겹친다 — 둘 중 하나만 쓴다</p>
+    </div>
+    <div class="row r-thin">
+      <span class="rowname">
+        에폭시체인지톡
+        <span class="rowmeta">17개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">그래픽 에폭시<b>13</b></span>
+        <span class="chip">심플컬러 에폭시<b>4</b></span>
+      </span>
+      <span class="mark"><span class="tag t-block">너무 작음</span></span>
+      <p class="why">상품 17개라 필터로 좁힐 게 없다</p>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>폰 케이스 <span class="gk">제품군</span></h2>
+    <p class="gd">케이스 목록에서 쓸 줄</p>
+    <p class="gn"><b>529</b>개 상품 · 필터 줄 후보 9개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        폰 케이스
+        <span class="rowmeta">529개 · 커버 100% · 칩 6</span>
+      </span>
+      <span class="chips">
+        <span class="chip">Z 플립 케이스<b>165</b></span>
+        <span class="chip">투명 케이스<b>152</b></span>
+        <span class="chip">포켓카드 케이스<b>116</b></span>
+        <span class="chip">도어범퍼 카드케이스<b>112</b></span>
+        <span class="chip">맥세이프 케이스<b>91</b></span>
+        <span class="chip">하드 케이스<b>58</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        투명 케이스
+        <span class="rowmeta">152개 · 커버 100% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">그래픽 포켓<b>113</b></span>
+        <span class="chip">그래픽 젤리<b>29</b></span>
+        <span class="chip">기본 투명<b>10</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-near">
+      <span class="rowname">
+        <span class="crumb">투명 케이스 &gt;</span>
+        그래픽 포켓
+        <span class="rowmeta">113개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">일반형<b>70</b></span>
+        <span class="chip">맥세이프형<b>43</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">거의 중복</span></span>
+      <p class="why">「폰 케이스 &gt; 포켓카드 케이스」와 97% 겹친다 — 둘 중 하나만 쓴다</p>
+    </div>
+    <div class="row r-near">
+      <span class="rowname">
+        포켓카드 케이스
+        <span class="rowmeta">116개 · 커버 99% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">UV 그래픽 포켓<b>113</b></span>
+        <span class="chip">심플 포켓<b>2</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">거의 중복</span></span>
+      <p class="why">「폰 케이스 &gt; 투명 케이스 &gt; 그래픽 포켓」와 97% 겹친다 — 둘 중 하나만 쓴다</p>
+    </div>
+    <div class="row r-dup">
+      <span class="rowname">
+        <span class="crumb">포켓카드 케이스 &gt;</span>
+        UV 그래픽 포켓
+        <span class="rowmeta">113개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">일반형<b>70</b></span>
+        <span class="chip">맥세이프형<b>43</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">중복</span></span>
+      <p class="why">「폰 케이스 &gt; 투명 케이스 &gt; 그래픽 포켓」와 상품이 완전히 같다</p>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        도어범퍼 카드케이스
+        <span class="rowmeta">112개 · 커버 99% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">그래픽 도어범퍼<b>103</b></span>
+        <span class="chip">심플 컬러 도어범퍼<b>8</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-dup">
+      <span class="rowname">
+        맥세이프 케이스
+        <span class="rowmeta">91개 · 커버 98% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_투명 케이스<b>47</b></span>
+        <span class="chip">맥_도어범퍼 카드케이스<b>42</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">중복</span></span>
+      <p class="why">「맥세이프 &gt; 맥세이프 폰케이스」와 상품이 완전히 같다</p>
+    </div>
+    <div class="row r-dup">
+      <span class="rowname">
+        <span class="crumb">맥세이프 케이스 &gt;</span>
+        맥_투명 케이스
+        <span class="rowmeta">47개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_그래픽형<b>43</b></span>
+        <span class="chip">맥_투명 기본형<b>4</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">중복</span></span>
+      <p class="why">「맥세이프 &gt; 맥세이프 폰케이스 &gt; 맥_투명케이스」와 상품이 완전히 같다</p>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        하드 케이스
+        <span class="rowmeta">58개 · 커버 100% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">컬러 +카드지갑 하드 (일체형)<b>36</b></span>
+        <span class="chip">그래픽 하드<b>18</b></span>
+        <span class="chip">심플 컬러 하드<b>4</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>카드지갑 <span class="gk">제품군</span></h2>
+    <p class="gd">카드지갑 목록에서 쓸 줄</p>
+    <p class="gn"><b>376</b>개 상품 · 필터 줄 후보 3개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        카드지갑
+        <span class="rowmeta">376개 · 커버 100% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥세이프<b>338</b></span>
+        <span class="chip">카드지갑 폰케이스<b>36</b></span>
+        <span class="chip">접착형<b>2</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span><span class="tag t-flat">사용 중</span></span>
+    </div>
+    <div class="row r-near">
+      <span class="rowname">
+        맥세이프
+        <span class="rowmeta">338개 · 커버 100% · 칩 7</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_3카드팩+원형톡<b>99</b></span>
+        <span class="chip">맥_3카드팩 (기본)<b>79</b></span>
+        <span class="chip">맥_3카드팩 스탠딩<b>66</b></span>
+        <span class="chip">맥_3카드팩 체인지<b>48</b></span>
+        <span class="chip">맥_3카드팩 미러<b>25</b></span>
+        <span class="chip">맥_3카드팩+아크릴톡<b>19</b></span>
+        <span class="chip">맥_2카드 슬롯<b>1</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">거의 중복</span></span>
+      <p class="why">「맥세이프 &gt; 맥세이프 카드지갑」와 97% 겹친다 — 둘 중 하나만 쓴다</p>
+    </div>
+    <div class="row r-dup">
+      <span class="rowname">
+        <span class="crumb">맥세이프 &gt;</span>
+        맥_3카드팩 스탠딩
+        <span class="rowmeta">66개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">기본형<b>33</b></span>
+        <span class="chip">톡 일체형<b>33</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">중복</span></span>
+      <p class="why">「맥세이프 &gt; 맥세이프 카드지갑 &gt; 3카드팩 스탠딩」와 상품이 완전히 같다</p>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>Z플립 케이스 <span class="gk">제품군</span></h2>
+    <p class="gd">Z플립은 별도 루트로 갈라져 있다</p>
+    <p class="gn"><b>165</b>개 상품 · 필터 줄 후보 1개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        Z플립 케이스
+        <span class="rowmeta">165개 · 커버 100% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">z플립5/6/7<b>94</b></span>
+        <span class="chip">z플립3/4<b>74</b></span>
+        <span class="chip">UV투명포켓<b>1</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>이어폰케이스 <span class="gk">제품군</span></h2>
+    <p class="gd">이어폰케이스 목록에서 쓸 줄</p>
+    <p class="gn"><b>153</b>개 상품 · 필터 줄 후보 3개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        이어폰케이스
+        <span class="rowmeta">153개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">에어팟 케이스<b>88</b></span>
+        <span class="chip">버즈 케이스<b>87</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        에어팟 케이스
+        <span class="rowmeta">88개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">AIRPODS<b>55</b></span>
+        <span class="chip">AIRPODS PRO<b>55</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        버즈 케이스
+        <span class="rowmeta">87개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">BUDS &amp; PLUS<b>55</b></span>
+        <span class="chip">BUDS LIVE<b>54</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>맥세이프 <span class="gk">속성축</span></h2>
+    <p class="gd">제품군을 가로지른다 — 전 목록 공통 칩으로 쓸 후보</p>
+    <p class="gn"><b>787</b>개 상품 · 필터 줄 후보 6개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        맥세이프
+        <span class="rowmeta">787개 · 커버 96% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥세이프 체인지톡<b>339</b></span>
+        <span class="chip">맥세이프 카드지갑<b>328</b></span>
+        <span class="chip">맥세이프 폰케이스<b>91</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span><span class="tag t-flat">사용 중</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        맥세이프 체인지톡
+        <span class="rowmeta">339개 · 커버 100% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_아크릴톡<b>327</b></span>
+        <span class="chip">맥_스탠딩톡<b>11</b></span>
+        <span class="chip">맥_에폭시톡<b>1</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-near">
+      <span class="rowname">
+        맥세이프 카드지갑
+        <span class="rowmeta">328개 · 커버 100% · 칩 7</span>
+      </span>
+      <span class="chips">
+        <span class="chip">3카드팩+원형톡<b>99</b></span>
+        <span class="chip">3카드팩(기본)<b>70</b></span>
+        <span class="chip">3카드팩 스탠딩<b>66</b></span>
+        <span class="chip">3카드팩 체인지<b>48</b></span>
+        <span class="chip">3카드팩 미러<b>25</b></span>
+        <span class="chip">3카드팩+아크릴톡<b>19</b></span>
+        <span class="chip">2카드슬롯<b>1</b></span>
+      </span>
+      <span class="mark"><span class="tag t-warn">거의 중복</span></span>
+      <p class="why">「카드지갑 &gt; 맥세이프」와 97% 겹친다 — 둘 중 하나만 쓴다</p>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        <span class="crumb">맥세이프 카드지갑 &gt;</span>
+        3카드팩 스탠딩
+        <span class="rowmeta">66개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">기본형<b>33</b></span>
+        <span class="chip">톡 일체형<b>33</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        맥세이프 폰케이스
+        <span class="rowmeta">91개 · 커버 98% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_투명케이스<b>47</b></span>
+        <span class="chip">맥_도어범퍼 케이스<b>42</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+    <div class="row r-ok">
+      <span class="rowname">
+        <span class="crumb">맥세이프 폰케이스 &gt;</span>
+        맥_투명케이스
+        <span class="rowmeta">47개 · 커버 100% · 칩 2</span>
+      </span>
+      <span class="chips">
+        <span class="chip">맥_그래픽형<b>43</b></span>
+        <span class="chip">맥_투명 기본형<b>4</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>꼼지락콜라보 <span class="gk">속성축</span></h2>
+    <p class="gd">테마축 — 제품군을 가로지른다</p>
+    <p class="gn"><b>132</b>개 상품 · 필터 줄 후보 1개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-ok">
+      <span class="rowname">
+        꼼지락콜라보
+        <span class="rowmeta">132개 · 커버 94% · 칩 4</span>
+      </span>
+      <span class="chips">
+        <span class="chip">체인지톡<b>84</b></span>
+        <span class="chip">z플립 케이스<b>26</b></span>
+        <span class="chip">겔럭시 케이스<b>14</b></span>
+        <span class="chip">아이폰 케이스<b>12</b></span>
+      </span>
+      <span class="mark"><span class="tag t-ok">바로 사용</span></span>
+    </div>
+  </div>
+</section>
+<section class="grp">
+  <div class="ghd">
+    <h2>폰 액세서리 <span class="gk">제품군</span></h2>
+    <p class="gd">상품이 15개뿐이라 필터가 의미 없다</p>
+    <p class="gn"><b>15</b>개 상품 · 필터 줄 후보 1개</p>
+  </div>
+  <div class="rows">
+    <div class="row r-thin">
+      <span class="rowname">
+        폰 액세서리
+        <span class="rowmeta">15개 · 커버 67% · 칩 3</span>
+      </span>
+      <span class="chips">
+        <span class="chip">스트랩<b>8</b></span>
+        <span class="chip">강화유리<b>1</b></span>
+        <span class="chip">차량용거치대<b>1</b></span>
+      </span>
+      <span class="mark"><span class="tag t-block">너무 작음</span></span>
+      <p class="why">상품 15개라 필터로 좁힐 게 없다</p>
+    </div>
+  </div>
+</section>
+
+<section class="closing">
+  <h2>정리하면</h2>
+  <div class="sum2">
+    <div class="col">
+      <p class="ct2 ok">그대로 쓸 수 있는 줄 16개</p>
+      <ul class="lst">
+        <li><b>체인지톡</b><span>체인지톡 · 칩 5개 · 881개 상품</span></li>
+        <li><b>맥세이프</b><span>맥세이프 · 칩 3개 · 787개 상품</span></li>
+        <li><b>폰 케이스</b><span>폰 케이스 · 칩 6개 · 529개 상품</span></li>
+        <li><b>카드지갑</b><span>카드지갑 · 칩 3개 · 376개 상품</span></li>
+        <li><b>맥세이프 체인지톡</b><span>맥세이프 · 칩 3개 · 339개 상품</span></li>
+        <li><b>Z플립 케이스</b><span>Z플립 케이스 · 칩 3개 · 165개 상품</span></li>
+        <li><b>이어폰케이스</b><span>이어폰케이스 · 칩 2개 · 153개 상품</span></li>
+        <li><b>투명 케이스</b><span>폰 케이스 · 칩 3개 · 152개 상품</span></li>
+        <li><b>꼼지락콜라보</b><span>꼼지락콜라보 · 칩 4개 · 132개 상품</span></li>
+        <li><b>도어범퍼 카드케이스</b><span>폰 케이스 · 칩 2개 · 112개 상품</span></li>
+        <li><b>맥세이프 폰케이스</b><span>맥세이프 · 칩 2개 · 91개 상품</span></li>
+        <li><b>에어팟 케이스</b><span>이어폰케이스 · 칩 2개 · 88개 상품</span></li>
+        <li><b>버즈 케이스</b><span>이어폰케이스 · 칩 2개 · 87개 상품</span></li>
+        <li><b>3카드팩 스탠딩</b><span>맥세이프 · 칩 2개 · 66개 상품</span></li>
+        <li><b>하드 케이스</b><span>폰 케이스 · 칩 3개 · 58개 상품</span></li>
+        <li><b>맥_투명케이스</b><span>맥세이프 · 칩 2개 · 47개 상품</span></li>
+      </ul>
+    </div>
+    <div class="col">
+      <p class="ct2 warn">손봐야 하는 줄 11개</p>
+      <ul class="lst">
+        <li><b>맥세이프 체인지톡</b><span>거의 중복 — 「맥세이프 &gt; 맥세이프 체인지톡」와 91% 겹친다 — 둘 중 하나만 쓴다</span></li>
+        <li><b>맥세이프</b><span>거의 중복 — 「맥세이프 &gt; 맥세이프 카드지갑」와 97% 겹친다 — 둘 중 하나만 쓴다</span></li>
+        <li><b>맥세이프 카드지갑</b><span>거의 중복 — 「카드지갑 &gt; 맥세이프」와 97% 겹친다 — 둘 중 하나만 쓴다</span></li>
+        <li><b>포켓카드 케이스</b><span>거의 중복 — 「폰 케이스 &gt; 투명 케이스 &gt; 그래픽 포켓」와 97% 겹친다 — 둘 중 하나만 쓴다</span></li>
+        <li><b>그래픽 포켓</b><span>거의 중복 — 「폰 케이스 &gt; 포켓카드 케이스」와 97% 겹친다 — 둘 중 하나만 쓴다</span></li>
+        <li><b>UV 그래픽 포켓</b><span>중복 — 「폰 케이스 &gt; 투명 케이스 &gt; 그래픽 포켓」와 상품이 완전히 같다</span></li>
+        <li><b>맥세이프 케이스</b><span>중복 — 「맥세이프 &gt; 맥세이프 폰케이스」와 상품이 완전히 같다</span></li>
+        <li><b>맥_3카드팩 스탠딩</b><span>중복 — 「맥세이프 &gt; 맥세이프 카드지갑 &gt; 3카드팩 스탠딩」와 상품이 완전히 같다</span></li>
+        <li><b>맥_투명 케이스</b><span>중복 — 「맥세이프 &gt; 맥세이프 폰케이스 &gt; 맥_투명케이스」와 상품이 완전히 같다</span></li>
+        <li><b>에폭시체인지톡</b><span>너무 작음 — 상품 17개라 필터로 좁힐 게 없다</span></li>
+        <li><b>폰 액세서리</b><span>너무 작음 — 상품 15개라 필터로 좁힐 게 없다</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="note"><b>중복이 생기는 이유는 하나입니다.</b> 같은 상품을 「맥세이프」 트리와 「카드지갑」 트리 양쪽에 넣어 두었기 때문입니다. 상품 데이터가 틀린 게 아니라 <b>트리를 두 벌 만들어 둔 것</b>이라, 필터에서는 둘 중 한쪽만 읽으면 그대로 해결됩니다. 분류를 지울 필요가 없습니다.</div>
+</section>
+
+<footer class="doc">
+  <div><b>집계</b> 진열상태 Y 1,938건 · 하위 분류 상품수는 조상 전개 후 실측</div>
+  <div><b>기준</b> 하위 분류가 2개 이상이고 각각 상품이 있으면 「필터 줄 후보」로 봄</div>
+  <div><b>출처</b> ssongsstore_20260820_454_532c.csv · _docs/분류매핑표.csv</div>
+</footer>
+</div>
+</body>
+</html>
