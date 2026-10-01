@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>쏭스 필터 개편 — 상품 DB와 상품등록</title>
+<title>쏭스 필터 개편 — 상품 정보 바꾸기</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -363,406 +363,370 @@ footer.doc b{font-weight:500;color:var(--ink2)}
 :focus-visible{outline:2px solid var(--sel);outline-offset:2px}
 
 /* ── 이 문서에서 새로 쓰는 것 ── */
-.tag.t-no{color:var(--block);background:var(--block-bg)}
 p.cap{margin:34px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink3)}
-.sbody h3{margin:38px 0 6px;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.sbody h3{margin:40px 0 6px;font-size:17px;font-weight:600;letter-spacing:-.01em}
 .tree u{text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
 .tree b{font-weight:600}
 table td[rowspan]{vertical-align:top}
+td.easy{color:var(--ok);font-weight:600}
+
+/* 화면 사진 */
+figure.shot{margin:18px 0 0;padding:0}
+figure.shot img{display:block;width:100%;height:auto;border:1px solid var(--rule2);
+  border-radius:6px;background:var(--surface)}
+figure.shot figcaption{margin-top:8px;font-size:12.5px;color:var(--ink2);line-height:1.6}
+figure.shot figcaption b{font-weight:600;color:var(--ink)}
+
+/* 3단 비교 */
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}
+.steps3 figure.shot{margin:0}
+.stepn{display:inline-flex;align-items:center;justify-content:center;
+  width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--paper);
+  font-size:11px;font-weight:700;margin-right:6px;vertical-align:1px}
+@media(max-width:760px){ .steps3{grid-template-columns:1fr} }
+
+/* 그림 */
+figure.chart{margin:22px 0 0;padding:0}
+figure.chart svg{display:block;width:100%;height:auto}
+
+/* 값 목록 알약 */
+.chips-ok{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pill{display:inline-flex;align-items:baseline;gap:7px;padding:7px 13px;
+  border-radius:999px;font-size:13px;font-weight:600;border:1px solid}
+.pill i{font-style:normal;font-weight:500;font-size:11.5px;opacity:.75}
+.pill .sub{font-size:10.5px;font-weight:500;opacity:.6;margin-left:-3px}
+.pill.ok{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.pill.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
+
+/* 주의 상자 */
+.warnbox{margin-top:26px;padding:20px 22px;border-radius:8px;
+  background:var(--warn-bg);border:1px solid var(--warn)}
+.warnbox .wt{margin:0 0 8px;font-size:14.5px;font-weight:700;color:var(--warn)}
+.warnbox p{margin:0 0 8px;font-size:14px;line-height:1.75;color:var(--ink)}
+.warnbox p:last-child{margin-bottom:0}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="doc">
-  <p class="kicker">노페일디자인 × (주)쏭스디자인 · 필터 개편 적용안</p>
-  <h1>새 필터를 담으려면<br>상품 DB를 이렇게 바꿉니다</h1>
-  <p class="dek">보내주신 요청서대로 필터를 만들려면 값 35개가 필요합니다. 그 35개를 지금 상품 데이터와 하나하나 대조했습니다. <strong>13개는 DB 어디에도 없고, 7개는 2~4건뿐</strong>입니다. 무엇을 분류로 만들고 무엇을 옵션으로 만들지, 그래서 상품등록 화면이 어떻게 바뀌는지 정리했습니다.</p>
+  <p class="kicker">노페일디자인 × (주)쏭스디자인</p>
+  <h1>필터를 바꾸려면<br>상품 정보를 이렇게 바꿔야 합니다</h1>
+  <p class="dek">보내주신 필터를 그대로 만들려면, 상품마다 적어 둬야 하는 정보가 <strong>35가지</strong>입니다. 지금 쇼핑몰에 올라와 있는 상품 1,938개를 전부 열어 그 35가지가 적혀 있는지 하나하나 확인했습니다.</p>
   <div class="meta">
     <span><b>작성</b> 2026-10-01</span>
-    <span><b>요청서</b> 쏭스스토어 메뉴정리.pdf · 6쪽</span>
-    <span><b>데이터</b> 상품 CSV 2026-08-20 · 2,146행 / 분류매핑표 101분류</span>
+    <span><b>받은 자료</b> 쏭스스토어 메뉴정리.pdf</span>
+    <span><b>확인한 것</b> 판매 중인 상품 1,938개</span>
     <span><b>화면</b> 와이어프레임 v6</span>
   </div>
 </header>
 
 <div class="summary">
   <div class="finds">
-    <div class="find"><span class="n">01</span><p><strong>이번 요청은 평면이 아니라 트리입니다.</strong> 축이 축에 매달립니다 — 타입을 골라야 디자인이 정해지고, 디자인을 골라야 기능이 정해집니다. 지금까지의 필터(기종·테마·가격)는 서로 상관없는 평면이었습니다. <strong>담는 그릇도 달라져야 합니다.</strong></p></div>
-    <div class="find"><span class="n">02</span><p><strong>필요한 값 35개 중 13개가 DB 어디에도 없습니다.</strong> 분류·옵션·상품명 세 군데를 전부 뒤져도 0건입니다. 특히 <strong>「포켓 (카드1장)」·「도어 (카드2장)」는 카드 장수라는 정보 자체가 상품 데이터에 없습니다.</strong> 필터를 켜는 문제가 아니라 값을 새로 넣는 문제입니다.</p></div>
-    <div class="find"><span class="n">03</span><p><strong>7개는 있지만 2~4건뿐입니다.</strong> 에폭시케이스 2건 · 컬러 하드 4건 · 접착형 카드지갑 2건 · 2카드슬롯 3건. 필터에 칩은 뜨는데 눌러도 상품이 거의 안 나옵니다. <strong>사실상 신설과 같습니다.</strong></p></div>
-    <div class="find"><span class="n">04</span><p><strong>단, 종속 구조 자체는 이미 분류 트리가 하고 있습니다.</strong> 「카드지갑 &gt; 맥세이프 &gt; 맥_3카드팩 스탠딩 &gt; 톡 일체형」처럼 4단까지 내려가 있습니다. <strong>새로 설계하는 게 아니라 정리하는 일</strong>입니다.</p></div>
+    <div class="find"><span class="n">01</span><p><strong>화면은 다 만들어 뒀습니다.</strong> 보내주신 그대로 동작합니다. 문제는 화면이 아니라 <strong>그 화면이 읽을 상품 정보</strong>입니다.</p></div>
+    <div class="find"><span class="n">02</span><p><strong>35가지 중 12가지만 지금 바로 쓸 수 있습니다.</strong> 10가지는 조금 손보면 되고, <strong>13가지는 상품에 아예 안 적혀 있습니다.</strong> 안 적혀 있으면 필터를 눌러도 상품이 안 나옵니다.</p></div>
+    <div class="find"><span class="n">03</span><p><strong>제일 큰 문제는 「카드 몇 장이 들어가는지」입니다.</strong> 상품 1,938개 어디에도 이게 안 적혀 있습니다. 「포켓」·「도어」라는 말은 많은데 <strong>몇 장인지를 적어 둔 칸이 없습니다.</strong></p></div>
+    <div class="find"><span class="n">04</span><p><strong>대신 좋은 소식도 있습니다.</strong> 「맥세이프 &gt; 3카드팩 &gt; 톡 일체형」처럼 단계로 내려가는 구조는 <strong>이미 상품분류에 만들어져 있습니다.</strong> 새로 설계하는 게 아니라 이름을 맞추고 정리하는 일입니다.</p></div>
   </div>
   <div class="figs">
-    <div class="fig"><span class="v">35</span><span class="k">요청서가 요구하는 값<br><span class="dim">기종 축 제외</span></span></div>
-    <div class="fig"><span class="v">13</span><span class="k">DB에 없는 값<br><span class="dim">분류·옵션·상품명 전부 0건</span></span></div>
-    <div class="fig"><span class="v">7</span><span class="k">2~4건뿐인 값<br><span class="dim">사실상 신설</span></span></div>
-    <div class="fig"><span class="v">0</span><span class="k">옵션세트 사용<br><span class="dim">2,146건 전부 비어 있음</span></span></div>
-  </div>
-</div>
-
-<div class="gloss">
-  <div class="sn">§ 0</div>
-  <div>
-    <p class="ghead">이 문서에 나오는 말</p>
-    <p class="gsub">카페24 관리자 화면에서 부르는 이름과 맞췄습니다. 더 자세한 설명은 <a class="gl" href="../report/">9월 브리프</a>에 있습니다.</p>
-    <dl class="gterms">
-      <div class="gt" id="g-cate"><dt>분류 <span class="en">상품분류</span></dt>
-        <dd>관리자의 「상품분류」. 큰 분류 아래 작은 분류가 가지처럼 뻗어 있습니다. 이 몰은 101개가 쓰이고 4단까지 있습니다. <b>이 상품이 무엇인가</b>를 담습니다.</dd></div>
-      <div class="gt" id="g-opt"><dt>옵션 <span class="en">옵션명 · 옵션값</span></dt>
-        <dd>구매 화면에서 사는 사람이 고르는 것. 「기종」·「색상」 같은 항목 이름이 <b>옵션명</b>, 그 안의 선택지가 <b>옵션값</b>입니다. <b>무엇을 고르는가</b>를 담습니다.</dd></div>
-      <div class="gt" id="g-optset"><dt>옵션세트</dt>
-        <dd>자주 쓰는 옵션 묶음을 미리 만들어 두고 상품등록 때 불러 쓰는 기능. <b>이 몰은 2,146건 전부 쓰고 있지 않습니다</b> — 상품마다 옵션명을 새로 타이핑하고 있습니다.</dd></div>
-      <div class="gt" id="g-dep"><dt>종속 축</dt>
-        <dd>위 축을 골라야 아래 축이 정해지는 관계. 「맥세이프」를 골라야 「에폭시케이스」가 나오고, 「카드케이스」를 골라야 「도어 (카드2장)」가 나옵니다. 이번 요청서의 핵심입니다.</dd></div>
-      <div class="gt" id="g-anc"><dt>조상 전개</dt>
-        <dd>상품이 배정된 분류를 보고 그 위쪽 단까지 자동으로 채워 넣는 처리. 카페24는 해주지 않습니다. 체인지톡은 루트에만 462건이지만 하위까지 펼치면 <b>881건</b>입니다.</dd></div>
-      <div class="gt" id="g-cov"><dt>커버리지</dt>
-        <dd>그 목록의 상품 중 해당 축의 어느 칩엔가 걸리는 비율. 낮으면 "필터를 켰더니 상품이 사라진다"가 됩니다.</dd></div>
-    </dl>
+    <div class="fig"><span class="v">12</span><span class="k">지금 바로 쓸 수 있는 것<br><span class="dim">상품에 이미 적혀 있음</span></span></div>
+    <div class="fig"><span class="v">10</span><span class="k">조금 손보면 되는 것<br><span class="dim">이름이 다르거나 상품이 적음</span></span></div>
+    <div class="fig"><span class="v">13</span><span class="k">새로 적어야 하는 것<br><span class="dim">어디에도 없음</span></span></div>
+    <div class="fig"><span class="v">0</span><span class="k">옵션세트 사용<br><span class="dim">2,146개 전부 손으로 입력 중</span></span></div>
   </div>
 </div>
 
 <section>
   <div class="sn">§ 1</div>
   <div class="sbody">
-    <h2>이번 요청은 평면이 아니라 트리입니다</h2>
-    <p class="sublede">지금까지의 필터는 기종·테마·가격처럼 서로 상관없는 축이 나란히 있었습니다. 요청서의 축은 다릅니다. <a class="gl" href="#g-dep">위 축을 골라야 아래 축이 정해집니다.</a></p>
+    <h2>먼저, 바뀐 화면입니다</h2>
+    <p class="sublede">보내주신 대로 만들었습니다. 아래 사진은 실제로 동작하는 화면을 찍은 것입니다.</p>
 
-    <div class="tree"><span class="c">케이스</span>
-<b>타입</b> 맥세이프 ─┬─ <b>디자인</b> 완전 투명 ── <b>기능</b> 기본 · 포켓 (카드1장)
-             ├─ 그래픽 투명 ── 기본 · 포켓 (카드1장)
-             ├─ 카드케이스 ─── 도어 (카드2장) · 포켓 (카드1장)
-             └─ 에폭시케이스 ─ 블랙범퍼 · 실버범퍼
-<b>타입</b> 일반 ─────┬─ 완전 투명 ──── 기본 · 포켓 (카드1장)
-             ├─ 그래픽 투명 ── <u>기본 (젤리)</u> · 포켓 (카드1장)
-             ├─ 카드케이스 ─── 도어 (카드2장) · 포켓 (카드1장)
-             └─ 컬러 하드 ──── 기본 · 포켓 (카드1장)
-<span class="c">└ 같은 「카드케이스」라도 타입이 다르면 다른 줄이다. 그래서 값이 8개가 아니라 16개다.</span></div>
+    <figure class="shot">
+      <img src="img/bar-case.png" alt="케이스 페이지 필터 줄 — 기종, 타입, 디자인, 인기순">
+      <figcaption><b>케이스</b> · 기종 → 타입 → 디자인 → 정렬</figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/bar-card.png" alt="카드지갑 페이지 필터 줄 — 부착방식, 기능, 인기순">
+      <figcaption><b>카드지갑</b> · 부착방식 → 기능 → 정렬. <span class="dim">「형태」는 3카드팩이나 세로 스탠드를 골랐을 때만 나타납니다</span></figcaption>
+    </figure>
+    <figure class="shot">
+      <img src="img/bar-grip.png" alt="체인지톡 페이지 필터 줄 — 부착방식, 기능, 형태, 디자인, 인기순">
+      <figcaption><b>체인지톡</b> · 부착방식 → 기능 → 형태 → 디자인 → 정렬</figcaption>
+    </figure>
 
-    <div class="tw">
-      <table>
-        <thead><tr><th>카테고리</th><th>축 순서</th><th>종속</th><th>칩</th></tr></thead>
-        <tbody>
-          <tr><td><strong>케이스</strong><br><span class="dim">523개</span></td>
-              <td>기종 · <strong>타입</strong> · <strong>디자인</strong> · 정렬</td>
-              <td>타입 → 디자인 → 기능</td><td class="num">26</td></tr>
-          <tr><td><strong>카드지갑</strong><br><span class="dim">373개</span></td>
-              <td><strong>부착방식</strong> · <strong>기능</strong> · <strong>형태</strong> · 정렬</td>
-              <td>부착방식 → 기능 → 형태<span class="dim"> (조건부)</span></td><td class="num">11</td></tr>
-          <tr><td><strong>체인지톡</strong><br><span class="dim">819개</span></td>
-              <td><strong>부착방식</strong> · <strong>기능</strong> · 형태 · 디자인 · 정렬</td>
-              <td>부착방식 → 기능</td><td class="num">14</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="sublede">카드지갑 「형태」만 조건부입니다. 요청서에 <strong>"형태가 필요한 카드지갑 종류는 3카드팩, 세로 스탠드 &gt; 나머지 종류는 형태 고를 필요없음"</strong>이라고 적혀 있어, 그 둘을 골랐을 때만 형태 칸이 나타나게 만들었습니다.</p>
-    <p class="sublede">기종 축은 <strong>"＊ 기존과 동일"</strong>이라고만 적혀 있어 손대지 않았습니다. 이어폰케이스·기타 악세사리는 요청서에 없어 지금 축 그대로 두었습니다.</p>
+    <p class="sublede">직접 눌러 보실 수 있습니다 → <a href="../v6/client/"><strong>와이어프레임 v6</strong></a></p>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 2</div>
   <div class="sbody">
-    <h2>종속은 분류가, 선택은 옵션이 담습니다</h2>
-    <p class="sublede">필터 재료가 들어갈 자리는 <a class="gl" href="#g-cate">분류</a>와 <a class="gl" href="#g-opt">옵션</a> 둘뿐입니다. 이번 축을 어느 쪽에 넣을지는 <strong>그것이 상품의 정체인가, 살 때 고르는 것인가</strong>로 갈립니다.</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th></th><th>분류에 담을 것</th><th>옵션에 담을 것</th></tr></thead>
-        <tbody>
-          <tr><td>성격</td><td>이 상품이 <strong>무엇인가</strong></td><td>사는 사람이 <strong>무엇을 고르는가</strong></td></tr>
-          <tr><td>구조</td><td><strong>트리</strong> — 단을 내려가며 좁힌다</td><td><strong>평면</strong> — 한 줄에 값이 나열된다</td></tr>
-          <tr><td>이번 축</td>
-              <td>타입 · 디자인 종류 · 부착방식 · 기능<span class="dim">(카드지갑·체인지톡)</span> · 형태<span class="dim">(체인지톡)</span></td>
-              <td>기능<span class="dim">(케이스)</span> · 형태<span class="dim">(카드지갑)</span> · 디자인<span class="dim">(체인지톡)</span></td></tr>
-          <tr><td>값이 느는 방식</td><td>하위 분류를 하나 만든다</td><td>옵션세트에 값 한 줄을 넣는다</td></tr>
-          <tr><td>부수 효과</td><td>쇼핑몰 메뉴와 주소가 함께 생긴다<br><span class="dim">검색 유입에 유리</span></td><td>없음<br><span class="dim">구매 화면에만 영향</span></td></tr>
-        </tbody>
-      </table>
+    <h2>이번 필터는 전과 다릅니다</h2>
+    <p class="sublede">전에는 「기종」·「테마」·「가격」이 서로 상관없이 나란히 있었습니다. 이번에는 <strong>위를 골라야 아래가 정해집니다.</strong> 케이스에서 실제로 눌러 본 모습입니다.</p>
+
+    <div class="steps3">
+      <figure class="shot">
+        <img src="img/step1.png" alt="아무것도 안 고른 상태 — 맥세이프 케이스와 일반 케이스 두 줄이 모두 보인다">
+        <figcaption><span class="stepn">1</span> 아직 아무것도 안 골랐을 때<br><span class="dim">맥세이프용 4개, 일반용 4개가 모두 보입니다</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/step2.png" alt="타입에서 맥세이프를 고른 상태 — 맥세이프 케이스 줄만 남는다">
+        <figcaption><span class="stepn">2</span> 「맥세이프」를 골랐더니<br><span class="dim">일반 케이스 줄이 사라집니다</span></figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/step3.png" alt="디자인에서 카드케이스를 고른 상태 — 기능 줄에 도어(카드2장)와 포켓(카드1장)만 나온다">
+        <figcaption><span class="stepn">3</span> 「카드케이스」를 골랐더니<br><span class="dim">그 아래 「기능」 줄이 새로 나옵니다</span></figcaption>
+      </figure>
     </div>
-    <p class="sublede">요청서 2쪽에 빨간 글씨로 <strong>「옵션 ＜ 기능」</strong>이라고 적어 주셨습니다. 케이스의 기능(기본·포켓·도어·범퍼)을 옵션에서 읽겠다는 뜻으로 읽었고, 그대로 반영했습니다. 실제로도 포켓이냐 도어냐는 <strong>같은 디자인 안에서 살 때 고르는 것</strong>이라 옵션이 맞습니다.</p>
+
+    <p class="sublede">이게 왜 중요하냐면 — <strong>상품에 「카드케이스」라고만 적어 두면 부족하기 때문입니다.</strong> 「맥세이프인지 일반인지」와 「카드가 몇 장 들어가는지」까지 같이 적혀 있어야 이 화면이 동작합니다. 한 상품에 <strong>세 가지를 다 적어야</strong> 합니다.</p>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 3</div>
   <div class="sbody">
-    <h2>값 35개를 지금 데이터와 대조했습니다</h2>
-    <p class="sublede">진열 중인 <strong>1,938건</strong> 기준입니다. 띄어쓰기는 무시하고 분류명 · 옵션 · 상품명 세 군데를 전부 찾았습니다. 숫자는 <strong>그 값에 걸리는 진열 상품 수</strong>입니다.</p>
+    <h2>35가지를 하나씩 확인해 봤습니다</h2>
+    <p class="sublede">「맥세이프」·「카드케이스」·「포켓 (카드1장)」처럼 필터 버튼에 들어갈 말이 모두 35가지입니다. 이 말들이 지금 상품에 적혀 있는지, <strong>상품분류 · 옵션 · 상품명</strong> 세 군데를 전부 찾아봤습니다.</p>
 
-    <p class="cap">케이스</p>
+    <figure class="chart">
+      <svg viewBox="0 0 700 108" role="img" aria-label="35가지 중 바로 쓸 수 있는 것 12개, 손봐야 하는 것 10개, 새로 적어야 하는 것 13개">
+        <g font-family="inherit">
+          <rect x="0" y="24" width="240" height="34" rx="3" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1"/>
+          <rect x="244" y="24" width="200" height="34" rx="3" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1"/>
+          <rect x="448" y="24" width="252" height="34" rx="3" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1"/>
+          <text x="120" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ok)">12가지</text>
+          <text x="344" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="var(--warn)">10가지</text>
+          <text x="574" y="46" text-anchor="middle" font-size="15" font-weight="700" fill="var(--block)">13가지</text>
+          <text x="120" y="78" text-anchor="middle" font-size="12.5" fill="var(--ink2)">바로 쓸 수 있음</text>
+          <text x="344" y="78" text-anchor="middle" font-size="12.5" fill="var(--ink2)">조금 손보면 됨</text>
+          <text x="574" y="78" text-anchor="middle" font-size="12.5" fill="var(--ink2)">새로 적어야 함</text>
+          <text x="120" y="96" text-anchor="middle" font-size="11.5" fill="var(--ink3)">상품에 이미 적혀 있다</text>
+          <text x="344" y="96" text-anchor="middle" font-size="11.5" fill="var(--ink3)">이름이 다르거나 상품이 적다</text>
+          <text x="574" y="96" text-anchor="middle" font-size="11.5" fill="var(--ink3)">세 군데 다 찾아도 없다</text>
+          <text x="0" y="14" font-size="11.5" fill="var(--ink3)">필터 버튼에 들어갈 말 35가지</text>
+        </g>
+      </svg>
+    </figure>
+
+    <h3>바로 쓸 수 있는 12가지</h3>
+    <p class="sublede">상품에 이미 충분히 적혀 있습니다. 괄호 안은 그 말이 붙어 있는 판매 중 상품 수입니다.</p>
+    <div class="chips-ok">
+      <span class="pill ok">맥세이프 <i>805</i></span>
+      <span class="pill ok">카드케이스 <i>271</i></span>
+      <span class="pill ok">3카드팩 <i>357</i></span>
+      <span class="pill ok">체인지 <i>870</i></span>
+      <span class="pill ok">미러 <i>25</i></span>
+      <span class="pill ok">기본형<span class="sub">카드지갑</span> <i>33</i></span>
+      <span class="pill ok">톡 일체형 <i>33</i></span>
+      <span class="pill ok">아크릴톡 <i>443</i></span>
+      <span class="pill ok">그래픽 <i>297</i></span>
+      <span class="pill ok">꼼지락 <i>278</i></span>
+      <span class="pill ok">맥세이프<span class="sub">카드지갑</span> <i>289</i></span>
+      <span class="pill ok">맥세이프<span class="sub">체인지톡</span> <i>347</i></span>
+    </div>
+
+    <h3>새로 적어야 하는 13가지</h3>
+    <p class="sublede">상품분류에도, 옵션에도, 상품명에도 <strong>한 건도 없습니다.</strong> 이대로 필터를 켜면 이 버튼들은 눌러도 빈 화면이 나옵니다.</p>
     <div class="tw">
       <table>
-        <thead><tr><th>축</th><th>값</th><th>분류</th><th>옵션</th><th>상품명</th><th>판정</th></tr></thead>
+        <thead><tr><th>없는 말</th><th>어느 필터</th><th>왜 없나</th><th>어떻게 하면 되나</th></tr></thead>
         <tbody>
-          <tr><td rowspan="2">타입</td><td>맥세이프</td><td class="num">805</td><td class="num">214</td><td class="num">796</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>일반</td><td class="num">70</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-warn">포켓 2분류에만</span></td></tr>
-          <tr><td rowspan="5">디자인<br>종류</td><td>완전 투명</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>그래픽 투명</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>카드케이스</td><td class="num">271</td><td class="num">0</td><td class="num">169</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>에폭시케이스</td><td class="num">0</td><td class="num">2</td><td class="num">2</td><td><span class="tag t-warn">2건</span></td></tr>
-          <tr><td>컬러 하드</td><td class="num">4</td><td class="num">4</td><td class="num">0</td><td><span class="tag t-warn">4건</span></td></tr>
-          <tr><td rowspan="6">기능</td><td>기본</td><td class="num">122</td><td class="num">36</td><td class="num">0</td><td><span class="tag t-warn">뜻이 섞임</span></td></tr>
-          <tr><td>기본 (젤리)</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>포켓 (카드1장)</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>도어 (카드2장)</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>블랙범퍼</td><td class="num">0</td><td class="num">1</td><td class="num">3</td><td><span class="tag t-warn">3건</span></td></tr>
-          <tr><td>실버범퍼</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td><span class="tag t-warn">1건</span></td></tr>
+          <tr><td><strong>포켓 (카드1장)</strong></td><td>케이스 디자인</td>
+              <td rowspan="2">「포켓」·「도어」라는 말은 많지만 <strong>카드가 몇 장인지 적은 칸이 없다</strong></td>
+              <td rowspan="2">옵션에 「케이스 기능」을 만들고 상품마다 지정<br><span class="dim">사람이 상품을 보고 판단해야 합니다</span></td></tr>
+          <tr><td><strong>도어 (카드2장)</strong></td><td>케이스 디자인</td></tr>
+          <tr><td>완전 투명</td><td>케이스 디자인</td>
+              <td rowspan="2">분류가 「기본 투명」·「그래픽 젤리」·「그래픽 포켓」으로 나뉘어 있어 이름이 안 맞는다</td>
+              <td rowspan="2">분류 이름을 바꾸거나 위에 분류를 하나 더 만든다</td></tr>
+          <tr><td>그래픽 투명</td><td>케이스 디자인</td></tr>
+          <tr><td>기본 (젤리)</td><td>케이스 디자인</td><td>「젤리」는 있지만 「기본 (젤리)」라는 말로는 없다</td><td>옵션 값으로 추가</td></tr>
+          <tr><td>세로 스탠드</td><td>카드지갑·체인지톡</td><td>쇼핑몰에는 <strong>「스탠딩」</strong>으로 적혀 있다</td><td class="easy">이름만 맞추면 끝 <span class="dim">(78개)</span></td></tr>
+          <tr><td>칼라</td><td>체인지톡 디자인</td><td>쇼핑몰에는 <strong>「컬러」</strong>로 적혀 있다</td><td class="easy">이름만 맞추면 끝 <span class="dim">(295개)</span></td></tr>
+          <tr><td>폴드톡</td><td rowspan="3">체인지톡 형태</td>
+              <td rowspan="3">세 개 모두 한 건도 없다. 대신 <strong>보내주신 목록에 없는 「버블톡」이 62개</strong> 있다</td>
+              <td rowspan="3">실제로 파는 제품인지부터 알려 주세요</td></tr>
+          <tr><td>미러톡</td></tr>
+          <tr><td>구슬톡</td></tr>
+          <tr><td>접착형</td><td>체인지톡</td>
+              <td rowspan="2">체인지톡 아래에 「맥세이프」만 있고 반대쪽이 없다</td>
+              <td rowspan="2">맥세이프가 아닌 체인지톡을 묶을 분류를 만든다<br><span class="dim">아크릴 443 · 에폭시 13 · 버블 62가 후보</span></td></tr>
+          <tr><td>기본형</td><td>체인지톡</td></tr>
+          <tr><td>일반</td><td>케이스 타입</td><td>「일반형」이 포켓 종류 70개에만 붙어 있다</td><td>맥세이프가 아닌 케이스 전부를 묶는다</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="sublede"><strong>「포켓」·「도어」라는 말 자체는 많습니다</strong> — 포켓이 분류 118건·옵션 136건·상품명 140건, 도어가 분류 154건·옵션 144건·상품명 295건입니다. <strong>없는 것은 「카드 몇 장」입니다.</strong> 카드 장수를 적어 둔 칸이 상품 데이터에 하나도 없습니다.</p>
-    <p class="sublede">「기본」은 122건 걸리지만 「기본형」·「기본 투명」·「3카드팩(기본)」이 섞여 있습니다. 그대로 읽으면 케이스 필터에 카드지갑이 나옵니다.</p>
 
-    <p class="cap">카드지갑</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th>축</th><th>값</th><th>분류</th><th>옵션</th><th>상품명</th><th>판정</th></tr></thead>
-        <tbody>
-          <tr><td rowspan="2">부착방식</td><td>맥세이프</td><td class="num">289</td><td class="num">214</td><td class="num">796</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>접착형</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-warn">2건</span></td></tr>
-          <tr><td rowspan="6">기능</td><td>3카드팩</td><td class="num">357</td><td class="num">265</td><td class="num">379</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>세로 스탠드</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">이름 다름</span></td></tr>
-          <tr><td>체인지</td><td class="num">48</td><td class="num">151</td><td class="num">870</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>미러</td><td class="num">25</td><td class="num">0</td><td class="num">25</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>2카드슬롯</td><td class="num">3</td><td class="num">2</td><td class="num">2</td><td><span class="tag t-warn">3건</span></td></tr>
-          <tr><td>케이스 일체형</td><td class="num">0</td><td class="num">0</td><td class="num">36</td><td><span class="tag t-warn">분류명 다름</span></td></tr>
-          <tr><td rowspan="2">형태</td><td>기본형</td><td class="num">33</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>톡 일체형</td><td class="num">33</td><td class="num">40</td><td class="num">37</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-        </tbody>
-      </table>
+    <h3>조금 손보면 되는 10가지</h3>
+    <p class="sublede">말은 있는데 <strong>붙어 있는 상품이 너무 적습니다.</strong> 버튼은 보이는데 눌러도 상품이 한두 개만 나옵니다.</p>
+    <div class="chips-ok">
+      <span class="pill warn">실버범퍼 <i>1</i></span>
+      <span class="pill warn">에폭시케이스 <i>2</i></span>
+      <span class="pill warn">접착형<span class="sub">카드지갑</span> <i>2</i></span>
+      <span class="pill warn">블랙범퍼 <i>3</i></span>
+      <span class="pill warn">2카드슬롯 <i>3</i></span>
+      <span class="pill warn">컬러 하드 <i>4</i></span>
+      <span class="pill warn">에폭시톡 <i>13</i></span>
+      <span class="pill warn">케이스 일체형 <i>36</i></span>
+      <span class="pill warn">일반<span class="sub">케이스</span> <i>70</i></span>
+      <span class="pill warn">기본 <i>뜻이 섞임</i></span>
     </div>
-    <p class="sublede"><strong>「세로 스탠드」는 DB에 「스탠딩」으로 적혀 있습니다.</strong> 「맥_3카드팩 스탠딩」 66건 · 「스탠딩체인지톡」 12건. 같은 것을 다르게 부르는 것이니, 요청하신 이름으로 통일할지 지금 이름을 쓸지만 정하면 됩니다.</p>
-    <p class="sublede">「케이스 일체형」도 마찬가지입니다. 분류에는 「컬러 +카드지갑 하드 (일체형)」 36건 · 「카드지갑 폰케이스」 36건으로 있습니다.</p>
-
-    <p class="cap">체인지톡</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th>축</th><th>값</th><th>분류</th><th>옵션</th><th>상품명</th><th>판정</th></tr></thead>
-        <tbody>
-          <tr><td rowspan="2">부착방식</td><td>맥세이프</td><td class="num">347</td><td class="num">214</td><td class="num">796</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>접착형</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td rowspan="2">기능</td><td>기본형</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>세로 스탠드</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">이름 다름</span></td></tr>
-          <tr><td rowspan="5">형태</td><td>아크릴톡</td><td class="num">443</td><td class="num">29</td><td class="num">19</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>에폭시톡</td><td class="num">13</td><td class="num">8</td><td class="num">0</td><td><span class="tag t-warn">13건</span></td></tr>
-          <tr><td>폴드톡</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>미러톡</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td>구슬톡</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">없음</span></td></tr>
-          <tr><td rowspan="3">디자인</td><td>칼라</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td><span class="tag t-no">이름 다름</span></td></tr>
-          <tr><td>그래픽</td><td class="num">297</td><td class="num">153</td><td class="num">39</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-          <tr><td>꼼지락</td><td class="num">132</td><td class="num">128</td><td class="num">278</td><td><span class="tag t-ok">그대로 사용</span></td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="sublede"><strong>「칼라」는 DB에 전부 「컬러」로 적혀 있습니다</strong> — 분류 52건 · 옵션 295건 · 상품명 377건. 표기만 맞추면 그대로 쓸 수 있습니다.</p>
-    <p class="sublede"><strong>요청서에 없는데 DB에 있는 형태가 하나 있습니다 — 「버블톡」 62건.</strong> 분류 「체인지톡 &gt; 버블톡」에 실제로 62건이 들어 있습니다. 형태 축에 넣을지 빼서 다른 값으로 옮길지 정해 주셔야 합니다.</p>
+    <p class="sublede">「기본」은 122개에 붙어 있지만 「기본형」·「기본 투명」·「3카드팩(기본)」이 섞여 있습니다. 그대로 읽으면 <strong>케이스 필터에 카드지갑이 나옵니다.</strong></p>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 4</div>
   <div class="sbody">
-    <h2>새로 넣어야 하는 값 13개</h2>
-    <p class="sublede">분류·옵션·상품명 어디에도 0건인 값입니다. 필터를 만드는 문제가 아니라 <strong>상품에 값을 넣는 문제</strong>입니다.</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th>값</th><th>어느 축</th><th>왜 없나</th><th>어떻게 채우나</th></tr></thead>
-        <tbody>
-          <tr><td><strong>포켓 (카드1장)</strong></td><td>케이스 기능</td><td rowspan="2">「포켓」·「도어」라는 말은 있지만 <strong>카드 장수를 적은 칸이 없다</strong></td><td rowspan="2">옵션세트 「케이스 기능」에 값으로 넣고, 포켓·도어 계열 상품에 지정</td></tr>
-          <tr><td><strong>도어 (카드2장)</strong></td><td>케이스 기능</td></tr>
-          <tr><td>완전 투명</td><td>케이스 디자인</td><td rowspan="2">분류는 「기본 투명」·「그래픽 젤리」·「그래픽 포켓」으로 나뉘어 있어 이름이 안 맞는다</td><td rowspan="2">기존 분류를 이 이름으로 바꾸거나 상위 분류를 새로 만든다</td></tr>
-          <tr><td>그래픽 투명</td><td>케이스 디자인</td></tr>
-          <tr><td>기본 (젤리)</td><td>케이스 기능</td><td>「젤리」는 분류 29건·옵션 33건 있으나 「기본 (젤리)」 형태로는 없다</td><td>옵션세트 값으로 신설</td></tr>
-          <tr><td>세로 스탠드</td><td>카드지갑·체인지톡 기능</td><td>DB 표기는 <strong>「스탠딩」</strong></td><td>이름만 맞추면 됨 <span class="dim">(카드지갑 66 · 체인지톡 12)</span></td></tr>
-          <tr><td>칼라</td><td>체인지톡 디자인</td><td>DB 표기는 <strong>「컬러」</strong></td><td>이름만 맞추면 됨 <span class="dim">(옵션 295)</span></td></tr>
-          <tr><td>폴드톡</td><td rowspan="3">체인지톡 형태</td><td rowspan="3">세 값 모두 분류·옵션·상품명 어디에도 없다. 대신 요청서에 없는 <strong>버블톡 62건</strong>이 있다</td><td rowspan="3">하위 분류 신설 후 상품 재배정 — <strong>또는 실제 취급 여부부터 확인</strong></td></tr>
-          <tr><td>미러톡</td></tr>
-          <tr><td>구슬톡</td></tr>
-          <tr><td>접착형</td><td>체인지톡 부착방식</td><td rowspan="2">체인지톡 하위에 「맥세이프 체인지톡」만 있고 반대쪽 가지가 없다</td><td rowspan="2">맥세이프가 아닌 체인지톡을 묶을 분류 신설 <span class="dim">(아크릴 443 · 에폭시 13 · 버블 62 · 스탠딩 12가 후보)</span></td></tr>
-          <tr><td>기본형</td><td>체인지톡 기능</td></tr>
-          <tr><td>일반</td><td>케이스 타입</td><td>「일반형」이 포켓 계열 2분류 70건에만 있다</td><td>맥세이프가 아닌 케이스 전체를 묶는다 <span class="dim">(맥세이프 91건의 여집합)</span></td></tr>
-        </tbody>
-      </table>
-    </div>
+    <h2>가장 큰 문제 하나</h2>
+    <p class="sublede">13가지 중에서도 <strong>「카드 몇 장」</strong>이 제일 까다롭습니다. 다른 건 이름을 바꾸거나 분류를 만들면 되는데, 이건 <strong>사람이 상품을 하나씩 보고 판단해야</strong> 합니다.</p>
 
-    <h3>있지만 2~4건뿐인 값 7개</h3>
-    <p class="sublede">칩은 뜨는데 눌러도 상품이 거의 안 나옵니다. <a class="gl" href="#g-cov">커버리지</a>가 사실상 0입니다.</p>
-    <div class="tw">
-      <table>
-        <thead><tr><th>값</th><th>축</th><th>지금</th><th>판단</th></tr></thead>
-        <tbody>
-          <tr><td>실버범퍼</td><td>케이스 기능</td><td class="num">1</td><td rowspan="7">상품을 더 넣을 계획이면 그대로 두고, 당분간 늘릴 계획이 없으면 <strong>칩에서 빼는 편</strong>이 낫습니다. 눌러도 빈 화면이 나오는 칩은 필터 전체의 신뢰를 깎습니다.</td></tr>
-          <tr><td>에폭시케이스</td><td>케이스 디자인</td><td class="num">2</td></tr>
-          <tr><td>접착형</td><td>카드지갑 부착방식</td><td class="num">2</td></tr>
-          <tr><td>블랙범퍼</td><td>케이스 기능</td><td class="num">3</td></tr>
-          <tr><td>2카드슬롯</td><td>카드지갑 기능</td><td class="num">3</td></tr>
-          <tr><td>컬러 하드</td><td>케이스 디자인</td><td class="num">4</td></tr>
-          <tr><td>에폭시톡</td><td>체인지톡 형태</td><td class="num">13</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <figure class="chart">
+      <svg viewBox="0 0 700 250" role="img" aria-label="상품 하나에 적혀 있는 정보 — 상품명, 분류, 옵션은 있지만 카드 장수는 없다">
+        <g font-family="inherit" font-size="12.5">
+          <text x="0" y="14" font-size="11.5" fill="var(--ink3)">상품 하나에 지금 적혀 있는 것</text>
+
+          <rect x="0" y="26" width="700" height="38" rx="4" fill="var(--sunk)"/>
+          <text x="16" y="50" fill="var(--ink2)">상품명</text>
+          <text x="120" y="50" fill="var(--ink)">쏭스 맥세이프 포켓 투명 케이스 018 꼼지락 브라키오</text>
+          <text x="672" y="50" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
+
+          <rect x="0" y="70" width="700" height="38" rx="4" fill="var(--sunk)"/>
+          <text x="16" y="94" fill="var(--ink2)">상품분류</text>
+          <text x="120" y="94" fill="var(--ink)">폰 케이스 › 투명 케이스 › 그래픽 포켓 › 맥세이프형</text>
+          <text x="672" y="94" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
+
+          <rect x="0" y="114" width="700" height="38" rx="4" fill="var(--sunk)"/>
+          <text x="16" y="138" fill="var(--ink2)">옵션</text>
+          <text x="120" y="138" fill="var(--ink)">기종 · 디자인</text>
+          <text x="672" y="138" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
+
+          <rect x="0" y="158" width="700" height="44" rx="4" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1" stroke-dasharray="3 3"/>
+          <text x="16" y="185" fill="var(--block)" font-weight="700">카드 몇 장</text>
+          <text x="120" y="185" fill="var(--block)">— 적어 두는 칸이 없음 —</text>
+          <text x="672" y="185" text-anchor="end" font-size="15" fill="var(--block)">✗</text>
+
+          <text x="0" y="226" font-size="11.5" fill="var(--ink3)">「포켓」이라는 말은 상품명 140개 · 옵션 136개 · 분류 118개에 있습니다.</text>
+          <text x="0" y="243" font-size="11.5" fill="var(--ink3)">「도어」도 상품명 295개 · 옵션 144개 · 분류 154개에 있습니다. 없는 건 「몇 장」입니다.</text>
+        </g>
+      </svg>
+    </figure>
+
+    <p class="sublede">대상은 케이스 529개 중 포켓·도어 종류입니다. 카페24 「상품 일괄수정」 엑셀을 내려받아 칸 하나를 채워 올리면 한 번에 끝납니다. <strong>다만 어떤 상품이 1장이고 2장인지는 쏭스 쪽에서 알려 주셔야 합니다.</strong></p>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 5</div>
   <div class="sbody">
-    <h2>분류 트리를 이렇게 바꿉니다</h2>
-    <p class="sublede">종속 축(타입 · 디자인 종류 · 부착방식)은 분류 트리가 담습니다. 좋은 소식은 <strong>트리가 이미 이 모양에 가깝다</strong>는 것입니다. 아래는 실제 데이터에서 뽑은 지금 트리와, 요청서에 맞춘 개편안입니다. 숫자는 진열 상품 수입니다.</p>
+    <h2>상품분류를 이렇게 정리합니다</h2>
+    <p class="sublede">「맥세이프냐 일반이냐」·「어떤 디자인이냐」는 <strong>상품분류</strong>에 담습니다. 다행히 지금 분류가 이미 비슷한 모양입니다. 아래는 실제 분류를 그대로 옮긴 것이고, 숫자는 그 분류에 들어 있는 판매 중 상품 수입니다.</p>
 
     <p class="cap">케이스 — 지금</p>
-    <div class="tree"><b>폰 케이스</b> 362
+    <div class="tree"><b>폰 케이스</b>
 ├ Z 플립 케이스 ........ 165
-├ 도어범퍼 카드케이스 ... 112 ─┬ 그래픽 도어범퍼 ..... 103
-│                             └ 심플 컬러 도어범퍼 ... 8
-├ <u>맥세이프 케이스</u> ....... 91 ─┬ 맥_도어범퍼 카드케이스 42
-│                             └ 맥_투명 케이스 ...... 47 ─┬ 맥_그래픽형 .... 43
-│                                                        └ 맥_투명 기본형 .. 4
+├ 도어범퍼 카드케이스 ... 112
+├ <u>맥세이프 케이스</u> ....... 91
 ├ 투명 케이스 .......... 151 ─┬ 그래픽 젤리 ......... 29
 │                             ├ 그래픽 포켓 ........ 113 ─┬ 맥세이프형 ..... 43
 │                             │                           └ <u>일반형</u> ......... 70
 │                             └ 기본 투명 ........... 10
-├ 포켓카드 케이스 ....... 116 ─┬ UV 그래픽 포켓 ..... 113 ─┬ 맥세이프형 ..... 43
-│                             │                           └ <u>일반형</u> ......... 70
-│                             ├ 심플 포켓 ............ 2
-│                             └ 컬러 포켓 ............ 0
-└ 하드 케이스 ........... 56 ─┬ 그래픽 하드 ......... 18
-                              ├ 심플 컬러 하드 ....... 4
-                              └ 컬러 +카드지갑 하드 .. 36
-<span class="c">맥세이프 / 일반 구분이 네 군데에 흩어져 있다. 「맥세이프 케이스」가 한 가지로 있고, 「맥세이프형 / 일반형」이 포켓 아래 두 곳에 또 있다.</span></div>
+├ 포켓카드 케이스 ....... 116
+└ 하드 케이스 ........... 56
+<span class="c">맥세이프인지 아닌지가 네 군데에 흩어져 있습니다. 「맥세이프 케이스」라는 분류가 따로 있고, 「맥세이프형 / 일반형」이 또 두 군데에 있습니다.</span></div>
 
-    <p class="cap">케이스 — 개편안</p>
+    <p class="cap">케이스 — 이렇게 바꾸면</p>
     <div class="tree"><b>폰 케이스</b>
-├ <b>맥세이프</b>  <span class="c">← 타입</span>
-│  ├ 완전 투명     <span class="c">← 디자인 종류 (지금 「기본 투명」·「맥_투명 기본형」)</span>
-│  ├ 그래픽 투명   <span class="c">← 지금 「맥_그래픽형」·「그래픽 포켓 &gt; 맥세이프형」</span>
-│  ├ 카드케이스    <span class="c">← 지금 「맥_도어범퍼 카드케이스」</span>
-│  └ 에폭시케이스  <span class="c">← 신설 (지금 2건)</span>
+├ <b>맥세이프</b>          <span class="c">← 먼저 여기서 갈라진다</span>
+│  ├ 완전 투명        <span class="c">지금 「기본 투명」</span>
+│  ├ 그래픽 투명      <span class="c">지금 「그래픽 포켓 › 맥세이프형」</span>
+│  ├ 카드케이스       <span class="c">지금 「맥_도어범퍼 카드케이스」</span>
+│  └ 에폭시케이스     <span class="c">새로 만들어야 함 (지금 2개)</span>
 └ <b>일반</b>
    ├ 완전 투명
-   ├ 그래픽 투명   <span class="c">← 지금 「그래픽 젤리」·「그래픽 포켓 &gt; 일반형」</span>
-   ├ 카드케이스    <span class="c">← 지금 「도어범퍼 카드케이스」</span>
-   └ 컬러 하드     <span class="c">← 지금 「심플 컬러 하드」 (4건)</span>
-<span class="c">2단 8가지로 정리된다. Z플립 케이스는 기종 축이 담당하므로 분류에서는 뺀다.</span></div>
+   ├ 그래픽 투명      <span class="c">지금 「그래픽 젤리」·「그래픽 포켓 › 일반형」</span>
+   ├ 카드케이스       <span class="c">지금 「도어범퍼 카드케이스」</span>
+   └ 컬러 하드        <span class="c">지금 「심플 컬러 하드」 (4개)</span>
+<span class="c">두 단계 여덟 갈래로 정리됩니다. Z플립은 「기종」 필터가 담당하니 분류에서는 뺍니다.</span></div>
 
-    <p class="cap">카드지갑 — 지금 / 개편안</p>
-    <div class="tree"><b>카드지갑</b> 365
-├ <u>맥세이프</u> ...... 289 ─┬ 맥_2카드 슬롯 ......... 1
-│                          ├ 맥_3카드팩 (기본) .... 79
+    <p class="cap">카드지갑 — 지금 (이미 거의 맞습니다)</p>
+    <div class="tree"><b>카드지갑</b>
+├ <u>맥세이프</u> ...... 289 ─┬ 맥_3카드팩 (기본) .... 79
 │                          ├ 맥_3카드팩 미러 ...... 25
 │                          ├ <u>맥_3카드팩 스탠딩</u> .... 66 ─┬ <u>기본형</u> ..... 33
 │                          │                                  └ <u>톡 일체형</u> .. 33
-│                          ├ 맥_3카드팩 체인지 ..... 48
-│                          ├ 맥_3카드팩+아크릴톡 ... 19
-│                          └ 맥_3카드팩+원형톡 ..... 99
-├ <u>접착형</u> ........... 2 ─ 2카드 슬롯 ............ 2
-└ 카드지갑 폰케이스 ... 36
-<span class="c">부착방식(맥세이프/접착형) → 기능 → 형태 가 이미 3단으로 들어 있다. 요청서 구조와 거의 같다.</span>
+│                          └ 맥_3카드팩 체인지 ..... 48
+└ <u>접착형</u> ........... 2
+<span class="c">「맥세이프 → 3카드팩 스탠딩 → 톡 일체형」. 보내주신 구조와 거의 같습니다.
+바꿀 것은 「스탠딩」을 「세로 스탠드」로 부르는 것 정도입니다.</span></div>
 
-<b>개편안</b> — 이름만 맞추면 된다
-├ 맥세이프 ─┬ 3카드팩 ····· 79+99+19 <span class="c">(기본·원형톡·아크릴톡 묶기)</span>
-│           ├ 세로 스탠드 ·· 66 <span class="c">← 지금 「스탠딩」</span> ─┬ 기본형 33
-│           │                                              └ 톡 일체형 33
-│           ├ 체인지 ······· 48
-│           ├ 미러 ········· 25
-│           └ 2카드슬롯 ····· 1 <span class="c">← 상품 보강 필요</span>
-└ 접착형 ───┬ 케이스 일체형 · 36 <span class="c">← 지금 「카드지갑 폰케이스」·「컬러+카드지갑 하드(일체형)」</span>
-            └ 2카드슬롯 ····· 2 <span class="c">← 상품 보강 필요</span></div>
-
-    <p class="cap">체인지톡 — 지금 / 개편안</p>
-    <div class="tree"><b>체인지톡</b> 462
-├ <u>맥세이프 체인지톡</u> .. 347 ─┬ 맥_아크릴톡 ... 344
-│                                └ 맥_에폭시톡 ..... 2
-├ 버블톡 ................ 62   <span class="c">← 요청서에 없는 값</span>
-├ 스탠딩체인지톡 ......... 12
-├ 아크릴체인지톡 ........ 443
-└ 에폭시체인지톡 ......... 13 ─┬ 그래픽 에폭시 ... 13
-                               └ 심플컬러 에폭시 .. 4
-<span class="c">맥세이프 가지만 있고 반대쪽(접착형) 가지가 없다. 아크릴·에폭시·버블·스탠딩이 맥세이프와 같은 단에 섞여 있다.</span>
-
-<b>개편안</b>
-├ <b>맥세이프</b> ─┬ 기본형      <span class="c">← 지금 「맥_아크릴톡」 344 등</span>
-│                 └ 세로 스탠드 <span class="c">← 지금 「스탠딩체인지톡」 12</span>
-└ <b>접착형</b> ───┬ 기본형      <span class="c">← 신설. 아크릴 443 · 에폭시 13 · 버블 62 재배정</span>
-                  └ 세로 스탠드
-<span class="c">형태(아크릴톡·에폭시톡·폴드톡·미러톡·구슬톡)는 부착방식과 독립이므로 분류 3단이 아니라 별도 축으로 뺀다 — 분류를 더 깊게 파면 조합이 4×5=20가지로 폭발한다.</span></div>
-
-    <p class="sublede"><strong>분류를 쓸 때 반드시 같이 해야 하는 일이 하나 있습니다.</strong> 카페24는 상품에 <a class="gl" href="#g-anc">조상 분류</a>를 자동으로 넣어 주지 않습니다. 체인지톡은 루트 「체인지톡」에 462건만 걸려 있지만 하위까지 펼치면 <strong>881건</strong>입니다 — <strong>419건이 하위에만 들어 있습니다.</strong> 필터를 만들 때 분류 엑셀을 함께 읽어 조상까지 펼쳐야 숫자가 맞습니다.</p>
+    <div class="warnbox">
+      <p class="wt">꼭 같이 해야 하는 일이 하나 있습니다</p>
+      <p>카페24는 상품을 하위 분류에 넣어도 <strong>위쪽 큰 분류에는 자동으로 안 넣어 줍니다.</strong> 지금 「체인지톡」 분류에 직접 들어 있는 상품은 462개인데, 하위까지 모두 세면 <strong>881개</strong>입니다. <strong>419개가 하위에만 들어 있습니다.</strong></p>
+      <p>이대로 두면 체인지톡 목록에서 상품 419개가 안 보입니다. 상품을 하위 분류에 넣을 때 <strong>큰 분류에도 같이 넣어 주셔야</strong> 합니다.</p>
+    </div>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 6</div>
   <div class="sbody">
-    <h2>옵션은 세트로 묶습니다</h2>
-    <p class="sublede">살 때 고르는 축(케이스 기능 · 카드지갑 형태 · 체인지톡 디자인)은 옵션에 담깁니다. 그런데 <a class="gl" href="#g-optset">옵션세트</a>가 <strong>2,146건 전부 비어 있습니다.</strong> 상품마다 옵션명을 손으로 새로 적고 있다는 뜻이고, 그래서 지금 옵션명이 463종입니다.</p>
+    <h2>옵션은 「세트」로 만들어 두면 편합니다</h2>
+    <p class="sublede">「카드 몇 장」·「기본형이냐 톡 일체형이냐」처럼 <strong>살 때 고르는 것</strong>은 옵션에 담깁니다. 그런데 지금은 상품 2,146개 전부 <strong>옵션 항목 이름을 손으로 새로 타이핑</strong>하고 있습니다. 그래서 「기종」을 20가지 이름으로 부르고 있습니다.</p>
+    <p class="sublede">카페24에 <strong>「옵션세트」</strong>라는 기능이 있습니다. 자주 쓰는 옵션을 미리 만들어 두고 등록할 때 불러 쓰는 것입니다. 이걸 쓰면 이름이 저절로 통일되고, <strong>세트에 값 한 줄을 넣으면 그게 바로 필터 버튼 하나가 됩니다.</strong></p>
     <div class="tw">
       <table>
-        <thead><tr><th>세트 이름<span class="dim"> = 필터 줄</span></th><th>값</th><th>붙는 상품</th></tr></thead>
+        <thead><tr><th>만들 세트</th><th>안에 넣을 값</th><th>붙일 상품</th></tr></thead>
         <tbody>
-          <tr><td><strong>케이스 기능</strong></td><td>기본 · 기본 (젤리) · 포켓 (카드1장) · 도어 (카드2장) · 블랙범퍼 · 실버범퍼</td><td>폰 케이스 전체 <span class="dim">529</span></td></tr>
-          <tr><td><strong>카드지갑 형태</strong></td><td>기본형 · 톡 일체형</td><td>3카드팩 · 세로 스탠드 <span class="dim">66</span></td></tr>
-          <tr><td><strong>체인지톡 디자인</strong></td><td>칼라 · 그래픽 · 꼼지락</td><td>체인지톡 전체 <span class="dim">881</span></td></tr>
+          <tr><td><strong>케이스 기능</strong></td><td>기본 · 기본 (젤리) · 포켓 (카드1장) · 도어 (카드2장) · 블랙범퍼 · 실버범퍼</td><td>케이스 전부 <span class="dim">529개</span></td></tr>
+          <tr><td><strong>카드지갑 형태</strong></td><td>기본형 · 톡 일체형</td><td>3카드팩·세로 스탠드 <span class="dim">66개</span></td></tr>
+          <tr><td><strong>체인지톡 디자인</strong></td><td>칼라 · 그래픽 · 꼼지락</td><td>체인지톡 전부 <span class="dim">881개</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="sublede">세트를 쓰면 <strong>세트에 값 한 줄을 추가하는 것이 곧 필터 칩을 하나 추가하는 일</strong>이 됩니다. 별도 관리 대장도, 스킨 수정도 필요 없습니다.</p>
-    <p class="sublede"><strong>확인이 필요한 한 가지.</strong> 옵션세트를 고쳤을 때 <strong>이미 등록된 상품에 어디까지 일괄 반영되는지</strong>는 카페24 관리자에서 실제로 눌러 봐야 확정됩니다. 반영 범위에 따라 §8의 작업량이 크게 갈립니다. 테스트 상품 하나로 먼저 확인해 주세요.</p>
+    <p class="sublede"><strong>먼저 확인할 것이 하나 있습니다.</strong> 옵션세트를 고쳤을 때 <strong>이미 올려둔 상품에도 자동으로 반영되는지</strong>는 카페24 관리자에서 직접 눌러 봐야 압니다. 여기에 따라 작업량이 크게 달라집니다. 테스트 상품 하나로 먼저 확인해 주세요.</p>
   </div>
 </section>
 
 <section>
   <div class="sn">§ 7</div>
   <div class="sbody">
-    <h2>상품등록 페이지는 이렇게 바뀝니다</h2>
-    <p class="sublede">담당자가 하는 일 자체는 지금과 같습니다 — 분류를 고르고 옵션을 넣습니다. 달라지는 건 <strong>손으로 타이핑하던 것을 고르게 된다</strong>는 점입니다.</p>
+    <h2>상품 올릴 때는 이렇게 바뀝니다</h2>
+    <p class="sublede">하시는 일 자체는 지금과 같습니다. 분류를 고르고 옵션을 넣습니다. 달라지는 건 <strong>타이핑하던 것을 고르게 된다</strong>는 점입니다.</p>
 
     <div class="compare">
       <div class="cc now">
         <p class="ct">지금</p>
-        <div class="cs no"><span class="m">✗</span><p class="tx">분류를 상품 성격과 상관없이 여러 개 고른다</p><p class="why">상품당 평균 4.5개에 귀속돼 있고, 하위에만 넣고 루트엔 안 넣은 상품이 체인지톡만 419건입니다.</p></div>
-        <div class="cs no"><span class="m">✗</span><p class="tx">옵션 항목 이름을 매번 새로 적는다</p><p class="why">「기종」을 20가지 이름으로 부르고 있습니다. 옵션명 463종.</p></div>
-        <div class="cs no"><span class="m">✗</span><p class="tx">기능·형태는 상품명에만 적는다</p><p class="why">「포켓」·「도어」가 상품명에는 있지만 거를 수 있는 칸에는 없습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">분류를 여러 개 고르는데 큰 분류를 빠뜨린다</p><p class="why">체인지톡만 419개가 큰 분류에 안 들어가 있습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">옵션 이름을 매번 새로 적는다</p><p class="why">「기종」을 20가지 이름으로 부르고 있습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">카드 장수는 상품명에만 쓴다</p><p class="why">상품명에만 있으면 필터로 거를 수 없습니다.</p></div>
       </div>
       <div class="cc aft">
         <p class="ct">바뀐 뒤</p>
-        <div class="cs yes"><span class="m">✓</span><p class="tx">분류는 한 갈래만 끝까지 고른다</p><p class="why">「폰 케이스 &gt; 맥세이프 &gt; 카드케이스」. 타입과 디자인이 이 한 줄로 정해집니다.</p></div>
-        <div class="cs yes"><span class="m">✓</span><p class="tx">옵션은 세트를 불러 쓴다</p><p class="why">「케이스 기능」 세트를 고르면 값 6개가 그대로 들어옵니다. 틀릴 여지가 없습니다.</p></div>
-        <div class="cs yes"><span class="m">✓</span><p class="tx">새 값이 생기면 세트에 한 줄만 추가</p><p class="why">그 값이 그대로 사용자 화면의 필터 칩이 됩니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">분류는 한 갈래만 끝까지 고른다</p><p class="why">「폰 케이스 › 맥세이프 › 카드케이스」. 큰 분류부터 차례로 다 체크합니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">옵션은 세트를 불러 쓴다</p><p class="why">「케이스 기능」을 고르면 값 6개가 그대로 들어옵니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">새 값이 생기면 세트에 한 줄만 추가</p><p class="why">그게 그대로 손님 화면의 필터 버튼이 됩니다.</p></div>
       </div>
     </div>
 
-    <h3>제품군별 등록 체크리스트</h3>
-    <p class="sublede">새 상품을 올릴 때 이것만 채우면 필터가 저절로 맞습니다.</p>
+    <h3>상품 올릴 때 확인할 것</h3>
     <div class="tw">
       <table>
-        <thead><tr><th>제품군</th><th>분류에서 고를 것</th><th>옵션세트에서 고를 것</th></tr></thead>
+        <thead><tr><th>제품</th><th>분류에서 고를 것</th><th>옵션에서 고를 것</th></tr></thead>
         <tbody>
           <tr><td><strong>케이스</strong></td>
-              <td>폰 케이스 &gt; <strong>맥세이프 또는 일반</strong> &gt; <strong>디자인 종류</strong><span class="dim"> (완전 투명 / 그래픽 투명 / 카드케이스 / 에폭시케이스 / 컬러 하드)</span></td>
-              <td>기종 세트 · <strong>케이스 기능 세트</strong></td></tr>
+              <td>폰 케이스 › <strong>맥세이프 / 일반</strong> › <strong>디자인</strong><span class="dim"> (완전 투명 · 그래픽 투명 · 카드케이스 · 에폭시케이스 · 컬러 하드)</span></td>
+              <td>기종 · <strong>케이스 기능</strong><span class="dim"> (카드 몇 장)</span></td></tr>
           <tr><td><strong>카드지갑</strong></td>
-              <td>카드지갑 &gt; <strong>맥세이프 또는 접착형</strong> &gt; <strong>기능</strong><span class="dim"> (3카드팩 / 세로 스탠드 / 체인지 / 미러 / 2카드슬롯 / 케이스 일체형)</span></td>
-              <td>색상 세트 · <strong>카드지갑 형태 세트</strong><span class="dim"> (3카드팩 · 세로 스탠드일 때만)</span></td></tr>
+              <td>카드지갑 › <strong>맥세이프 / 접착형</strong> › <strong>기능</strong><span class="dim"> (3카드팩 · 세로 스탠드 · 체인지 · 미러 · 2카드슬롯 · 케이스 일체형)</span></td>
+              <td>색상 · <strong>카드지갑 형태</strong><span class="dim"> (3카드팩·세로 스탠드일 때만)</span></td></tr>
           <tr><td><strong>체인지톡</strong></td>
-              <td>체인지톡 &gt; <strong>맥세이프 또는 접착형</strong> &gt; <strong>기능</strong><span class="dim"> (기본형 / 세로 스탠드)</span> + <strong>형태</strong><span class="dim"> (아크릴톡 / 에폭시톡 / …)</span></td>
-              <td><strong>체인지톡 디자인 세트</strong></td></tr>
+              <td>체인지톡 › <strong>맥세이프 / 접착형</strong> › <strong>기능</strong> + <strong>형태</strong><span class="dim"> (아크릴톡 · 에폭시톡 …)</span></td>
+              <td><strong>체인지톡 디자인</strong><span class="dim"> (칼라 · 그래픽 · 꼼지락)</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="sublede"><strong>루트 분류를 빠뜨리지 않는 것</strong>이 가장 중요합니다. 지금처럼 하위 분류에만 넣으면 그 상품은 제품군 목록에서 사라집니다.</p>
-
-    <div class="stack">
-      <div class="layer"><div class="ln">쏭스</div>
-        <div><p class="lt">상품등록에서 분류 한 갈래 + 옵션세트를 고른다</p><p class="ld">새 값이 생기면 하위 분류를 하나 만들거나 세트에 한 줄을 추가한다. <strong>지금 하고 있는 일과 같습니다.</strong></p></div>
-        <div class="lo"><b>카페24 관리자</b><span class="dim">별도 대장 없음</span></div></div>
-      <div class="layer hot"><div class="ln">갱신</div>
-        <div><p class="lt">상품 엑셀 · 분류 엑셀로 인덱스를 만든다</p><p class="ld">조상 분류를 펼치고 종속 관계(타입 → 디자인 → 기능)를 함께 적어 둔다. <strong>이번 개편에서 새로 필요한 부분입니다.</strong></p></div>
-        <div class="lo"><b>스크립트</b><span class="dim">받기 · 돌리기 · 올리기</span></div></div>
-      <div class="layer"><div class="ln">화면</div>
-        <div><p class="lt">인덱스에 적힌 대로 칩을 그리고, 위 축을 고르면 아래 축을 바꾼다</p><p class="ld">칩 목록을 스킨에 적어 두지 않는다. 값이 늘면 칩이 생기고, 조합이 바뀌면 종속도 따라 바뀐다.</p></div>
-        <div class="lo"><b>스킨</b><span class="dim">1회 구축 · 이후 무수정</span></div></div>
-    </div>
+    <p class="sublede"><strong>큰 분류를 빠뜨리지 않는 것</strong>이 제일 중요합니다. 하위 분류에만 넣으면 그 상품은 목록에서 사라집니다.</p>
   </div>
 </section>
 
@@ -770,14 +734,14 @@ table td[rowspan]{vertical-align:top}
   <div class="sn">§ 8</div>
   <div class="sbody">
     <h2>작업 순서</h2>
-    <p class="sublede">기존 상품을 지우지 않습니다. 분류를 옮기고 옵션을 세트로 바꾸는 일이며, 되돌릴 수 있습니다.</p>
+    <p class="sublede">지금 상품을 지우거나 망가뜨리는 작업은 없습니다. 분류를 옮기고 옵션을 정리하는 일이며 되돌릴 수 있습니다.</p>
     <ol class="steps">
-      <li><div><span class="st">옵션세트 반영 범위를 확인한다<span class="who">먼저 · 30분</span></span><span class="sd">테스트 상품 하나로, 세트를 고쳤을 때 기존 상품에 어디까지 일괄 반영되는지 확인합니다. 결과에 따라 3·4단계 작업량이 갈립니다.</span></div></li>
-      <li><div><span class="st">§9의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 폴드톡·미러톡·구슬톡을 실제로 취급하는지, 카드 장수를 누가 넣을지가 일정 전체를 좌우합니다.</span></div></li>
-      <li><div><span class="st">분류 트리를 개편안대로 정리한다<span class="who">쏭스 · 1~2일</span></span><span class="sd">§5 그대로입니다. 분류를 새로 만들고 상품을 재배정합니다. 카페24 「상품 일괄수정」 엑셀로 한 번에 할 수 있습니다. <strong>루트 분류를 함께 넣는 것</strong>을 잊지 마세요.</span></div></li>
-      <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">케이스 기능 · 카드지갑 형태 · 체인지톡 디자인. 이 중 <strong>카드 장수(포켓 1장 / 도어 2장)는 상품을 보고 판단해야 하므로 사람 손이 가장 많이 가는 부분</strong>입니다.</span></div></li>
-      <li><div><span class="st">인덱스 스크립트에 종속 관계를 넣는다<span class="who">노페일 · 1일</span></span><span class="sd">조상 전개 + 타입→디자인→기능 조합표를 함께 뽑습니다. 와이어프레임 v6의 화면이 이 데이터를 그대로 읽습니다.</span></div></li>
-      <li><div><span class="st">커버리지를 재서 빈 칩을 정리한다<span class="who">함께 · 반나절</span></span><span class="sd">값마다 몇 건이 걸리는지 다시 재고, 여전히 한 자릿수인 칩은 뺄지 상품을 더 넣을지 정합니다.</span></div></li>
+      <li><div><span class="st">옵션세트가 기존 상품에도 반영되는지 확인<span class="who">제일 먼저 · 30분</span></span><span class="sd">테스트 상품 하나로 눌러 보면 됩니다. 결과에 따라 4번 작업량이 크게 달라집니다.</span></div></li>
+      <li><div><span class="st">§9의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>카드 장수를 누가 넣을지</strong>가 일정 전체를 좌우합니다.</span></div></li>
+      <li><div><span class="st">상품분류를 §5처럼 정리한다<span class="who">쏭스 · 1~2일</span></span><span class="sd">분류를 만들고 상품을 옮깁니다. 카페24 「상품 일괄수정」 엑셀로 한 번에 됩니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
+      <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">이 중 <strong>카드 장수 넣는 일이 손이 제일 많이 갑니다.</strong> 상품을 보고 판단해야 해서 자동으로 못 합니다.</span></div></li>
+      <li><div><span class="st">필터가 읽을 데이터를 만든다<span class="who">노페일 · 1일</span></span><span class="sd">상품 엑셀과 분류 엑셀을 받아 처리합니다. 큰 분류 자동 채우기와 「맥세이프 → 카드케이스 → 도어」 같은 연결 관계를 여기서 만듭니다.</span></div></li>
+      <li><div><span class="st">버튼마다 상품이 몇 개 나오는지 다시 센다<span class="who">같이 · 반나절</span></span><span class="sd">여전히 한두 개뿐인 버튼은 뺄지 상품을 더 넣을지 정합니다.</span></div></li>
     </ol>
   </div>
 </section>
@@ -785,43 +749,43 @@ table td[rowspan]{vertical-align:top}
 <section>
   <div class="sn">§ 9</div>
   <div class="sbody">
-    <h2>정해 주셔야 할 것</h2>
-    <p class="sublede">요청서만으로는 판단할 수 없어 와이어프레임 v6에는 제 판단으로 넣어 둔 것들입니다. 다르게 정하시면 그대로 맞추겠습니다.</p>
+    <h2>정해 주세요</h2>
+    <p class="sublede">보내주신 자료만으로는 알 수 없어서 일단 제 판단으로 넣어 둔 것들입니다. 다르게 정하시면 그대로 맞추겠습니다.</p>
     <div class="agenda">
       <div class="item"><span class="q">01</span>
-        <div><p class="qt">폴드톡 · 미러톡 · 구슬톡을 실제로 취급하십니까</p><p class="qd">셋 다 분류·옵션·상품명 어디에도 없습니다. 대신 요청서에 없는 「버블톡」이 62건 있습니다. 앞으로 낼 제품이면 분류만 만들어 두면 되고, 지금 있는 제품이면 어느 상품이 어디에 해당하는지 알려 주셔야 합니다.</p></div>
-        <div class="qr"><b>지금</b>칩만 만들어 둠</div></div>
+        <div><p class="qt">폴드톡 · 미러톡 · 구슬톡을 실제로 파십니까?</p><p class="qd">셋 다 쇼핑몰 어디에도 없습니다. 대신 보내주신 목록에 없는 <strong>「버블톡」이 62개</strong> 있습니다. 앞으로 낼 제품이면 분류만 만들어 두면 되고, 지금 파는 제품이면 어떤 상품이 여기 해당하는지 알려 주세요.</p></div>
+        <div class="qr"><b>지금</b>버튼만 만들어 둠</div></div>
       <div class="item"><span class="q">02</span>
-        <div><p class="qt">카드 장수(1장 / 2장)는 누가 넣습니까</p><p class="qd">상품 데이터에 이 정보가 전혀 없습니다. 상품을 보고 판단해야 하므로 자동으로 채울 방법이 없습니다. 케이스 529건 중 포켓·도어 계열이 대상입니다.</p></div>
-        <div class="qr"><b>제안</b>쏭스 · 일괄수정 엑셀</div></div>
+        <div><p class="qt">카드 장수는 누가 넣습니까?</p><p class="qd">상품을 보고 판단해야 해서 자동으로 채울 방법이 없습니다. 케이스 529개 중 포켓·도어 종류가 대상입니다.</p></div>
+        <div class="qr"><b>제안</b>쏭스 · 엑셀로 한 번에</div></div>
       <div class="item"><span class="q">03</span>
-        <div><p class="qt">가격 필터를 없애는 것이 맞습니까</p><p class="qd">요청서 세 쪽 어디에도 가격 축이 없습니다. 지금은 세 페이지 모두 가격 필터를 뺐고, 정렬의 「낮은 가격순 / 높은 가격순」만 남겼습니다.</p></div>
+        <div><p class="qt">가격 필터를 없애는 게 맞습니까?</p><p class="qd">보내주신 세 장 어디에도 가격이 없습니다. 지금은 가격 필터를 뺐고, 정렬의 「낮은 가격순 / 높은 가격순」만 남겼습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
       <div class="item"><span class="q">04</span>
-        <div><p class="qt">테마 축도 없애는 것이 맞습니까</p><p class="qd">8월에 확정하신 11종안(파스텔·비비드·모노톤·…)이 요청서에는 등장하지 않습니다. 가격과 같이 뺐습니다.</p></div>
+        <div><p class="qt">테마 필터도 없애는 게 맞습니까?</p><p class="qd">8월에 정하신 11가지(파스텔·비비드·모노톤 …)가 이번 자료에 안 나옵니다. 가격과 같이 뺐습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
       <div class="item"><span class="q">05</span>
-        <div><p class="qt">「칼라」와 「세로 스탠드」, 어느 쪽 이름을 씁니까</p><p class="qd">DB에는 「컬러」(295건)와 「스탠딩」(78건)으로 적혀 있습니다. 요청서 이름으로 바꾸면 DB를 고쳐야 하고, DB 이름을 쓰면 화면 글자만 바꾸면 됩니다.</p></div>
-        <div class="qr"><b>지금</b>요청서 이름</div></div>
+        <div><p class="qt">「칼라」와 「세로 스탠드」, 어느 쪽 이름을 씁니까?</p><p class="qd">쇼핑몰에는 「컬러」(295개)·「스탠딩」(78개)으로 적혀 있습니다. 보내주신 이름을 쓰려면 상품을 고쳐야 하고, 쇼핑몰 이름을 쓰면 화면 글자만 바꾸면 됩니다.</p></div>
+        <div class="qr"><b>지금</b>보내주신 이름</div></div>
       <div class="item"><span class="q">06</span>
-        <div><p class="qt">한 축에서 값을 두 개 이상 고를 수 있습니까</p><p class="qd">요청서에 명시가 없습니다. 타입·부착방식만 하나로 제한했습니다 — 맥세이프와 일반을 같이 고르면 그 아래 디자인 목록이 무엇이어야 하는지 정의되지 않습니다. 나머지는 복수 선택되게 두었습니다.</p></div>
-        <div class="qr"><b>지금</b>기준 축만 단일</div></div>
+        <div><p class="qt">버튼을 두 개 이상 같이 누를 수 있게 할까요?</p><p class="qd">「타입」과 「부착방식」만 하나씩 고르게 했습니다 — 맥세이프와 일반을 같이 고르면 그 아래 디자인 목록이 무엇이어야 할지 정할 수 없습니다. 나머지는 여러 개 고를 수 있습니다.</p></div>
+        <div class="qr"><b>지금</b>두 개만 하나씩</div></div>
       <div class="item"><span class="q">07</span>
-        <div><p class="qt">「360 링톡」은 빼는 것이 맞습니까</p><p class="qd">요청서 5쪽 현행 목업에는 있는데 개편안 칩 목록에는 없습니다. 의도적으로 빼신 것으로 읽고 뺐습니다.</p></div>
+        <div><p class="qt">「360 링톡」은 빼는 게 맞습니까?</p><p class="qd">자료 5쪽의 지금 화면에는 있는데 바꿀 목록에는 없습니다. 일부러 빼신 것으로 보고 뺐습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
       <div class="item"><span class="q">08</span>
-        <div><p class="qt">2~4건뿐인 칩 7개를 어떻게 합니까</p><p class="qd">에폭시케이스 2 · 컬러 하드 4 · 접착형 카드지갑 2 · 2카드슬롯 3 · 블랙범퍼 3 · 실버범퍼 1. 눌러도 빈 화면이 나오는 칩은 필터 전체의 신뢰를 깎습니다.</p></div>
-        <div class="qr"><b>제안</b>상품 보강 후 노출</div></div>
+        <div><p class="qt">상품이 한두 개뿐인 버튼 7개를 어떻게 할까요?</p><p class="qd">실버범퍼 1 · 에폭시케이스 2 · 접착형 카드지갑 2 · 2카드슬롯 3 · 블랙범퍼 3 · 컬러 하드 4. 눌러도 빈 화면이 나오면 손님이 필터 전체를 안 믿게 됩니다.</p></div>
+        <div class="qr"><b>제안</b>상품 늘린 뒤 보여주기</div></div>
     </div>
   </div>
 </section>
 
 <footer class="doc">
-  <div><b>데이터 출처</b> ssongsstore_20260820_454_532c.csv (2,146행 · 92컬럼) · _docs/분류매핑표.csv (101분류)</div>
-  <div><b>집계 기준</b> 진열상태 Y 1,938건 · 띄어쓰기 무시 · 분류는 조상 전개 후 합집합</div>
-  <div><b>요청서</b> 쏭스스토어 메뉴정리.pdf 6쪽 — 폰케이스 · 카드지갑 · 체인지톡 3개 카테고리</div>
-  <div><b>화면</b> <a href="../v6/client/">와이어프레임 v6</a> · <a href="../report/">9월 브리프</a> · <a href="../map/">분류 필터 지도</a></div>
-  <div><b>상태</b> 논의용 — §9가 정해지기 전까지 DB 작업을 시작하지 않는 것을 권합니다</div>
+  <div><b>확인한 자료</b> 상품 엑셀 2026-08-20 (2,146개) · 분류 엑셀 (101개 분류)</div>
+  <div><b>세는 기준</b> 판매 중인 상품 1,938개 · 띄어쓰기는 무시하고 찾음</div>
+  <div><b>받은 자료</b> 쏭스스토어 메뉴정리.pdf · 케이스 · 카드지갑 · 체인지톡 세 가지</div>
+  <div><b>같이 보기</b> <a href="../v6/client/">바뀐 화면 (v6)</a> · <a href="../report/">9월에 드린 자료</a> · <a href="../map/">분류 지도</a></div>
+  <div><b>상태</b> 논의용 — §9가 정해지기 전에는 상품을 고치지 않는 것을 권합니다</div>
 </footer>
 </div>
 </body>
