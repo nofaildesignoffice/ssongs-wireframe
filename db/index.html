@@ -433,7 +433,7 @@ figure.chart svg{display:block;width:100%;height:auto}
     <div class="fig"><span class="v">12</span><span class="k">지금 바로 쓸 수 있는 것<br><span class="dim">상품에 이미 적혀 있음</span></span></div>
     <div class="fig"><span class="v">10</span><span class="k">조금 손보면 되는 것<br><span class="dim">이름이 다르거나 상품이 적음</span></span></div>
     <div class="fig"><span class="v">13</span><span class="k">새로 적어야 하는 것<br><span class="dim">어디에도 없음</span></span></div>
-    <div class="fig"><span class="v">0</span><span class="k">옵션세트 사용<br><span class="dim">2,146개 전부 손으로 입력 중</span></span></div>
+    <div class="fig"><span class="v">20</span><span class="k">「기종」을 부르는 이름<br><span class="dim">하는 일은 같은데 이름이 제각각</span></span></div>
   </div>
 </div>
 
@@ -733,8 +733,59 @@ figure.chart svg{display:block;width:100%;height:auto}
   <div class="sn">§ 7</div>
   <div class="sbody">
     <h2>옵션은 「세트」로 만들어 두면 편합니다</h2>
-    <p class="sublede">「카드 몇 장」·「기본형이냐 톡 일체형이냐」처럼 <strong>살 때 고르는 것</strong>은 옵션에 담깁니다. 그런데 지금은 상품 2,146개 전부 <strong>옵션 항목 이름을 손으로 새로 타이핑</strong>하고 있습니다. 그래서 「기종」을 20가지 이름으로 부르고 있습니다.</p>
-    <p class="sublede">카페24에 <strong>「옵션세트」</strong>라는 기능이 있습니다. 자주 쓰는 옵션을 미리 만들어 두고 등록할 때 불러 쓰는 것입니다. 이걸 쓰면 이름이 저절로 통일되고, <strong>세트에 값 한 줄을 넣으면 그게 바로 필터 버튼 하나가 됩니다.</strong></p>
+    <p class="sublede">「카드 몇 장」·「기본형이냐 톡 일체형이냐」처럼 <strong>살 때 고르는 것</strong>은 옵션에 담깁니다. 그런데 지금 옵션을 넣는 방식에 문제가 하나 있습니다.</p>
+
+    <h3>지금은 상품마다 손으로 타이핑하고 있습니다</h3>
+    <p class="sublede">상품을 등록할 때 옵션 항목 이름과 값을 매번 새로 칩니다. 그래서 <strong>하는 일이 똑같은데 이름이 20가지</strong>가 됐습니다. 아래는 실제로 쓰이고 있는 이름들입니다.</p>
+
+    <figure class="chart">
+      <svg viewBox="0 0 700 300" role="img" aria-label="기종을 묻는 옵션 항목 이름이 20가지로 갈려 있고, 값도 띄어쓰기 때문에 둘로 갈려 있다">
+        <g font-family="inherit" font-size="12.5">
+          <text x="0" y="13" font-size="11.5" fill="var(--ink3)">손님에게 「기종을 고르세요」 라고 묻는 옵션 항목 이름 — 전부 같은 일을 한다</text>
+          <g fill="var(--ink)">
+            <rect x="0" y="24" width="160" height="30" rx="4" fill="var(--sunk)"/><text x="12" y="44">기종 <tspan fill="var(--ink3)">225개</tspan></text>
+            <rect x="168" y="24" width="160" height="30" rx="4" fill="var(--sunk)"/><text x="180" y="44">UV포켓기종 <tspan fill="var(--ink3)">28개</tspan></text>
+            <rect x="336" y="24" width="180" height="30" rx="4" fill="var(--sunk)"/><text x="348" y="44">맥-UV포켓기종 <tspan fill="var(--ink3)">43개</tspan></text>
+            <rect x="524" y="24" width="176" height="30" rx="4" fill="var(--sunk)"/><text x="536" y="44">젤리 가능기종 <tspan fill="var(--ink3)">2개</tspan></text>
+            <rect x="0" y="60" width="200" height="30" rx="4" fill="var(--sunk)"/><text x="12" y="80">도어 그래픽스 가능기종 <tspan fill="var(--ink3)">99개</tspan></text>
+            <rect x="208" y="60" width="160" height="30" rx="4" fill="var(--sunk)"/><text x="220" y="80">아이폰 기종 <tspan fill="var(--ink3)">2개</tspan></text>
+            <rect x="376" y="60" width="150" height="30" rx="4" fill="var(--sunk)"/><text x="388" y="80">이어폰 기종 <tspan fill="var(--ink3)">32개</tspan></text>
+            <rect x="534" y="60" width="166" height="30" rx="4" fill="var(--sunk)" opacity=".5"/><text x="546" y="80" fill="var(--ink3)">… 모두 20가지</text>
+          </g>
+          <text x="0" y="118" font-size="12.5" fill="var(--block)">→ 이대로 필터를 만들면 「기종」 한 줄이 아니라 <tspan font-weight="700">스무 줄</tspan>이 생깁니다.</text>
+
+          <text x="0" y="158" font-size="11.5" fill="var(--ink3)">값도 마찬가지입니다 — 띄어쓰기 하나 차이</text>
+          <rect x="0" y="170" width="340" height="44" rx="4" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1"/>
+          <text x="16" y="190" fill="var(--ink)" font-weight="600">아이폰16</text><text x="16" y="207" fill="var(--ink3)" font-size="11.5">상품 211개</text>
+          <rect x="356" y="170" width="344" height="44" rx="4" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1"/>
+          <text x="372" y="190" fill="var(--ink)" font-weight="600">아이폰 16</text><text x="372" y="207" fill="var(--ink3)" font-size="11.5">상품 96개</text>
+          <text x="0" y="238" font-size="12.5" fill="var(--block)">→ 손님 화면에 <tspan font-weight="700">버튼이 두 개</tspan> 뜨고, 어느 쪽을 눌러도 절반만 나옵니다.</text>
+
+          <text x="0" y="276" font-size="11.5" fill="var(--ink3)">사람이 잘못한 게 아닙니다. 매번 손으로 치면 그때그때 달라지는 게 당연합니다.</text>
+          <text x="0" y="293" font-size="11.5" fill="var(--ink3)">더 잘 치라고 할 일이 아니라, 손으로 칠 일을 없애야 합니다.</text>
+        </g>
+      </svg>
+    </figure>
+
+    <h3>「옵션세트」를 쓰면 됩니다</h3>
+    <p class="sublede">카페24에 들어 있는 기능입니다. <strong>자주 쓰는 옵션을 미리 만들어 두고, 등록할 때 불러 쓰는 것</strong>입니다. 지금 이 몰은 상품 2,146개 전부 이 기능을 안 쓰고 있습니다.</p>
+
+    <div class="compare">
+      <div class="cc now">
+        <p class="ct">지금 — 상품마다 직접 입력</p>
+        <div class="cs no"><span class="m">✗</span><p class="tx">등록할 때마다 항목 이름을 새로 친다</p><p class="why">그래서 「기종」이 20가지 이름이 됐습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">값 표기가 그때그때 달라진다</p><p class="why">「아이폰16」과 「아이폰 16」이 같이 있습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">새 기종이 나오면 상품 수백 개를 하나씩 고친다</p><p class="why">빠뜨린 상품은 그 기종으로 검색해도 안 나옵니다.</p></div>
+      </div>
+      <div class="cc aft">
+        <p class="ct">세트를 쓰면</p>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">등록할 때 세트를 고르기만 한다</p><p class="why">이름과 값이 세트에 적힌 그대로 들어갑니다. 틀릴 수가 없습니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">새 기종은 세트에 한 줄만 추가</p><p class="why">아이폰17이 나오면 「케이스 기종」 세트에 한 줄. 그 세트를 쓰는 상품 전부에 붙습니다.</p></div>
+        <div class="cs yes"><span class="m">✓</span><p class="tx">그 한 줄이 그대로 필터 버튼이 된다</p><p class="why">따로 관리할 목록도, 사이트 수정도 없습니다.</p></div>
+      </div>
+    </div>
+
+    <h3>이번에 만들 세트 3개</h3>
     <div class="tw">
       <table>
         <thead><tr><th>만들 세트</th><th>안에 넣을 값</th><th>붙일 상품</th></tr></thead>
