@@ -369,6 +369,7 @@ p.cap{margin:34px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;col
 .tree b{font-weight:600}
 table td[rowspan]{vertical-align:top}
 td.easy{color:var(--ok);font-weight:600}
+td.xrow{color:var(--block);background:var(--block-bg);font-weight:600}
 
 /* 화면 사진 */
 figure.shot{margin:18px 0 0;padding:0}
@@ -425,7 +426,8 @@ figure.chart svg{display:block;width:100%;height:auto}
     <div class="find"><span class="n">01</span><p><strong>화면은 다 만들어 뒀습니다.</strong> 보내주신 그대로 동작합니다. 문제는 화면이 아니라 <strong>그 화면이 읽을 상품 정보</strong>입니다.</p></div>
     <div class="find"><span class="n">02</span><p><strong>35가지 중 12가지만 지금 바로 쓸 수 있습니다.</strong> 10가지는 조금 손보면 되고, <strong>13가지는 상품에 아예 안 적혀 있습니다.</strong> 안 적혀 있으면 필터를 눌러도 상품이 안 나옵니다.</p></div>
     <div class="find"><span class="n">03</span><p><strong>제일 큰 문제는 「카드 몇 장이 들어가는지」입니다.</strong> 상품 1,938개 어디에도 이게 안 적혀 있습니다. 「포켓」·「도어」라는 말은 많은데 <strong>몇 장인지를 적어 둔 칸이 없습니다.</strong></p></div>
-    <div class="find"><span class="n">04</span><p><strong>대신 좋은 소식도 있습니다.</strong> 「맥세이프 &gt; 3카드팩 &gt; 톡 일체형」처럼 단계로 내려가는 구조는 <strong>이미 상품분류에 만들어져 있습니다.</strong> 새로 설계하는 게 아니라 이름을 맞추고 정리하는 일입니다.</p></div>
+    <div class="find"><span class="n">04</span><p><strong>필터는 상품명을 읽지 않습니다.</strong> 상품명 낱말로 거르면 등록하는 분이 그 낱말을 전부 외워야 하고, 띄어쓰기 하나만 달라도 상품이 조용히 빠집니다. <strong>상품분류와 옵션에서만 읽습니다</strong> — 둘 다 등록 화면에서 「고르는」 것이라 빠뜨리면 눈에 띕니다.</p></div>
+    <div class="find"><span class="n">05</span><p><strong>좋은 소식도 있습니다.</strong> 「맥세이프 &gt; 3카드팩 &gt; 톡 일체형」처럼 단계로 내려가는 구조는 <strong>이미 상품분류에 만들어져 있습니다.</strong> 새로 설계하는 게 아니라 이름을 맞추고 정리하는 일입니다.</p></div>
   </div>
   <div class="figs">
     <div class="fig"><span class="v">12</span><span class="k">지금 바로 쓸 수 있는 것<br><span class="dim">상품에 이미 적혀 있음</span></span></div>
@@ -486,8 +488,67 @@ figure.chart svg{display:block;width:100%;height:auto}
 <section>
   <div class="sn">§ 3</div>
   <div class="sbody">
+    <h2>필터는 상품명을 읽지 않습니다</h2>
+    <p class="sublede">지금 쇼핑몰은 상품명에 들어 있는 낱말로 거르는 자리가 남아 있습니다. 이 방식은 <strong>운영하다 보면 반드시 빠집니다.</strong></p>
+
+    <figure class="chart">
+      <svg viewBox="0 0 700 300" role="img" aria-label="상품명으로 거르면 띄어쓰기나 낱말이 달라질 때 상품이 빠진다. 분류와 옵션은 골라서 넣으므로 빠지지 않는다.">
+        <g font-family="inherit" font-size="12.5">
+          <text x="0" y="13" font-size="11.5" fill="var(--block)" font-weight="700">상품명으로 거를 때</text>
+          <rect x="0" y="24" width="700" height="100" rx="6" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1"/>
+          <text x="18" y="50" fill="var(--ink)">쏭스 맥세이프 <tspan font-weight="700">포켓</tspan> 투명 케이스 018</text>
+          <text x="470" y="50" fill="var(--ok)" font-size="12">→ 필터에 걸림 ✓</text>
+          <text x="18" y="78" fill="var(--ink)">쏭스 맥세이프 <tspan font-weight="700">포켓형</tspan> 투명 케이스 019</text>
+          <text x="470" y="78" fill="var(--block)" font-size="12">→ 안 걸림 ✗ <tspan fill="var(--ink3)">(「포켓형」은 다른 낱말)</tspan></text>
+          <text x="18" y="106" fill="var(--ink)">쏭스 맥세이프 투명 <tspan font-weight="700">카드포켓</tspan> 케이스 020</text>
+          <text x="470" y="106" fill="var(--block)" font-size="12">→ 안 걸림 ✗ <tspan fill="var(--ink3)">(낱말 순서가 다름)</tspan></text>
+
+          <text x="0" y="158" font-size="11.5" fill="var(--block)">셋 다 같은 제품인데 하나만 걸립니다. 그리고 <tspan font-weight="700">빠진 것을 아무도 모릅니다.</tspan></text>
+
+          <text x="0" y="196" font-size="11.5" fill="var(--ok)" font-weight="700">분류 · 옵션으로 거를 때</text>
+          <rect x="0" y="207" width="700" height="62" rx="6" fill="var(--ok-bg)" stroke="var(--ok)" stroke-width="1"/>
+          <text x="18" y="233" fill="var(--ink)">등록할 때 <tspan font-weight="700">목록에서 고른다</tspan> — 포켓 (카드1장)</text>
+          <text x="470" y="233" fill="var(--ok)" font-size="12">→ 항상 걸림 ✓</text>
+          <text x="18" y="257" fill="var(--ink2)" font-size="12">안 고르면 그 칸이 비어 보인다 — <tspan font-weight="700" fill="var(--ink)">빠뜨린 게 눈에 띈다</tspan></text>
+
+          <text x="0" y="292" font-size="11.5" fill="var(--ink3)">상품명은 마케팅 문구라 자꾸 바뀝니다. 바뀔 때마다 필터가 조용히 어긋납니다.</text>
+        </g>
+      </svg>
+    </figure>
+
+    <p class="sublede">그래서 <strong>필터가 읽을 곳을 두 군데로 못 박았습니다.</strong> 화면(v6)에서도 각 필터 줄이 어디를 읽는지 표시해 두었습니다.</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>필터</th><th>읽는 곳</th><th>등록할 때 하는 일</th></tr></thead>
+        <tbody>
+          <tr><td>타입 <span class="dim">맥세이프 / 일반</span></td><td><strong>상품분류</strong></td><td rowspan="5">분류를 <strong>한 갈래 끝까지</strong> 체크한다</td></tr>
+          <tr><td>디자인 <span class="dim">케이스</span></td><td><strong>상품분류</strong></td></tr>
+          <tr><td>부착방식</td><td><strong>상품분류</strong></td></tr>
+          <tr><td>기능 <span class="dim">카드지갑 · 체인지톡</span></td><td><strong>상품분류</strong></td></tr>
+          <tr><td>형태 <span class="dim">체인지톡</span></td><td><strong>상품분류</strong></td></tr>
+          <tr><td>기종</td><td><strong>옵션</strong></td><td rowspan="4">옵션세트를 <strong>불러서</strong> 값을 고른다</td></tr>
+          <tr><td>기능 <span class="dim">케이스 · 카드 몇 장</span></td><td><strong>옵션</strong></td></tr>
+          <tr><td>형태 <span class="dim">카드지갑</span></td><td><strong>옵션</strong></td></tr>
+          <tr><td>디자인 <span class="dim">체인지톡 · 칼라/그래픽/꼼지락</span></td><td><strong>옵션</strong></td></tr>
+          <tr><td colspan="3" class="xrow">상품명 — <strong>읽지 않습니다</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="sublede">이렇게 하면 <strong>등록하는 분이 외울 게 없습니다.</strong> 분류를 고르고 옵션세트를 불러오면 끝이고, 안 고른 칸은 등록 화면에서 비어 보여서 그 자리에서 알아챌 수 있습니다.</p>
+
+    <div class="warnbox">
+      <p class="wt">이 때문에 못 쓰게 되는 값이 하나 있습니다</p>
+      <p><strong>「케이스 일체형」</strong>은 상품명에만 36개 있고 분류·옵션에는 없습니다. 지금까지는 상품명으로 걸렀기 때문에 동작했지만, 상품명을 안 읽기로 하면 <strong>이 버튼은 아무것도 안 나옵니다.</strong></p>
+      <p>분류 「카드지갑 폰케이스」(36개)·「컬러 +카드지갑 하드 (일체형)」(36개)가 같은 제품이므로, 분류 이름을 「케이스 일체형」으로 바꾸거나 그 분류를 읽도록 연결하면 해결됩니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 4</div>
+  <div class="sbody">
     <h2>35가지를 하나씩 확인해 봤습니다</h2>
-    <p class="sublede">「맥세이프」·「카드케이스」·「포켓 (카드1장)」처럼 필터 버튼에 들어갈 말이 모두 35가지입니다. 이 말들이 지금 상품에 적혀 있는지, <strong>상품분류 · 옵션 · 상품명</strong> 세 군데를 전부 찾아봤습니다.</p>
+    <p class="sublede">「맥세이프」·「카드케이스」·「포켓 (카드1장)」처럼 필터 버튼에 들어갈 말이 모두 35가지입니다. 이 말들이 지금 상품에 적혀 있는지 찾아봤습니다. 필터가 읽을 <strong>상품분류와 옵션</strong>은 물론, <strong>상품명</strong>까지 뒤졌습니다 — 상품명에만 있는 것은 <em>제품은 있는데 거를 방법이 없다</em>는 뜻이라 따로 표시했습니다.</p>
 
     <figure class="chart">
       <svg viewBox="0 0 700 108" role="img" aria-label="35가지 중 바로 쓸 수 있는 것 12개, 손봐야 하는 것 10개, 새로 적어야 하는 것 13개">
@@ -576,7 +637,7 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 4</div>
+  <div class="sn">§ 5</div>
   <div class="sbody">
     <h2>가장 큰 문제 하나</h2>
     <p class="sublede">13가지 중에서도 <strong>「카드 몇 장」</strong>이 제일 까다롭습니다. 다른 건 이름을 바꾸거나 분류를 만들면 되는데, 이건 <strong>사람이 상품을 하나씩 보고 판단해야</strong> 합니다.</p>
@@ -617,7 +678,7 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 5</div>
+  <div class="sn">§ 6</div>
   <div class="sbody">
     <h2>상품분류를 이렇게 정리합니다</h2>
     <p class="sublede">「맥세이프냐 일반이냐」·「어떤 디자인이냐」는 <strong>상품분류</strong>에 담습니다. 다행히 지금 분류가 이미 비슷한 모양입니다. 아래는 실제 분류를 그대로 옮긴 것이고, 숫자는 그 분류에 들어 있는 판매 중 상품 수입니다.</p>
@@ -669,7 +730,7 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 6</div>
+  <div class="sn">§ 7</div>
   <div class="sbody">
     <h2>옵션은 「세트」로 만들어 두면 편합니다</h2>
     <p class="sublede">「카드 몇 장」·「기본형이냐 톡 일체형이냐」처럼 <strong>살 때 고르는 것</strong>은 옵션에 담깁니다. 그런데 지금은 상품 2,146개 전부 <strong>옵션 항목 이름을 손으로 새로 타이핑</strong>하고 있습니다. 그래서 「기종」을 20가지 이름으로 부르고 있습니다.</p>
@@ -689,7 +750,7 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 7</div>
+  <div class="sn">§ 8</div>
   <div class="sbody">
     <h2>상품 올릴 때는 이렇게 바뀝니다</h2>
     <p class="sublede">하시는 일 자체는 지금과 같습니다. 분류를 고르고 옵션을 넣습니다. 달라지는 건 <strong>타이핑하던 것을 고르게 된다</strong>는 점입니다.</p>
@@ -731,14 +792,14 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 8</div>
+  <div class="sn">§ 9</div>
   <div class="sbody">
     <h2>작업 순서</h2>
     <p class="sublede">지금 상품을 지우거나 망가뜨리는 작업은 없습니다. 분류를 옮기고 옵션을 정리하는 일이며 되돌릴 수 있습니다.</p>
     <ol class="steps">
       <li><div><span class="st">옵션세트가 기존 상품에도 반영되는지 확인<span class="who">제일 먼저 · 30분</span></span><span class="sd">테스트 상품 하나로 눌러 보면 됩니다. 결과에 따라 4번 작업량이 크게 달라집니다.</span></div></li>
-      <li><div><span class="st">§9의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>카드 장수를 누가 넣을지</strong>가 일정 전체를 좌우합니다.</span></div></li>
-      <li><div><span class="st">상품분류를 §5처럼 정리한다<span class="who">쏭스 · 1~2일</span></span><span class="sd">분류를 만들고 상품을 옮깁니다. 카페24 「상품 일괄수정」 엑셀로 한 번에 됩니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
+      <li><div><span class="st">§10의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>카드 장수를 누가 넣을지</strong>가 일정 전체를 좌우합니다.</span></div></li>
+      <li><div><span class="st">상품분류를 §6처럼 정리한다<span class="who">쏭스 · 1~2일</span></span><span class="sd">분류를 만들고 상품을 옮깁니다. 카페24 「상품 일괄수정」 엑셀로 한 번에 됩니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
       <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">이 중 <strong>카드 장수 넣는 일이 손이 제일 많이 갑니다.</strong> 상품을 보고 판단해야 해서 자동으로 못 합니다.</span></div></li>
       <li><div><span class="st">필터가 읽을 데이터를 만든다<span class="who">노페일 · 1일</span></span><span class="sd">상품 엑셀과 분류 엑셀을 받아 처리합니다. 큰 분류 자동 채우기와 「맥세이프 → 카드케이스 → 도어」 같은 연결 관계를 여기서 만듭니다.</span></div></li>
       <li><div><span class="st">버튼마다 상품이 몇 개 나오는지 다시 센다<span class="who">같이 · 반나절</span></span><span class="sd">여전히 한두 개뿐인 버튼은 뺄지 상품을 더 넣을지 정합니다.</span></div></li>
@@ -747,7 +808,7 @@ figure.chart svg{display:block;width:100%;height:auto}
 </section>
 
 <section>
-  <div class="sn">§ 9</div>
+  <div class="sn">§ 10</div>
   <div class="sbody">
     <h2>정해 주세요</h2>
     <p class="sublede">보내주신 자료만으로는 알 수 없어서 일단 제 판단으로 넣어 둔 것들입니다. 다르게 정하시면 그대로 맞추겠습니다.</p>
@@ -785,7 +846,7 @@ figure.chart svg{display:block;width:100%;height:auto}
   <div><b>세는 기준</b> 판매 중인 상품 1,938개 · 띄어쓰기는 무시하고 찾음</div>
   <div><b>받은 자료</b> 쏭스스토어 메뉴정리.pdf · 케이스 · 카드지갑 · 체인지톡 세 가지</div>
   <div><b>같이 보기</b> <a href="../v6/client/">바뀐 화면 (v6)</a> · <a href="../report/">9월에 드린 자료</a> · <a href="../map/">분류 지도</a></div>
-  <div><b>상태</b> 논의용 — §9가 정해지기 전에는 상품을 고치지 않는 것을 권합니다</div>
+  <div><b>상태</b> 논의용 — §10이 정해지기 전에는 상품을 고치지 않는 것을 권합니다</div>
 </footer>
 </div>
 </body>
