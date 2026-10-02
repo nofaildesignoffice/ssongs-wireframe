@@ -425,7 +425,7 @@ figure.chart svg{display:block;width:100%;height:auto}
   <div class="finds">
     <div class="find"><span class="n">01</span><p><strong>화면은 다 만들어 뒀습니다.</strong> 보내주신 그대로 동작합니다. 문제는 화면이 아니라 <strong>그 화면이 읽을 상품 정보</strong>입니다.</p></div>
     <div class="find"><span class="n">02</span><p><strong>35가지 중 12가지만 지금 바로 쓸 수 있습니다.</strong> 10가지는 조금 손보면 되고, <strong>13가지는 상품에 아예 안 적혀 있습니다.</strong> 안 적혀 있으면 필터를 눌러도 상품이 안 나옵니다.</p></div>
-    <div class="find"><span class="n">03</span><p><strong>제일 큰 문제는 「카드 몇 장이 들어가는지」입니다.</strong> 상품 1,938개 어디에도 이게 안 적혀 있습니다. 「포켓」·「도어」라는 말은 많은데 <strong>몇 장인지를 적어 둔 칸이 없습니다.</strong></p></div>
+    <div class="find"><span class="n">03</span><p><strong>제일 큰 문제는 Z플립 케이스입니다.</strong> 케이스 529개 중 364개는 분류만 보면 포켓인지 도어인지 바로 알 수 있는데, <strong>165개는 알 수 없습니다.</strong> 그중 163개가 Z플립 케이스입니다 — 분류가 기종으로만 나뉘어 있고 디자인 구분이 없습니다.</p></div>
     <div class="find"><span class="n">04</span><p><strong>필터는 상품명을 읽지 않습니다.</strong> 상품명 낱말로 거르면 등록하는 분이 그 낱말을 전부 외워야 하고, 띄어쓰기 하나만 달라도 상품이 조용히 빠집니다. <strong>상품분류와 옵션에서만 읽습니다</strong> — 둘 다 등록 화면에서 「고르는」 것이라 빠뜨리면 눈에 띕니다.</p></div>
     <div class="find"><span class="n">05</span><p><strong>좋은 소식도 있습니다.</strong> 「맥세이프 &gt; 3카드팩 &gt; 톡 일체형」처럼 단계로 내려가는 구조는 <strong>이미 상품분류에 만들어져 있습니다.</strong> 새로 설계하는 게 아니라 이름을 맞추고 정리하는 일입니다.</p></div>
   </div>
@@ -596,7 +596,7 @@ figure.chart svg{display:block;width:100%;height:auto}
         <thead><tr><th>없는 말</th><th>어느 필터</th><th>왜 없나</th><th>어떻게 하면 되나</th></tr></thead>
         <tbody>
           <tr><td><strong>포켓 (카드1장)</strong></td><td>케이스 디자인</td>
-              <td rowspan="2">「포켓」·「도어」라는 말은 많지만 <strong>카드가 몇 장인지 적은 칸이 없다</strong></td>
+              <td rowspan="2">분류에는 있지만 <strong>옵션 값으로는 없다.</strong> 장수는 이름에 들어 있어 따로 셀 필요가 없다 — 포켓이면 1장, 도어면 2장</td>
               <td rowspan="2">옵션에 「케이스 기능」을 만들고 상품마다 지정<br><span class="dim">사람이 상품을 보고 판단해야 합니다</span></td></tr>
           <tr><td><strong>도어 (카드2장)</strong></td><td>케이스 디자인</td></tr>
           <tr><td>완전 투명</td><td>케이스 디자인</td>
@@ -641,41 +641,43 @@ figure.chart svg{display:block;width:100%;height:auto}
 <section>
   <div class="sn">§ 5</div>
   <div class="sbody">
-    <h2>가장 큰 문제 하나</h2>
-    <p class="sublede">13가지 중에서도 <strong>「카드 몇 장」</strong>이 제일 까다롭습니다. 다른 건 이름을 바꾸거나 분류를 만들면 되는데, 이건 <strong>사람이 상품을 하나씩 보고 판단해야</strong> 합니다.</p>
+    <h2>가장 큰 문제 하나 — Z플립 케이스</h2>
+    <p class="sublede">앞서 「카드가 몇 장인지 아무 데도 없다」고 적었는데 <strong>틀렸습니다.</strong> 보내주신 안의 케이스 기능은 <strong>「포켓 (카드1장)」·「도어 (카드2장)」 둘뿐</strong>입니다. 장수가 이름 안에 이미 들어 있습니다 — <strong>포켓이면 1장, 도어면 2장으로 정해져 있어 따로 셀 것이 없습니다.</strong></p>
+    <p class="sublede">필요한 건 「몇 장이냐」가 아니라 <strong>「포켓이냐 도어냐 기본이냐」</strong>이고, 그건 상품분류에 이미 들어 있습니다. 케이스 529개를 분류만 보고 갈라 봤습니다.</p>
 
     <figure class="chart">
-      <svg viewBox="0 0 700 250" role="img" aria-label="상품 하나에 적혀 있는 정보 — 상품명, 분류, 옵션은 있지만 카드 장수는 없다">
+      <svg viewBox="0 0 700 212" role="img" aria-label="케이스 529개 중 364개는 분류로 정해지고 165개는 알 수 없으며 그중 163개가 Z플립 케이스다">
         <g font-family="inherit" font-size="12.5">
-          <text x="0" y="14" font-size="11.5" fill="var(--ink3)">상품 하나에 지금 적혀 있는 것</text>
+          <rect x="0" y="6" width="153" height="42" rx="5" fill="var(--ok-bg)" stroke="var(--ok)"/>
+          <text x="76" y="25" text-anchor="middle" fill="var(--ok)" font-weight="700">포켓 116개</text>
+          <text x="76" y="40" text-anchor="middle" fill="var(--ok)" font-size="11">= 카드 1장</text>
+          <rect x="161" y="6" width="153" height="42" rx="5" fill="var(--ok-bg)" stroke="var(--ok)"/>
+          <text x="237" y="25" text-anchor="middle" fill="var(--ok)" font-weight="700">도어 154개</text>
+          <text x="237" y="40" text-anchor="middle" fill="var(--ok)" font-size="11">= 카드 2장</text>
+          <rect x="322" y="6" width="130" height="42" rx="5" fill="var(--ok-bg)" stroke="var(--ok)"/>
+          <text x="387" y="25" text-anchor="middle" fill="var(--ok)" font-weight="700">기본 94개</text>
+          <text x="387" y="40" text-anchor="middle" fill="var(--ok)" font-size="11">= 카드 없음</text>
+          <rect x="460" y="6" width="240" height="42" rx="5" fill="var(--warn-bg)" stroke="var(--warn)"/>
+          <text x="580" y="25" text-anchor="middle" fill="var(--warn)" font-weight="700">알 수 없음 165개</text>
+          <text x="580" y="40" text-anchor="middle" fill="var(--warn)" font-size="11">분류에 디자인 구분이 없음</text>
 
-          <rect x="0" y="26" width="700" height="38" rx="4" fill="var(--sunk)"/>
-          <text x="16" y="50" fill="var(--ink2)">상품명</text>
-          <text x="120" y="50" fill="var(--ink)">쏭스 맥세이프 포켓 투명 케이스 018 꼼지락 브라키오</text>
-          <text x="672" y="50" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
+          <text x="0" y="70" font-size="11.5" fill="var(--ink3)">364개는 분류만 보면 정해집니다. 포켓과 도어가 같이 달린 상품은 0개라 헷갈릴 일도 없습니다.</text>
 
-          <rect x="0" y="70" width="700" height="38" rx="4" fill="var(--sunk)"/>
-          <text x="16" y="94" fill="var(--ink2)">상품분류</text>
-          <text x="120" y="94" fill="var(--ink)">폰 케이스 › 투명 케이스 › 그래픽 포켓 › 맥세이프형</text>
-          <text x="672" y="94" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
-
-          <rect x="0" y="114" width="700" height="38" rx="4" fill="var(--sunk)"/>
-          <text x="16" y="138" fill="var(--ink2)">옵션</text>
-          <text x="120" y="138" fill="var(--ink)">기종 · 디자인</text>
-          <text x="672" y="138" text-anchor="end" font-size="15" fill="var(--ok)">✓</text>
-
-          <rect x="0" y="158" width="700" height="44" rx="4" fill="var(--block-bg)" stroke="var(--block)" stroke-width="1" stroke-dasharray="3 3"/>
-          <text x="16" y="185" fill="var(--block)" font-weight="700">카드 몇 장</text>
-          <text x="120" y="185" fill="var(--block)">— 적어 두는 칸이 없음 —</text>
-          <text x="672" y="185" text-anchor="end" font-size="15" fill="var(--block)">✗</text>
-
-          <text x="0" y="226" font-size="11.5" fill="var(--ink3)">「포켓」이라는 말은 상품명 140개 · 옵션 136개 · 분류 118개에 있습니다.</text>
-          <text x="0" y="243" font-size="11.5" fill="var(--ink3)">「도어」도 상품명 295개 · 옵션 144개 · 분류 154개에 있습니다. 없는 건 「몇 장」입니다.</text>
+          <text x="0" y="104" font-size="11.5" fill="var(--ink3)">알 수 없는 165개가 무엇인가</text>
+          <rect x="0" y="116" width="700" height="88" rx="6" fill="var(--sunk)"/>
+          <text x="18" y="142" fill="var(--ink)">Z플립 케이스 <tspan font-weight="700">163개</tspan>  ·  그 밖 <tspan font-weight="700">2개</tspan></text>
+          <text x="18" y="166" fill="var(--ink2)" font-size="12">Z플립 케이스는 분류가 「z플립3/4」 · 「z플립5/6/7」처럼 <tspan font-weight="600">기종으로만</tspan> 나뉘어 있습니다.</text>
+          <text x="18" y="188" fill="var(--block)" font-size="12" font-weight="600">포켓인지 도어인지 하드인지를 나눠 둔 분류가 없습니다.</text>
         </g>
       </svg>
     </figure>
 
-    <p class="sublede">대상은 케이스 529개 중 포켓·도어 종류입니다. 카페24 「상품 일괄수정」 엑셀을 내려받아 칸 하나를 채워 올리면 한 번에 끝납니다. <strong>다만 어떤 상품이 1장이고 2장인지는 쏭스 쪽에서 알려 주셔야 합니다.</strong></p>
+    <p class="sublede"><strong>그래서 할 일은 둘입니다.</strong> 하나는 Z플립 케이스 아래에 디자인 분류를 만드는 것이고(한 번만 하면 끝), 다른 하나는 그 163개가 각각 어느 디자인인지 알려 주시는 것입니다. <strong>이건 상품을 아는 쏭스 쪽에서만 할 수 있습니다.</strong></p>
+
+    <div class="warnbox">
+      <p class="wt">앞서 적은 437개는 틀린 숫자였습니다</p>
+      <p>상품명에 「포켓」·「도어」가 들어간 상품을 세어 437개라고 적었는데, <strong>상품명으로 거르면 안 된다고 §3에 써 놓고 제가 그걸로 셌습니다.</strong> 「포켓볼 8볼」 같은 상품까지 들어가 있었습니다. 분류로 다시 세어 <strong>165개</strong>입니다.</p>
+    </div>
   </div>
 </section>
 
@@ -959,7 +961,7 @@ figure.chart svg{display:block;width:100%;height:auto}
         <p class="ct">지금</p>
         <div class="cs no"><span class="m">✗</span><p class="tx">분류를 여러 개 고르는데 큰 분류를 빠뜨린다</p><p class="why">체인지톡만 419개가 큰 분류에 안 들어가 있습니다.</p></div>
         <div class="cs no"><span class="m">✗</span><p class="tx">옵션 이름을 매번 새로 적는다</p><p class="why">「기종」을 20가지 이름으로 부르고 있습니다.</p></div>
-        <div class="cs no"><span class="m">✗</span><p class="tx">카드 장수는 상품명에만 쓴다</p><p class="why">상품명에만 있으면 필터로 거를 수 없습니다.</p></div>
+        <div class="cs no"><span class="m">✗</span><p class="tx">포켓·도어를 상품명에만 쓴다</p><p class="why">상품명에만 있으면 필터로 거를 수 없습니다. 분류에서 골라야 합니다.</p></div>
       </div>
       <div class="cc aft">
         <p class="ct">바뀐 뒤</p>
@@ -997,9 +999,9 @@ figure.chart svg{display:block;width:100%;height:auto}
     <p class="sublede">지금 상품을 지우거나 망가뜨리는 작업은 없습니다. 분류를 옮기고 옵션을 정리하는 일이며 되돌릴 수 있습니다.</p>
     <ol class="steps">
       <li><div><span class="st">옵션 엑셀 수정이 재고를 건드리는지 확인<span class="who">제일 먼저 · 30분</span></span><span class="sd">상품 한두 개로 기종을 하나 더해 보고 재고가 그대로인지 봅니다. 되돌릴 수 없는 작업이라 전체에 적용하기 전에 꼭 해야 합니다. <strong>옵션세트가 기존 상품에 자동 반영되는지는 이미 확인했습니다 — 안 됩니다(§7).</strong></span></div></li>
-      <li><div><span class="st">§11의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>카드 장수를 누가 넣을지</strong>가 일정 전체를 좌우합니다.</span></div></li>
+      <li><div><span class="st">§11의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>Z플립 케이스 165개의 디자인을 누가 정할지</strong>가 일정 전체를 좌우합니다.</span></div></li>
       <li><div><span class="st">중복된 분류부터 정리하고 §6처럼 바꾼다<span class="who">쏭스 · 2~3일</span></span><span class="sd">제품군 트리와 맥세이프 트리가 두 벌로 복제돼 있습니다. <strong>한 벌만 남기는 것이 먼저</strong>고, 그다음 §6 모양으로 바꿉니다. 카페24 「상품 일괄수정」 엑셀로 할 수 있고, <strong>엑셀로 넣은 분류는 기존 분류를 지우지 않고 더해집니다.</strong> 빼는 건 상품정보 일괄변경에서 따로 해야 합니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
-      <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">이 중 <strong>카드 장수 넣는 일이 손이 제일 많이 갑니다.</strong> 상품을 보고 판단해야 해서 자동으로 못 합니다.</span></div></li>
+      <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">포켓·도어는 <strong>분류를 보고 자동으로 채울 수 있습니다.</strong> 손이 가는 건 <strong>Z플립 케이스 165개</strong>뿐입니다 — 분류에 디자인 구분이 없어 상품을 봐야 합니다.</span></div></li>
       <li><div><span class="st">필터가 읽을 데이터를 만든다<span class="who">노페일 · 1일</span></span><span class="sd">상품 엑셀과 분류 엑셀을 받아 처리합니다. 큰 분류 자동 채우기와 「맥세이프 → 카드케이스 → 도어」 같은 연결 관계를 여기서 만듭니다.</span></div></li>
       <li><div><span class="st">버튼마다 상품이 몇 개 나오는지 다시 센다<span class="who">같이 · 반나절</span></span><span class="sd">여전히 한두 개뿐인 버튼은 뺄지 상품을 더 넣을지 정합니다.</span></div></li>
     </ol>
@@ -1019,8 +1021,8 @@ figure.chart svg{display:block;width:100%;height:auto}
         <div><p class="qt">「맥세이프」 대분류를 없애도 될까요?</p><p class="qd">지금 대분류에 「맥세이프」(612개)와 「맥세이프 제품」(530개)이 제품군 분류와 따로 있고, 530개는 완전히 같은 상품입니다. 개편안대로 가면 할 일이 없어지는데, 분류 주소로 들어오는 검색 유입이 있을 수 있습니다. <strong>바로 지우지 말고 숨김으로 먼저 돌리는</strong> 것을 권합니다.</p></div>
         <div class="qr"><b>제안</b>숨김 → 확인 → 삭제</div></div>
       <div class="item"><span class="q">03</span>
-        <div><p class="qt">카드 장수는 누가 넣습니까?</p><p class="qd">상품을 보고 판단해야 해서 자동으로 채울 방법이 없습니다. 케이스 529개 중 포켓·도어 종류가 대상입니다.</p></div>
-        <div class="qr"><b>제안</b>쏭스 · 엑셀로 한 번에</div></div>
+        <div><p class="qt">Z플립 케이스 165개는 어떤 디자인입니까?</p><p class="qd">케이스 529개 중 364개는 분류만 보면 포켓·도어·기본이 정해집니다. <strong>Z플립 케이스 165개만 알 수 없습니다</strong> — 분류가 기종으로만 나뉘어 있어서입니다. <span class="mut">카드 장수는 따로 세실 필요 없습니다. 포켓이면 1장, 도어면 2장으로 요청서에 정해져 있습니다.</span></p></div>
+        <div class="qr"><b>필요</b>쏭스 · 약 1.5시간</div></div>
       <div class="item"><span class="q">04</span>
         <div><p class="qt">가격 필터를 없애는 게 맞습니까?</p><p class="qd">보내주신 세 장 어디에도 가격이 없습니다. 지금은 가격 필터를 뺐고, 정렬의 「낮은 가격순 / 높은 가격순」만 남겼습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
