@@ -681,7 +681,42 @@ figure.chart svg{display:block;width:100%;height:auto}
   <div class="sn">§ 6</div>
   <div class="sbody">
     <h2>상품분류를 이렇게 정리합니다</h2>
-    <p class="sublede">「맥세이프냐 일반이냐」·「어떤 디자인이냐」는 <strong>상품분류</strong>에 담습니다. 다행히 지금 분류가 이미 비슷한 모양입니다. 아래는 실제 분류를 그대로 옮긴 것이고, 숫자는 그 분류에 들어 있는 판매 중 상품 수입니다.</p>
+
+    <div class="warnbox">
+      <p class="wt">먼저 — 분류가 두 벌로 복제돼 있습니다</p>
+      <p>관리자 화면을 열어 보니 대분류에 <strong>「맥세이프」가 폰 케이스와 같은 단에 따로</strong> 있었습니다. 확인해 보니 <strong>제품군 트리와 맥세이프 트리가 통째로 평행하게 존재</strong>합니다. 같은 상품이 양쪽에 다 들어가 있습니다.</p>
+    </div>
+
+    <figure class="chart">
+      <svg viewBox="0 0 700 250" role="img" aria-label="같은 상품이 제품군 트리와 맥세이프 트리에 동시에 들어 있다">
+        <g font-family="inherit" font-size="12.5">
+          <text x="0" y="13" font-size="11.5" fill="var(--ink3)">같은 33개 상품이 두 군데에 동시에 들어 있습니다</text>
+          <rect x="0" y="26" width="330" height="86" rx="6" fill="var(--sunk)"/>
+          <text x="16" y="50" fill="var(--ink2)" font-size="11.5">제품군 트리</text>
+          <text x="16" y="72" fill="var(--ink)">카드지갑 › 맥세이프 › 맥_3카드팩 스탠딩</text>
+          <text x="16" y="94" fill="var(--ink)">› <tspan font-weight="700">기본형</tspan>  <tspan fill="var(--ink3)">33개</tspan></text>
+
+          <rect x="370" y="26" width="330" height="86" rx="6" fill="var(--sunk)"/>
+          <text x="386" y="50" fill="var(--ink2)" font-size="11.5">맥세이프 트리</text>
+          <text x="386" y="72" fill="var(--ink)">맥세이프 › 맥세이프 카드지갑 › 3카드팩 스탠딩</text>
+          <text x="386" y="94" fill="var(--ink)">› <tspan font-weight="700">기본형</tspan>  <tspan fill="var(--ink3)">33개</tspan></text>
+
+          <text x="350" y="76" text-anchor="middle" font-size="15" fill="var(--block)">=</text>
+          <text x="0" y="136" font-size="12.5" fill="var(--block)">→ 둘 다 들어 있는 상품 <tspan font-weight="700">33개</tspan>, 한쪽에만 있는 상품 <tspan font-weight="700">0개</tspan>. 완전히 같은 묶음입니다.</text>
+
+          <text x="0" y="172" font-size="11.5" fill="var(--ink3)">그런데 복제본끼리 조금씩 어긋나 있습니다</text>
+          <rect x="0" y="184" width="700" height="56" rx="6" fill="var(--warn-bg)" stroke="var(--warn)" stroke-width="1"/>
+          <text x="16" y="208" fill="var(--ink)">맥_아크릴톡 — 제품군 쪽 <tspan font-weight="700">344개</tspan> / 맥세이프 쪽 <tspan font-weight="700">327개</tspan></text>
+          <text x="16" y="230" fill="var(--warn)" font-size="12">둘 다 있는 건 326개. <tspan font-weight="700">19개가 한쪽에만</tspan> 있습니다 — 복제해 두고 동기화가 안 된 상태</text>
+        </g>
+      </svg>
+    </figure>
+
+    <p class="sublede">대분류가 11개인데 그중 셋이 겹칩니다. <strong>「맥세이프」 612개</strong>, <strong>「맥세이프 제품」 530개</strong> — 이름이 거의 같은 대분류가 둘이고, <strong>530개는 완전히 같은 상품</strong>입니다(맥세이프 제품이 맥세이프 안에 통째로 들어 있음). 거기에 제품군 트리(폰 케이스·카드지갑·체인지톡)가 또 따로 있습니다.</p>
+
+    <p class="sublede"><strong>이게 왜 문제냐면</strong> — 필터가 분류를 읽기로 했으니 <strong>어느 트리를 읽을지 정해야 합니다.</strong> 둘 다 읽으면 같은 상품이 두 번 세어지고, 한쪽만 읽으면 19개처럼 반대쪽에만 있는 상품이 빠집니다. <strong>정리하지 않으면 어느 쪽을 골라도 숫자가 틀립니다.</strong></p>
+
+    <p class="sublede">아래 개편안은 <strong>제품군 트리 한 벌만 남기는</strong> 것을 전제로 합니다. 「맥세이프냐 일반이냐」·「어떤 디자인이냐」는 <strong>상품분류</strong>에 담습니다. 다행히 지금 분류가 이미 비슷한 모양입니다. 아래는 실제 분류를 그대로 옮긴 것이고, 숫자는 그 분류에 들어 있는 판매 중 상품 수입니다.</p>
 
     <p class="cap">케이스 — 지금</p>
     <div class="tree"><b>폰 케이스</b>
@@ -720,6 +755,12 @@ figure.chart svg{display:block;width:100%;height:auto}
 └ <u>접착형</u> ........... 2
 <span class="c">「맥세이프 → 3카드팩 스탠딩 → 톡 일체형」. 보내주신 구조와 거의 같습니다.
 바꿀 것은 「스탠딩」을 「세로 스탠드」로 부르는 것 정도입니다.</span></div>
+
+    <div class="warnbox">
+      <p class="wt">기존 「맥세이프」 대분류는 어떻게 하나요</p>
+      <p>개편안대로 가면 맥세이프가 <strong>폰 케이스 아래</strong>로 들어옵니다. 그러면 지금의 대분류 「맥세이프」(612개)·「맥세이프 제품」(530개)은 할 일이 없어집니다.</p>
+      <p><strong>다만 바로 지우면 안 됩니다.</strong> 분류마다 주소(URL)가 있고 검색에서 그 주소로 들어오는 손님이 있습니다. 지우면 그 유입이 끊깁니다. <strong>먼저 숨김으로 돌리고</strong>, 유입이 없는 것을 확인한 뒤 지우는 순서를 권합니다.</p>
+    </div>
 
     <div class="warnbox">
       <p class="wt">꼭 같이 해야 하는 일이 하나 있습니다</p>
@@ -955,7 +996,7 @@ figure.chart svg{display:block;width:100%;height:auto}
     <ol class="steps">
       <li><div><span class="st">옵션 엑셀 수정이 재고를 건드리는지 확인<span class="who">제일 먼저 · 30분</span></span><span class="sd">상품 한두 개로 기종을 하나 더해 보고 재고가 그대로인지 봅니다. 되돌릴 수 없는 작업이라 전체에 적용하기 전에 꼭 해야 합니다. <strong>옵션세트가 기존 상품에 자동 반영되는지는 이미 확인했습니다 — 안 됩니다(§7).</strong></span></div></li>
       <li><div><span class="st">§11의 여덟 가지를 정한다<span class="who">회의 · 1시간</span></span><span class="sd">특히 <strong>폴드톡·미러톡·구슬톡을 실제로 파는지</strong>, <strong>카드 장수를 누가 넣을지</strong>가 일정 전체를 좌우합니다.</span></div></li>
-      <li><div><span class="st">상품분류를 §6처럼 정리한다<span class="who">쏭스 · 1~2일</span></span><span class="sd">분류를 만들고 상품을 옮깁니다. 카페24 「상품 일괄수정」 엑셀로 한 번에 됩니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
+      <li><div><span class="st">중복된 분류부터 정리하고 §6처럼 바꾼다<span class="who">쏭스 · 2~3일</span></span><span class="sd">제품군 트리와 맥세이프 트리가 두 벌로 복제돼 있습니다. <strong>한 벌만 남기는 것이 먼저</strong>고, 그다음 §6 모양으로 바꿉니다. 카페24 「상품 일괄수정」 엑셀로 할 수 있고, <strong>엑셀로 넣은 분류는 기존 분류를 지우지 않고 더해집니다.</strong> 빼는 건 상품정보 일괄변경에서 따로 해야 합니다. <strong>큰 분류도 같이 체크</strong>하는 걸 잊지 마세요.</span></div></li>
       <li><div><span class="st">옵션세트 3개를 만들고 상품에 건다<span class="who">쏭스 · 2~3일</span></span><span class="sd">이 중 <strong>카드 장수 넣는 일이 손이 제일 많이 갑니다.</strong> 상품을 보고 판단해야 해서 자동으로 못 합니다.</span></div></li>
       <li><div><span class="st">필터가 읽을 데이터를 만든다<span class="who">노페일 · 1일</span></span><span class="sd">상품 엑셀과 분류 엑셀을 받아 처리합니다. 큰 분류 자동 채우기와 「맥세이프 → 카드케이스 → 도어」 같은 연결 관계를 여기서 만듭니다.</span></div></li>
       <li><div><span class="st">버튼마다 상품이 몇 개 나오는지 다시 센다<span class="who">같이 · 반나절</span></span><span class="sd">여전히 한두 개뿐인 버튼은 뺄지 상품을 더 넣을지 정합니다.</span></div></li>
@@ -973,24 +1014,27 @@ figure.chart svg{display:block;width:100%;height:auto}
         <div><p class="qt">폴드톡 · 미러톡 · 구슬톡을 실제로 파십니까?</p><p class="qd">셋 다 쇼핑몰 어디에도 없습니다. 대신 보내주신 목록에 없는 <strong>「버블톡」이 62개</strong> 있습니다. 앞으로 낼 제품이면 분류만 만들어 두면 되고, 지금 파는 제품이면 어떤 상품이 여기 해당하는지 알려 주세요.</p></div>
         <div class="qr"><b>지금</b>버튼만 만들어 둠</div></div>
       <div class="item"><span class="q">02</span>
+        <div><p class="qt">「맥세이프」 대분류를 없애도 될까요?</p><p class="qd">지금 대분류에 「맥세이프」(612개)와 「맥세이프 제품」(530개)이 제품군 분류와 따로 있고, 530개는 완전히 같은 상품입니다. 개편안대로 가면 할 일이 없어지는데, 분류 주소로 들어오는 검색 유입이 있을 수 있습니다. <strong>바로 지우지 말고 숨김으로 먼저 돌리는</strong> 것을 권합니다.</p></div>
+        <div class="qr"><b>제안</b>숨김 → 확인 → 삭제</div></div>
+      <div class="item"><span class="q">03</span>
         <div><p class="qt">카드 장수는 누가 넣습니까?</p><p class="qd">상품을 보고 판단해야 해서 자동으로 채울 방법이 없습니다. 케이스 529개 중 포켓·도어 종류가 대상입니다.</p></div>
         <div class="qr"><b>제안</b>쏭스 · 엑셀로 한 번에</div></div>
-      <div class="item"><span class="q">03</span>
+      <div class="item"><span class="q">04</span>
         <div><p class="qt">가격 필터를 없애는 게 맞습니까?</p><p class="qd">보내주신 세 장 어디에도 가격이 없습니다. 지금은 가격 필터를 뺐고, 정렬의 「낮은 가격순 / 높은 가격순」만 남겼습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
-      <div class="item"><span class="q">04</span>
+      <div class="item"><span class="q">05</span>
         <div><p class="qt">테마 필터도 없애는 게 맞습니까?</p><p class="qd">8월에 정하신 11가지(파스텔·비비드·모노톤 …)가 이번 자료에 안 나옵니다. 가격과 같이 뺐습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
-      <div class="item"><span class="q">05</span>
+      <div class="item"><span class="q">06</span>
         <div><p class="qt">「칼라」와 「세로 스탠드」, 어느 쪽 이름을 씁니까?</p><p class="qd">쇼핑몰에는 「컬러」(295개)·「스탠딩」(78개)으로 적혀 있습니다. 보내주신 이름을 쓰려면 상품을 고쳐야 하고, 쇼핑몰 이름을 쓰면 화면 글자만 바꾸면 됩니다.</p></div>
         <div class="qr"><b>지금</b>보내주신 이름</div></div>
-      <div class="item"><span class="q">06</span>
+      <div class="item"><span class="q">07</span>
         <div><p class="qt">버튼을 두 개 이상 같이 누를 수 있게 할까요?</p><p class="qd">「타입」과 「부착방식」만 하나씩 고르게 했습니다 — 맥세이프와 일반을 같이 고르면 그 아래 디자인 목록이 무엇이어야 할지 정할 수 없습니다. 나머지는 여러 개 고를 수 있습니다.</p></div>
         <div class="qr"><b>지금</b>두 개만 하나씩</div></div>
-      <div class="item"><span class="q">07</span>
+      <div class="item"><span class="q">08</span>
         <div><p class="qt">「360 링톡」은 빼는 게 맞습니까?</p><p class="qd">자료 5쪽의 지금 화면에는 있는데 바꿀 목록에는 없습니다. 일부러 빼신 것으로 보고 뺐습니다.</p></div>
         <div class="qr"><b>지금</b>뺌</div></div>
-      <div class="item"><span class="q">08</span>
+      <div class="item"><span class="q">09</span>
         <div><p class="qt">상품이 한두 개뿐인 버튼 7개를 어떻게 할까요?</p><p class="qd">실버범퍼 1 · 에폭시케이스 2 · 접착형 카드지갑 2 · 2카드슬롯 3 · 블랙범퍼 3 · 컬러 하드 4. 눌러도 빈 화면이 나오면 손님이 필터 전체를 안 믿게 됩니다.</p></div>
         <div class="qr"><b>제안</b>상품 늘린 뒤 보여주기</div></div>
     </div>
