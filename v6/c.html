@@ -2112,18 +2112,18 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 /* ── 원형 줄 (슬롯 0) ── */
 .cstrip{margin:0 0 24px}
-.cstrip__in{display:flex;gap:24px;overflow-x:auto;padding-bottom:4px;
+.cstrip__in{display:flex;gap:26px;overflow-x:auto;padding-bottom:4px;
   scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch}
 .cstrip__in::-webkit-scrollbar{display:none}
-.cs__i{flex:0 0 auto;width:108px;text-align:center;text-decoration:none;color:inherit}
+.cs__i{flex:0 0 auto;width:104px;text-align:center;text-decoration:none;color:inherit}
 .cs__ph{display:flex;align-items:center;justify-content:center;
-  width:96px;height:96px;margin:0 auto;border-radius:50%;overflow:hidden;
+  width:88px;height:88px;margin:0 auto;border-radius:50%;overflow:hidden;
   background:var(--ph);color:var(--phic);
   box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .18s}
 .cs__ph > img{width:100%;height:100%;object-fit:cover;display:block}
 /* 활성 링 — 레퍼런스는 파랑이다. 브랜드 포인트 컬러가 정해지면 그 색으로 */
 .cs__i.on .cs__ph{box-shadow:inset 0 0 0 2px var(--black)}
-.cs__t{display:block;margin-top:10px;font-size:12px;font-weight:700;
+.cs__t{display:block;margin-top:11px;font-size:12.5px;font-weight:700;
   line-height:1.35;color:var(--gray)}
 .cs__i.on .cs__t{color:var(--black)}
 @media(hover:hover) and (min-width:901px){
@@ -2188,9 +2188,9 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 @media(max-width:900px){
   .cstrip{margin:0 0 18px}
-  .cs__i{width:84px}
-  .cs__ph{width:74px;height:74px}
-  .cs__t{font-size:11px;margin-top:8px}
+  .cs__i{width:78px}
+  .cs__ph{width:68px;height:68px}
+  .cs__t{font-size:11.5px;margin-top:8px}
 }
 @media(max-width:767px){
   /* 레퍼런스 모바일 — 개수는 위로 빠지고 컨트롤이 2줄로 접힌다 */
@@ -2250,12 +2250,12 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 .cstrip{position:relative}
 /* 넘치지 않을 때는 오른쪽 끝에 붙는다 — 레퍼런스의 정렬이다 */
-.cstrip__in{justify-content:flex-end;gap:28px}
+.cstrip__in{justify-content:flex-end;gap:26px}
 .cstrip.hasmore .cstrip__in{justify-content:flex-start;
   mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
-.cs__i{width:118px}
-.cs__ph{width:108px;height:108px}
-.cs__t{font-size:12.5px;margin-top:12px}
+.cs__i{width:104px}
+.cs__ph{width:88px;height:88px}
+.cs__t{font-size:12.5px;margin-top:11px}
 
 .cs__next{display:none;position:absolute;right:-6px;top:44px;z-index:2;
   width:30px;height:30px;align-items:center;justify-content:center;
@@ -2267,10 +2267,11 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 @media(max-width:900px){
   .pgtop__l{max-width:none;padding-top:0}
-  .cstrip__in{justify-content:flex-start;gap:20px}
-  .cs__i{width:92px}
-  .cs__ph{width:82px;height:82px}
-  .cs__t{font-size:11.5px;margin-top:9px}
+  /* 메인 원형과 같은 값 (.circwrap gap:16px / .circ__i 78 / .circ__ph 68) */
+  .cstrip__in{justify-content:flex-start;gap:16px}
+  .cs__i{width:78px}
+  .cs__ph{width:68px;height:68px}
+  .cs__t{font-size:11.5px;margin-top:8px}
   .cs__next{display:none !important}
   .wsec.tight:has(.pgtop) + .wsec:has(.ctlbar){padding-top:18px}
 }
@@ -2357,6 +2358,32 @@ body.navopen #r-brand .wnav{background:var(--white)}
 @media(prefers-reduced-motion:reduce){.locktip{transition:none}}
 @media(max-width:767px){
   .locktip{left:0;right:0;max-width:none}
+}
+
+
+/* ══ v6 원형 줄 크기를 메인과 맞춤 — 폰(≤640) ════════════════════
+   메인은 폰에서 '4.2개가 보이는' 유동 폭이라 원이 100px 까지 커진다.
+   리스트만 고정 68px 로 두면 같은 화면에서 눈에 띄게 작다.
+   메인(.circ__i)과 같은 규칙을 그대로 쓴다. */
+@media(max-width:640px){
+  .cs__i{width:auto;flex:0 0 calc((100% - 64px)/4.2)}
+  .cs__ph{width:100%;max-width:100px;height:auto;aspect-ratio:1/1}
+}
+@media(max-width:560px){
+  .cs__t{font-size:11px}
+}
+
+/* ══ 카테고리 그리드 섹션 — 모바일 위 여백을 카드 간격과 같게 ═══════
+   간격이 폭에 따라 10px / 8px 로 달라진다. 숫자를 섹션과 그리드 두
+   군데에 적어 두면 한쪽만 바뀌므로, 섹션에 한 번 선언하고 그리드가
+   받아 쓴다. 데스크탑(≥901)은 지금처럼 0 이다. */
+.wsec[aria-label="카테고리"]{--cbgap:10px}
+@media(max-width:767px){
+  .wsec[aria-label="카테고리"]{--cbgap:8px}
+}
+.catban{gap:var(--cbgap,10px)}
+@media(max-width:900px){
+  .wsec[aria-label="카테고리"]{padding-top:var(--cbgap)}
 }
 
 /* ── SEO 패널 (DB 오버레이에서만) ── */
