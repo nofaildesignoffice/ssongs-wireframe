@@ -2235,10 +2235,11 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .pgtop__r .cstrip{margin:0}
 .pgtop .pghead{margin:0}
 
-/* .cstrip__in 이 overflow-x:auto 라 세로로도 잘린다 —
-   원 바깥에 그린 활성 링(4px)이 깎이지 않도록 안쪽 여백을 주고
-   바깥 마진으로 되돌린다. */
-.cstrip__in{padding:6px 2px;margin:-6px -2px}
+/* .cstrip__in 이 overflow-x:auto 라 자기 패딩 상자 끝에서 자른다 —
+   가로 세로 양쪽 다. 원 바깥에 그린 활성 링이 4px 이므로 네 변에
+   그보다 넉넉한 여백을 주고 바깥 마진으로 되돌린다. 자리는 그대로다.
+   좌우를 2px 로 뒀더니 첫 원의 링 왼쪽이 2px 깎여 보였다. */
+.cstrip__in{padding:6px;margin:-6px}
 
 @media(max-width:900px){
   /* 모바일은 세로로 쌓고 화면 끝까지 흘린다.
