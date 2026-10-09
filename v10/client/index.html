@@ -2689,7 +2689,14 @@ body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
     var r = document.querySelector(".route:not([hidden])");
     var w = r && r.querySelector(".pgtop__r");
     if(!w) return;
-    var on = window.innerWidth <= 900 && window.scrollY > 40;
+    var h = w.__h || w.offsetHeight;
+    // 푸터가 화면 아래쪽에 들어오면 뗀다 — 안 그러면 푸터를 보는 동안
+    // 원형 줄이 그 위에 떠 있는다. 폰에서 끝까지 내린 뒤 더 당기면
+    // (고무줄) iOS 가 fixed 요소를 같이 밀어서 더 어색해진다.
+    // 섹션 끝으로 재면 페이지 번호 아래 여백 때문에 끝까지 안 떨어진다.
+    var ft = r.querySelector(".wfoot");
+    var room = ft ? ft.getBoundingClientRect().top > innerHeight * 0.6 : true;
+    var on = window.innerWidth <= 900 && window.scrollY > 40 && room;
     if(!on){
       w.classList.remove("stuck");
       w.style.minHeight = "";
