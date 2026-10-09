@@ -2546,6 +2546,28 @@ body.navopen #r-brand .wnav{background:var(--white)}
   }
 }
 
+
+/* ══ 맨 위로 ══════════════════════════════════════════════════════
+   라우트 밖 body 직속이라 페이지를 옮겨도 하나만 산다.
+   바텀시트(120)보다 아래에 둬서 시트가 덮는다. */
+.gotop{position:fixed;right:24px;bottom:24px;z-index:90;
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:1px solid var(--border);background:var(--white);color:var(--ink);
+  box-shadow:0 4px 16px rgba(0,0,0,.12);cursor:pointer;padding:0;
+  opacity:0;visibility:hidden;transform:translateY(8px);
+  transition:opacity .2s,visibility .2s,transform .2s,background .18s}
+.gotop.on{opacity:1;visibility:visible;transform:none}
+@media(hover:hover) and (min-width:901px){
+  .gotop:hover{background:var(--ink);color:var(--white);border-color:var(--ink)}
+}
+/* 시트가 열리면 그 위를 덮으므로 비킨다 */
+body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
+@media(max-width:560px){
+  .gotop{right:15px;bottom:15px;width:44px;height:44px}
+}
+@media(prefers-reduced-motion:reduce){.gotop{transition:none}}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -2663,6 +2685,24 @@ body.srcon .srclegend{display:block}
   }
   window.addEventListener("scroll", navScroll, { passive: true });
   navScroll();
+  // 맨 위로 — 전역 버튼 하나. 라우트 밖 body 직속이라 페이지를 옮겨도 남는다.
+  var gotop = document.createElement("button");
+  gotop.className = "gotop";
+  gotop.type = "button";
+  gotop.setAttribute("aria-label", "맨 위로");
+  gotop.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"'
+    + ' stroke="currentColor" stroke-width="2" stroke-linecap="round"'
+    + ' stroke-linejoin="round" aria-hidden="true">'
+    + '<path d="m18 15-6-6-6 6"></path></svg>';
+  document.body.appendChild(gotop);
+  gotop.addEventListener("click", function(){
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+  // 0 에서만 숨기면 한 칸만 굴려도 튀어나와 깜빡인다 — 200px 을 둔다
+  function gotopSync(){ gotop.classList.toggle("on", window.scrollY > 200); }
+  window.addEventListener("scroll", gotopSync, { passive: true });
+  window.addEventListener("hashchange", function(){ setTimeout(gotopSync, 0); });
+  gotopSync();
   // 스크롤 방향 — 올리는 중이면 GNB 1행(햄버거·로고·아이콘)을 도로 보여 준다.
   // 문턱 4px: 손떨림으로 방향이 번갈아 뒤집히면 1행이 떨린다.
   var lastY = window.scrollY;
