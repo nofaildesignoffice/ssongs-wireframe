@@ -2593,6 +2593,12 @@ body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
   .pgtop__r{margin-bottom:30px}
 }
 
+
+/* ══ v10 원형 줄 — 끝까지 민 줄은 페이드를 끈다 ═══════════════════
+   .cstrip.hasmore 는 오른쪽 44px 을 흐리게 덮어 "더 있다" 를 알린다.
+   끝까지 밀면 더 있을 게 없는데도 마지막 원이 흐리게 남는다. 끈다. */
+.cstrip.hasmore.atend .cstrip__in{mask-image:none;-webkit-mask-image:none}
+
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -3815,6 +3821,54 @@ body.srcon .srclegend{display:block}
     box.scrollTo({left: next, behavior: "smooth"});
   });
   window.addEventListener("resize", measure);
+  // 잘린 원을 보이는 자리로 — 오른쪽 44px 은 페이드가 덮으므로 그 바깥에 세운다
+  var CSFADE = 44, CSPAD = 6;
+  function csEnd(s){
+    if(!s || !s.querySelector) return;
+    var box = s.querySelector(".cstrip__in"); if(!box) return;
+    var end = box.scrollLeft >= box.scrollWidth - box.clientWidth - 2;
+    if(end) s.classList.add("atend"); else s.classList.remove("atend");
+  }
+  function csFit(a, smooth){
+    if(!a) return;
+    var box = a.parentNode, s = box && box.parentNode;
+    if(!box || box.scrollWidth - box.clientWidth < 2) return;
+    var ar = a.getBoundingClientRect(), br = box.getBoundingClientRect();
+    var want = box.scrollLeft, right = br.right - CSFADE;
+    // 필요한 만큼만 민다 — 다 보이는 원은 눌러도 줄이 안 움직인다
+    if(ar.right > right) want += ar.right - right;
+    else if(ar.left < br.left + CSPAD) want -= br.left + CSPAD - ar.left;
+    var max = box.scrollWidth - box.clientWidth;
+    if(want < 0) want = 0;
+    if(want > max) want = max;
+    if(Math.abs(want - box.scrollLeft) < 1){ csEnd(s); return; }
+    box.scrollTo({ left: want, behavior: smooth ? "smooth" : "auto" });
+    setTimeout(function(){ csEnd(s); }, smooth ? 420 : 0);
+  }
+  function csFitActive(){
+    document.querySelectorAll(".cstrip").forEach(function(s){
+      if(s.closest("[hidden]")) return;
+      csFit(s.querySelector(".cs__i.on"), false);
+      csEnd(s);
+    });
+  }
+  document.addEventListener("click", function(ev){
+    var a = ev.target.closest && ev.target.closest(".cs__i");
+    if(a) setTimeout(function(){ csFit(a, true); }, 0);
+  });
+  // 손으로 민 줄도 끝에 닿으면 페이드를 끈다. scroll 은 안 올라오므로 캡처로 듣는다.
+  document.addEventListener("scroll", function(ev){
+    var box = ev.target;
+    if(box && box.classList && box.classList.contains("cstrip__in")) csEnd(box.parentNode);
+  }, true);
+  // 누르면 페이지가 바뀐다 — 도착한 쪽 줄에서 활성 원을 같은 규칙으로 끌어온다
+  window.addEventListener("hashchange", function(){
+    setTimeout(csFitActive, 140);
+    setTimeout(csFitActive, 420);
+  });
+  setTimeout(csFitActive, 160);
+  setTimeout(csFitActive, 560);
+  window.addEventListener("load", function(){ setTimeout(csFitActive, 60); });
   // 라우터가 언제 숨김을 푸는지에 기대지 않는다 — 몇 번 더 잰다
   function soon(){
     requestAnimationFrame(measure);
