@@ -2606,6 +2606,26 @@ body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
    끝까지 밀면 더 있을 게 없는데도 마지막 원이 흐리게 남는다. 끈다. */
 .cstrip.hasmore.atend .cstrip__in{mask-image:none;-webkit-mask-image:none}
 
+
+/* ══ v10 페이지 전환 ══════════════════════════════════════════════
+   라우트는 hidden 토글이라 전환이 한 프레임에 끝났다. 나가는 쪽은
+   transition 으로 지우고, 들어오는 쪽은 animation 으로 띄운다.
+   둘을 나눈 건 들어오는 라우트가 display:none 에서 나와 transition
+   이 안 걸리기 때문이다.
+   opacity 만 쓴다 — transform 을 주면 .route 가 containing block 이
+   되어 안의 position:fixed(.tbar · .wnav · stuck 원형줄)가 어긋난다. */
+.route{transition:opacity .13s linear}
+body.rtleave .route:not([hidden]){opacity:0;pointer-events:none}
+/* 「맨 위로」는 body 직속이라 라우트와 같이 지워지지 않는다. 비는 화면
+   위에 혼자 떠 있으면 어색하니 같이 빼 준다. */
+body.rtleave .gotop{opacity:0;transform:translateY(8px)}
+@keyframes rtfade{from{opacity:0}to{opacity:1}}
+.route.rtin{animation:rtfade .26s cubic-bezier(.33,.7,.37,1) both}
+@media(prefers-reduced-motion:reduce){
+  .route{transition:none}
+  .route.rtin{animation:none}
+}
+
 .route[hidden]{display:none}
 @media(prefers-reduced-motion:no-preference){
   .wdrop{transition:opacity .13s,transform .13s,visibility .13s}
@@ -3082,7 +3102,47 @@ body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
     ev.stopPropagation(); return;
     }
     }, true);
-    window.addEventListener("hashchange", render);
+    window.addEventListener("hashchange", function(){ render(); rtEnter(); });
+    // 페이지 전환 — 나갈 때 지우고 들어올 때 띄운다
+    var RTOUT = 130, rtTimer = 0;
+    function rtStill(){
+      return !!(window.matchMedia
+                && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+    }
+    function rtEnter(){
+      document.body.classList.remove("rtleave");
+      if(rtStill()) return;
+      var el = document.querySelector(".route:not([hidden])");
+      if(!el) return;
+      el.classList.remove("rtin");
+      void el.offsetWidth;            // 리플로우 — 같은 라우트를 다시 열어도 다시 돈다
+      el.classList.add("rtin");
+    }
+    // 끝나면 클래스를 뗀다. 자손의 animationend 도 올라오므로 이름으로 가린다.
+    document.addEventListener("animationend", function(ev){
+      if(ev.animationName !== "rtfade") return;
+      if(ev.target && ev.target.classList) ev.target.classList.remove("rtin");
+    }, true);
+    // 누른 순간 먼저 지운다. 해시는 다 지워진 뒤에 바꾼다 — 그래야
+    // hashchange 를 듣는 일곱 군데가 전부 새 페이지를 보고 동기화한다.
+    document.addEventListener("click", function(ev){
+      if(ev.defaultPrevented || ev.button || ev.metaKey || ev.ctrlKey
+         || ev.shiftKey || ev.altKey) return;
+      if(!ev.target || !ev.target.closest) return;
+      var a = ev.target.closest('a[href^="#/"]');
+      if(!a) return;
+      var to = a.getAttribute("href");
+      if(to === (location.hash || "#/main")) return;   // 지금 페이지면 안 끼어든다
+      if(rtStill()) return;
+      ev.preventDefault();
+      document.body.classList.add("rtleave");
+      clearTimeout(rtTimer);
+      rtTimer = setTimeout(function(){
+        location.hash = to.slice(1);
+        // hashchange 가 안 오는 경우를 대비한 보험 — 화면이 비어 있을 수는 없다
+        setTimeout(function(){ document.body.classList.remove("rtleave"); }, 400);
+      }, RTOUT);
+    });
     document.addEventListener("click", function(ev){
       var t=ev.target;
       if(!t.closest) return;
