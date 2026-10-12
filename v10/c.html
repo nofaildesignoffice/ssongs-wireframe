@@ -2174,16 +2174,20 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 /* ── 적용된 필터 토큰 줄 ──
    필터를 접은 순간 무엇이 걸려 있는지 화면에서 사라진다. 이 줄이 그걸 대신한다. */
-.ftokens{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.ftokens{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:14px}
 .ftokens[hidden]{display:none}
-.ftok{display:inline-flex;align-items:center;gap:7px;height:32px;
-  padding:0 9px 0 12px;cursor:pointer;
+/* [2026-10-12] 칩을 한 단 줄였다 — 높이 32→26 · 글자 12.5→11.5.
+   조건을 되짚는 보조 줄이라 본문 칩(.chip)보다 작아야 위계가 맞는다. */
+.ftok{display:inline-flex;align-items:center;gap:5px;height:26px;
+  padding:0 7px 0 10px;cursor:pointer;
   border:1px solid var(--black);border-radius:999px;background:transparent;
-  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--black)}
+  font-family:inherit;font-size:11.5px;font-weight:600;color:var(--black)}
 .ftok em{font-style:normal;font-weight:600;color:var(--gray)}
 .ftok .x{line-height:0;opacity:.55}
+/* ✕ 는 마크업에 width/height="12" 로 박혀 있다 — 칩이 줄었으니 같이 줄인다 */
+.ftok .x svg{width:10px;height:10px}
 .ftokall{border:0;background:transparent;padding:0 4px;cursor:pointer;
-  font-family:inherit;font-size:12.5px;font-weight:600;color:var(--gray);
+  font-family:inherit;font-size:11.5px;font-weight:600;color:var(--gray);
   text-decoration:underline;text-underline-offset:3px}
 
 @media(max-width:900px){
@@ -2628,25 +2632,6 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .route.rtin{animation:none}
 }
 
-
-/* ══ v10 고른 필터 줄 상단 고정 ═══════════════════════════════════
-   어떤 조건으로 좁혔는지가 스크롤 내려도 보여야 한다. 위에 붙어 있는
-   것들(띠배너 · GNB · 고정된 원형 줄)의 높이가 상황마다 달라 top 을
-   CSS 로 적을 수 없다 — JS 가 재서 --stick 으로 넘긴다.
-   패딩은 배경이 본문을 덮을 만큼 준다. 기존 margin-top:14px 를 5+9 로
-   나눠 담아 쉬는 자리는 그대로다. */
-.ftokens{position:sticky;top:var(--stick,0px);z-index:38;
-  background:var(--white);margin-top:5px;padding:9px 0;
-  box-shadow:0 1px 0 var(--border)}
-@media(max-width:900px){
-  /* 두 줄이 되면 위에 붙은 것들과 합쳐 화면을 너무 먹는다. 칩 바들과
-     같이 한 줄에 두고 좌우로 흘린다. */
-  .ftokens{flex-wrap:nowrap;overflow-x:auto;padding:8px 0;
-    scrollbar-width:none;-ms-overflow-style:none}
-  .ftokens::-webkit-scrollbar{display:none}
-  .ftok,.ftokall{flex:none}
-}
-
 /* ── SEO 패널 (DB 오버레이에서만) ── */
 .seopanel{display:none;border:1px solid #0E5C57;border-radius:var(--r2);
   margin:0 32px 24px;padding:14px 16px;background:#F2F8F7}
@@ -2795,44 +2780,6 @@ body.srcon .srclegend{display:block}
   }
   window.addEventListener("scroll", navDir, { passive: true });
   navDir();
-  // 고른 필터 줄(.ftokens)을 붙일 높이 — 위에 붙어 있는 것들의 아래끝.
-  // 띠배너는 내리면 올라가고, 모바일 GNB 는 방향에 따라 45 와 105 를
-  // 오가고, 목록 페이지는 원형 줄이 그 아래 또 붙는다. 재는 수밖에 없다.
-  var stLast = -1;
-  function stickTop(){
-    var r = document.querySelector(".route:not([hidden])");
-    if(!r) return;
-    var y = 0, nav = r.querySelector(".wnav");
-    if(nav){ var a = nav.getBoundingClientRect(); if(a.bottom > y) y = a.bottom; }
-    // 원형 줄은 실제로 fixed 일 때만 센다 — .stuck 은 데스크탑에도 붙지만
-    // fixed 규칙은 모바일에만 있다. 흐름에 남은 좌표를 쓰면 엉뚱해진다.
-    var cs = r.querySelector(".pgtop__r.stuck > .cstrip");
-    if(cs && getComputedStyle(cs).position === "fixed"){
-      var b = cs.getBoundingClientRect(); if(b.bottom > y) y = b.bottom;
-    }
-    if(!(y > 0)) y = 0;
-    y = Math.round(y);
-    // 값이 같으면 쓰지 않는다. :root 의 커스텀 속성을 건드리면 문서 전체
-    // 스타일이 무효화된다 — 매 프레임 쓰면 스크롤이 무거워진다.
-    if(y === stLast) return;
-    stLast = y;
-    document.documentElement.style.setProperty("--stick", y + "px");
-  }
-  // 스크롤 핸들러에서 레이아웃을 읽으면 스크롤이 메인 스레드에 묶인다.
-  // 매 프레임 한 번으로 묶는다.
-  var stTick = 0;
-  function stickSoon(){
-    if(stTick) return;
-    stTick = requestAnimationFrame(function(){ stTick = 0; stickTop(); });
-  }
-  window.addEventListener("scroll", stickSoon, { passive: true });
-  window.addEventListener("resize", stickSoon);
-  window.addEventListener("hashchange", function(){
-    setTimeout(stickTop, 160);
-    setTimeout(stickTop, 460);
-  });
-  stickTop();
-  window.addEventListener("load", stickTop);
   // 원형 줄을 메뉴 줄 아래 붙인다. fixed 라 흐름에서 빠지므로
   // 부모에 원래 높이를 남겨 내용이 튀지 않게 한다. 높이는 폭에 따라
   // 달라지므로(≤640 은 원이 유동) 안 붙어 있을 때 재서 기억한다.
