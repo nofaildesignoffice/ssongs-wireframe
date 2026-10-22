@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>쏭스 필터 개편 ② — 10/16 안으로 진행 시 추가금액</title>
+<title>쏭스 필터 개편 ② — 확정 구조 기준 추가금액</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -541,10 +541,10 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
 <header class="doc">
   <p class="kicker">노페일디자인 → (주)쏭스디자인 · 과업 변경 통지 겸 추가 견적</p>
   <h1>필터 개편 ② — 10월 2일 뒤에<br>더해진 작업과 추가금액</h1>
-  <p class="dek">10월 2일에 드린 명세서는 <strong>옵션세트 3개 · 엑셀 세 칸</strong>을 전제로 뽑은 금액입니다. 10월 16일에 주신 「쏭스스토어 메뉴정리」 안으로 진행하면 <strong>그때 없던 작업이 더 생깁니다.</strong> <strong>무엇이 얼마나 늘었고, 그래서 공수가 얼마나 더 들고, 추가금액이 얼마인지</strong>를 정리했습니다.</p>
+  <p class="dek">10월 2일에 드린 명세서는 <strong>옵션세트 3개 · 엑셀 세 칸</strong>을 전제로 뽑은 금액입니다. 그 뒤 10월 16일 안을 화면으로 옮기고, <strong>10월 23일에 분류 구조를 확정</strong>했습니다. 확정안은 <strong>구매 옵션을 건드리지 않고 상품분류 4단만 쓰는 방식</strong>입니다. <strong>무엇이 얼마나 늘었고, 그래서 공수가 얼마나 더 들고, 추가금액이 얼마인지</strong>를 다시 계산했습니다.</p>
   <div class="meta">
-    <span><b>작성</b> 2026-10-22</span>
-    <span><b>기준</b> 「쏭스스토어 메뉴정리_1016」 6장</span>
+    <span><b>작성</b> 2026-10-23</span>
+    <span><b>기준</b> 분류체계 확정안 <span class="mut">10/23</span></span>
     <span><b>기존 명세서</b> <a href="../plan/">10/02 전달분</a></span>
     <span><b>화면</b> <a href="../v12/client/">와이어프레임 v12</a></span>
   </div>
@@ -554,44 +554,53 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
   <div class="sn">§ 1</div>
   <div class="sbody">
     <h2>10월 2일 뒤에 무엇이 늘었나</h2>
-    <p class="sublede">10/02 명세서의 금액은 아래 왼쪽 칸만큼의 일을 전제로 나온 값입니다. 오른쪽은 10/16 안을 화면으로 옮겨 <strong>직접 센 수</strong>입니다. <strong>그 차이만큼이 새로 생긴 일</strong>입니다.</p>
+    <p class="sublede">10/02 명세서의 금액은 아래 왼쪽 칸만큼의 일을 전제로 나온 값입니다. 오른쪽은 <strong>10/23 확정안을 파일에서 직접 센 수</strong>입니다. <strong>그 차이만큼이 새로 생긴 일</strong>입니다.</p>
 
     <table class="wt2">
-      <thead><tr><th>전제</th><th>10/02 전달분</th><th>10/16 안으로 진행하면 <span class="mut">실측</span></th></tr></thead>
+      <thead><tr><th>전제</th><th>10/02 전달분</th><th>10/23 확정안 <span class="mut">실측</span></th></tr></thead>
       <tbody>
-        <tr><td><b>옵션세트</b></td>
-            <td>3개 <span class="mut">케이스 기능 · 카드지갑 형태 · 체인지톡 디자인</span></td>
-            <td><strong>35개</strong> — 분류마다 2~4단으로 갈립니다</td></tr>
+        <tr><td><b>담는 방식</b></td>
+            <td>옵션세트에 담기 <span class="mut">구매 옵션을 고침</span></td>
+            <td><strong>상품분류 4단 트리</strong> — 구매 옵션은 건드리지 않습니다</td></tr>
+        <tr><td><b>만들 구조</b></td>
+            <td>옵션세트 3개 <span class="mut">케이스 기능 · 카드지갑 형태 · 체인지톡 디자인</span></td>
+            <td><strong>분류 230개</strong> <span class="mut">뼈대 52개(고정) + 값 178개(담당자)</span></td></tr>
         <tr><td><b>엑셀 칸</b></td>
             <td>세 칸을 1,938줄</td>
-            <td>상품 1개당 <strong>평균 3.66칸</strong></td></tr>
+            <td>상품 1개당 <strong>평균 4.8칸</strong> <span class="mut">다기종 상품까지 세면 8.8칸 · 최대 45칸</span></td></tr>
         <tr><td><b>필터 값</b></td>
             <td>35개 <span class="mut">읽을 수 있음 22 / 담을 곳 없음 13</span></td>
-            <td><strong>109개</strong> <span class="mut">읽을 수 있음 68 / <strong>담을 곳 없음 41</strong></span></td></tr>
+            <td><strong>178개</strong> <span class="mut">읽을 수 있음 137 / <strong>담을 곳 없음 41</strong></span></td></tr>
         <tr><td><b>상품분류</b></td>
             <td>신규 약 10개 · 숨김 2개</td>
-            <td>거기에 <strong>신규 대분류 2개</strong>(360 링홀더 · 키링)와 그 하위가 더해집니다</td></tr>
+            <td>신규 대분류 2개(360 링홀더 · 키링) · <strong>기존 분류 3개와 경로가 겹칩니다</strong></td></tr>
         <tr><td><b>제품군</b></td>
             <td>6대분류</td>
-            <td><strong>8대분류</strong></td></tr>
+            <td><strong>9대분류</strong></td></tr>
+        <tr><td><b>상품 수</b></td>
+            <td>1,938개</td>
+            <td><strong>2,146개</strong> <span class="mut">진열 Y 1,938 / N 208</span></td></tr>
+        <tr><td><b>재고 초기화</b></td>
+            <td>위험 있음 <span class="mut">옵션 개수가 바뀌므로</span></td>
+            <td><strong>없어집니다</strong> — 구매 옵션을 안 건드립니다</td></tr>
       </tbody>
     </table>
 
-    <p class="sublede" style="margin-top:20px">분류별로 보면 이렇습니다. <strong>「사람이 판단해야 하는 축」</strong>은 그 값이 지금 상품분류에도 상품옵션에도 없어서, 변환 도구가 채울 수 없고 상품을 하나씩 열어 봐야 하는 자리입니다.</p>
+    <p class="sublede" style="margin-top:20px">분류별로 보면 이렇습니다. <strong>「담을 곳 없는 값」</strong>은 지금 상품분류에도 상품옵션에도 없어서 변환 도구가 채울 수 없고, 상품을 하나씩 열어 봐야 하는 자리입니다.</p>
 
     <table class="wt2">
-      <thead><tr><th>분류</th><th class="n">축</th><th class="n">값</th><th class="n">담을 곳 없는 값</th><th class="n">판단 필요 축</th><th class="n">상품</th></tr></thead>
+      <thead><tr><th>분류</th><th class="n">축 <span class="mut">depth3</span></th><th class="n">값 <span class="mut">depth4</span></th><th class="n">담을 곳 없는 값</th><th class="n">자동으로 0% 나온 축</th><th class="n">상품</th></tr></thead>
       <tbody>
-        <tr><td><b>케이스</b></td><td class="n">5</td><td class="n">21</td><td class="n">8</td><td class="n">4</td><td class="n">523</td></tr>
-        <tr><td><b>카드지갑</b></td><td class="n">7</td><td class="n">31</td><td class="n">8</td><td class="n">3</td><td class="n">373</td></tr>
-        <tr><td><b>체인지톡</b></td><td class="n">9</td><td class="n">24</td><td class="n">7</td><td class="n">4</td><td class="n">819</td></tr>
-        <tr><td><b>이어폰케이스</b></td><td class="n">5</td><td class="n">30</td><td class="n">10</td><td class="n">4</td><td class="n">153</td></tr>
-        <tr><td><b>360 링홀더</b> <span class="mut">신규</span></td><td class="n">7</td><td class="n">19</td><td class="n">13</td><td class="n">7</td><td class="n">0</td></tr>
-        <tr><td><b>키링</b> <span class="mut">신규</span></td><td class="n">2</td><td class="n">3</td><td class="n">1</td><td class="n">1</td><td class="n">0</td></tr>
-        <tr class="sum"><td>합</td><td class="n">35</td><td class="n">128</td><td class="n">47</td><td class="n">23</td><td class="n">1,868</td></tr>
+        <tr><td><b>케이스</b></td><td class="n">7</td><td class="n">80</td><td class="n">8</td><td class="n">1</td><td class="n">711</td></tr>
+        <tr><td><b>카드지갑</b></td><td class="n">5</td><td class="n">27</td><td class="n">5</td><td class="n">2</td><td class="n">384</td></tr>
+        <tr><td><b>체인지톡</b></td><td class="n">8</td><td class="n">22</td><td class="n">6</td><td class="n">1</td><td class="n">904</td></tr>
+        <tr><td><b>이어폰케이스</b></td><td class="n">4</td><td class="n">30</td><td class="n">10</td><td class="n">1</td><td class="n">156</td></tr>
+        <tr><td><b>360 링홀더</b> <span class="mut">신규</span></td><td class="n">4</td><td class="n">16</td><td class="n">11</td><td class="n">4</td><td class="n">0</td></tr>
+        <tr><td><b>키링</b> <span class="mut">신규</span></td><td class="n">2</td><td class="n">3</td><td class="n">1</td><td class="n">2</td><td class="n">0</td></tr>
+        <tr class="sum"><td>합</td><td class="n">30</td><td class="n">178</td><td class="n">41</td><td class="n">11</td><td class="n">2,155</td></tr>
       </tbody>
     </table>
-    <p class="note">값 128은 줄마다 센 수이고, 같은 축의 같은 값을 한 번만 세면 109개입니다. <strong>상품이 있는 네 분류 전부가 「판단 필요 축」을 갖고 있습니다.</strong> 1,938개 중 사실상 전부가 최소 한 칸은 사람이 보고 골라야 합니다.</p>
+    <p class="note">값 178개 중 <strong>41개(23.0%)가 담을 곳이 없습니다.</strong> 상품 합 2,155는 한 상품이 여러 분류에 걸쳐 전체 2,146과 다릅니다. 자동 도출이 <strong>0%</strong>로 나온 축은 케이스 「바디」, 체인지톡 「세대」, 이어폰케이스 「종류」, 카드지갑 「기본·에폭시 디자인」입니다 — <strong>여기가 사람이 전부 보고 채워야 하는 자리</strong>입니다. 어느 축에도 안 걸리는 상품이 <strong>115개(5.36%)</strong> 있습니다.</p>
   </div>
 </section>
 
@@ -599,26 +608,46 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
   <div class="sn">§ 2</div>
   <div class="sbody">
     <h2>① 신규 DB 구축 — 더해진 작업과 추가금액</h2>
-    <p class="sublede">10/02 명세서의 <strong>2영업일 · 38만 5천원</strong>은 그대로 두고, <strong>그 위에 더해지는 일만</strong> 적었습니다. 아래가 전부 10/02 명세서에도 계약서에도 없던 작업입니다. <strong>맨 오른쪽 「추가금액」이 실제로 더 청구하는 금액</strong>이고, 서비스로 드리는 항목은 그 칸에 <strong>「서비스 제공」</strong>이라고 적었습니다.</p>
+    <p class="sublede">10/02 명세서의 <strong>2영업일 · 38만 5천원</strong>은 그대로 두고, <strong>그 위에 더해지는 일만</strong> 적었습니다. <strong>맨 오른쪽 「추가금액」이 실제로 더 청구하는 금액</strong>이고, 서비스로 드리는 항목은 그 칸에 <strong>「서비스 제공」</strong>이라고 적었습니다.</p>
 
     <table class="wt2">
       <thead><tr><th>하는 일</th><th>내용</th><th class="n">공수</th><th class="n">금액</th><th class="n">추가금액</th></tr></thead>
       <tbody>
-        <tr><td><b>옵션세트 등록</b></td>
-            <td>3개로 보고 뽑은 금액이었는데 <strong>35개</strong>가 됩니다. <strong>32개가 새로 생깁니다</strong></td>
-            <td class="n">4영업일</td>
-            <td class="n">96만원</td>
-            <td class="n"><b>96만원</b></td></tr>
-        <tr><td><b>엑셀 양식 · 변환 도구</b></td>
-            <td>세 칸으로 설계해 둔 양식을 축 35개 · 평균 3.66칸에 맞춰 <strong>다시 설계</strong>합니다</td>
+        <tr><td><b>분류 뼈대 52개 생성</b></td>
+            <td>대분류 9 · 중분류 13 · 소분류 30. <strong>한 번 심으면 고정</strong>되는 구조입니다. 생성 즉시 분류 ID 기준표를 만들어 둡니다</td>
             <td class="n">1영업일</td>
             <td class="n">19만 2,500원</td>
             <td class="n"><b>19만 2,500원</b></td></tr>
-        <tr><td><b>샘플 검증</b></td>
-            <td>분류 3종 → <strong>6종</strong>으로 확대 <span class="mut">위에 포함</span></td>
-            <td class="n"><span class="mut">포함</span></td>
-            <td class="n"><span class="mut">포함</span></td>
-            <td class="n"><span class="mut">—</span></td></tr>
+        <tr><td><b>값 178개 등록</b></td>
+            <td>상세분류 178개를 CSV에서 일괄 생성 · 업로드 · 검수합니다. 손으로 178번 누르지 않습니다</td>
+            <td class="n">1영업일</td>
+            <td class="n">19만 2,500원</td>
+            <td class="n"><b>19만 2,500원</b></td></tr>
+        <tr><td><b>카페24 선확인 시험</b></td>
+            <td>상품당 귀속 개수 상한 · 엑셀 칸 제한 · 숨김 분류 활용 · 성능 등 <strong>6항목</strong>. <strong>공식 문서에 없어 직접 시험해야</strong> 합니다</td>
+            <td class="n">1영업일</td>
+            <td class="n">19만 2,500원</td>
+            <td class="n"><b>19만 2,500원</b></td></tr>
+        <tr><td><b>엑셀 양식 · 변환 도구</b></td>
+            <td>세 칸으로 설계해 둔 양식을 <strong>축 30개 · 상품당 평균 4.8칸</strong>에 맞춰 다시 설계합니다</td>
+            <td class="n">2영업일</td>
+            <td class="n">38만 5천원</td>
+            <td class="n"><b>38만 5천원</b></td></tr>
+        <tr><td><b>분류 → 화면 갱신 파이프라인</b><br><span class="mut">10/02 명세서에 없던 항목</span></td>
+            <td><strong>지금 구조로는 담당자가 분류를 고쳐도 쇼핑몰 필터가 안 바뀝니다.</strong> 값과 종속 조건이 화면 코드에 박혀 있기 때문입니다. 이걸 잇는 작업입니다 — 이게 없으면 「담당자가 직접 관리」가 성립하지 않습니다</td>
+            <td class="n">3영업일</td>
+            <td class="n">57만 7,500원</td>
+            <td class="n"><b>57만 7,500원</b></td></tr>
+        <tr><td><b>전체 상품 인덱스 발행</b><br><span class="mut">10/02 명세서에 없던 항목</span></td>
+            <td>목록이 <strong>한 번에 12개씩</strong> 끊겨 나옵니다. 지금 화면에 있는 카드만 걸러서는 <strong>다음 장 상품이 누락</strong>됩니다</td>
+            <td class="n">2영업일</td>
+            <td class="n">38만 5천원</td>
+            <td class="n"><b>38만 5천원</b></td></tr>
+        <tr><td><b>뼈대 검증 스크립트</b><br><span class="mut">10/02 명세서에 없던 항목</span></td>
+            <td>대·중·소분류가 바뀌었는지 주기적으로 검출합니다. 카페24 권한이 메뉴 단위라 <strong>막을 수가 없어 탐지로 대신</strong>합니다</td>
+            <td class="n">1영업일</td>
+            <td class="n">19만 2,500원</td>
+            <td class="n"><b>19만 2,500원</b></td></tr>
         <tr><td><b>신규 분류 2종</b><br><span class="mut">360 링홀더 · 키링</span></td>
             <td>분류 생성과 연결, 상단 메뉴 · 드롭다운 · 모바일 메뉴 · 분류 원형 줄 반영, 목록과 상세 노출</td>
             <td class="n">2영업일</td>
@@ -636,15 +665,15 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
             <td class="n"><b>서비스 제공</b></td></tr>
         <tr class="sum"><td>합계</td>
             <td>서비스로 드리는 173만 2,500원(9영업일)은 청구하지 않습니다</td>
-            <td class="n">14영업일</td>
-            <td class="n">288만 5천원</td>
-            <td class="n">115만 2,500원</td></tr>
+            <td class="n">20영업일</td>
+            <td class="n">385만원</td>
+            <td class="n">211만 7,500원</td></tr>
       </tbody>
     </table>
 
-    <p class="cost standalone">① 추가금액 <b>115만 2,500원</b><span>부가세 포함 · 10/02 명세서의 38만 5천원에 더해지는 금액입니다 · 더해진 일 288만 5천원 중 173만 2,500원은 서비스로 드려 청구하지 않습니다</span></p>
+    <p class="cost standalone">① 추가금액 <b>211만 7,500원</b><span>부가세 포함 · 10/02 명세서의 38만 5천원에 더해지는 금액입니다 · 더해진 일 385만원 중 173만 2,500원은 서비스로 드려 청구하지 않습니다</span></p>
 
-    <p class="note"><b>옵션세트 단가의 근거</b> — 계약 제9조 나항은 <strong>「DB 추가비용 1~3만원/개」</strong>로 정해져 있습니다. 새로 등록하는 32개는 문언 그대로 <strong>「추가할 DB」</strong>라 이 단가를 적용했습니다(개당 3만원 × 32개 = 96만원). 기존 분류를 옮기는 일과 달리 해석의 여지가 없는 부분입니다.</p>
+    <p class="note"><b>10/16 판에서 96만원이 빠지고 192만 5천원이 들어왔습니다</b> — 10/16 판은 옵션세트 32개를 새로 만드는 전제여서 계약 제9조 나항 「DB 추가비용 1~3만원/개」로 <strong>96만원</strong>을 잡았습니다. 확정안은 <strong>구매 옵션을 건드리지 않으므로 이 항목이 통째로 빠집니다.</strong> 대신 분류 구축(2영업일) · 선확인 시험(1영업일) · 갱신 파이프라인(3영업일) · 전체 인덱스(2영업일) · 검증 스크립트(1영업일)가 들어왔습니다. <strong>그 대신 재고 초기화 위험이 사라집니다</strong> — 1,936개 조합형 상품의 품목 번호와 재고를 다시 맞출 일이 없어집니다.</p>
 
     <p class="note"><b>공수 단가</b> — 10/02 명세서 ①의 <strong>2영업일 · 38만 5천원</strong>에서 나온 <strong>1영업일 19만 2,500원</strong>을 그대로 썼습니다. 임의로 정한 단가가 아니라 이미 드린 금액에서 역산한 값입니다. 값 대표 이미지는 <strong>쏭스에서 주시기로</strong> 하여 표에 넣지 않았습니다.</p>
   </div>
@@ -653,31 +682,32 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
 <section>
   <div class="sn">§ 3</div>
   <div class="sbody">
-    <h2>② 상품 1,938개에 반영 — 늘어난 작업량과 추가금액</h2>
-    <p class="sublede">10/02 명세서는 <strong>상품 1개당 세 칸</strong>을 전제로 한 금액이었습니다. 10/16 안으로 하면 세 칸이 아니라 <strong>평균 3.66칸</strong>이 되고, 그중 <strong>약 1.38칸은 변환 도구가 채울 수 없습니다.</strong> 담을 곳 없는 값이 109개 중 41개(37.6%)이기 때문입니다.</p>
+    <h2>② 상품 2,146개에 반영 — 늘어난 작업량과 추가금액</h2>
+    <p class="sublede">10/02 명세서는 <strong>상품 1개당 세 칸</strong>을 전제로 한 금액이었습니다. 확정안으로 하면 세 칸이 아니라 <strong>평균 4.8칸</strong>이 되고, 그중 <strong>약 1.1칸은 변환 도구가 채울 수 없습니다.</strong> 담을 곳 없는 값이 178개 중 41개(23.0%)이기 때문입니다.</p>
 
     <div class="vs">
       <div class="way">
         <p class="wk">방법 A</p>
         <p class="wn">쏭스에서 관리자 화면으로</p>
-        <div class="big"><em>172~215</em><span>시간</span></div>
-        <p class="cal">하루 3시간씩 <strong>58~72일</strong></p>
-        <p class="cost">예상 인건비 <b>206만 ~ 258만원</b><span>시급 12,000원 기준 · 10/02 전달분은 96만~120만원이었습니다</span></p>
+        <div class="big"><em>163~204</em><span>시간</span></div>
+        <p class="cal">하루 3시간씩 <strong>54~68일</strong></p>
+        <p class="cost">예상 인건비 <b>196만 ~ 244만원</b><span>시급 12,000원 기준 · 10/02 전달분은 96만~120만원이었습니다</span></p>
         <ul>
-          <li>변환 가능한 칸 2.28칸 × 0.67분 = <strong>1.53분</strong></li>
-          <li>판단해야 하는 칸 1.38칸 × 2분 = <strong>2.76분</strong></li>
-          <li>건당 약 <strong>4.3분</strong> × 1,938개 = 139시간이 하한입니다</li>
-          <li>10/02 전달분과 같은 여유율(1.24~1.55배)을 적용해 172~215시간으로 봅니다</li>
+          <li>변환 가능한 칸 3.7칸 × 0.5분 = <strong>1.85분</strong></li>
+          <li>판단해야 하는 칸 1.1칸 × 2분 = <strong>2.22분</strong></li>
+          <li>건당 약 <strong>4.07분</strong> × 1,938개 = 131시간이 하한입니다</li>
+          <li>10/02 전달분과 같은 여유율(1.24~1.55배)을 적용해 163~204시간으로 봅니다</li>
+          <li>칸당 0.5분은 <strong>분류 선택기에서 골라 넣는</strong> 기준입니다. 타이핑이 아니라 고르는 작업이라 10/16 판(0.67분)보다 빠릅니다</li>
         </ul>
       </div>
       <div class="way">
         <p class="wk">방법 B</p>
         <p class="wn">노페일에서 엑셀 변환</p>
-        <div class="big"><em>6.5</em><span>영업일</span></div>
-        <p class="cost">비용 <b>142만원</b><span>부가세 포함 · 10/02 전달분 66만원 + <strong>추가금액 76만원</strong></span></p>
+        <div class="big"><em>7</em><span>영업일</span></div>
+        <p class="cost">비용 <b>154만원</b><span>부가세 포함 · 10/02 전달분 66만원 + <strong>추가금액 88만원</strong></span></p>
         <ul>
-          <li>작업량이 <strong>2.15배</strong>라 3영업일로 드린 일이 6.5영업일이 됩니다</li>
-          <li>같은 규칙을 1,938줄에 적용하는 것은 전과 같습니다</li>
+          <li>축이 3개에서 <strong>30개</strong>로 늘어 변환 규칙 수가 <strong>2.3배</strong>가 됩니다</li>
+          <li>같은 규칙을 2,146줄에 적용하는 것은 전과 같습니다</li>
           <li><strong>다만 규칙이 있는 값에 한합니다</strong> — 아래 상자를 봐 주세요</li>
         </ul>
       </div>
@@ -685,14 +715,16 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
 
     <div class="warnbox">
       <p class="wt">추가금액과 별개의 문제 — 41개 값은 규칙이 없습니다</p>
-      <p>10/02 전달분의 방법 B는 <strong>「같은 규칙을 1,938줄 모두에 적용」</strong>하는 일이었습니다. 그런데 10/16 안의 값 109개 중 <strong>41개는 지금 상품분류에도 상품옵션에도 근거가 없습니다.</strong> 투명범퍼 · 투명쿠션 · 아이언 · 1세대 / 2세대 · 폴드톡 · 구슬톡 · 1단 / 2단 홀더 · 양면자석 같은 값입니다. 읽을 자리가 없으니 변환으로는 채울 수 없습니다.</p>
-      <p>그래서 <strong>이 41개는 방법 B의 범위 밖</strong>입니다. 쏭스에서 상품별 값을 먼저 정해 주시거나, 저희가 1,938개를 하나씩 보고 지정하는 <strong>별도 작업으로 나눠야</strong> 합니다. 비용이 아니라 <strong>선행 조건</strong>이라 먼저 말씀드립니다.</p>
-      <p class="dim">어떤 값에 근거가 없는지는 와이어프레임 v12에서 바로 보실 수 있습니다. 화면 오른쪽 아래 <strong>「DB 연결 보기」</strong>를 누르면 값마다 라벨이 뜨고, <strong>빨간 라벨이 곧 근거가 없는 값</strong>입니다.</p>
+      <p>10/02 전달분의 방법 B는 <strong>「같은 규칙을 모든 줄에 적용」</strong>하는 일이었습니다. 그런데 확정안의 값 178개 중 <strong>41개는 지금 상품분류에도 상품옵션에도 근거가 없습니다.</strong> 투명범퍼 · 투명쿠션 · 아이언 · 1세대 / 2세대 · 폴드톡 · 구슬톡 · 1단 / 2단 홀더 · 양면자석 같은 값입니다. 읽을 자리가 없으니 변환으로는 채울 수 없습니다.</p>
+      <p>그래서 <strong>이 41개는 방법 B의 범위 밖</strong>입니다. 쏭스에서 상품별 값을 먼저 정해 주시거나, 저희가 2,146개를 하나씩 보고 지정하는 <strong>별도 작업으로 나눠야</strong> 합니다. 비용이 아니라 <strong>선행 조건</strong>이라 먼저 말씀드립니다.</p>
+      <p class="dim">독립 검증에서 축별 자동 도출률도 함께 쟀습니다. 케이스 「바디」 0% · 체인지톡 「세대」 0% · 이어폰케이스 「종류」 0% · 카드지갑 「기본·에폭시 디자인」 0%입니다. 케이스 「기기」는 99.9%, 카드지갑 「종류」는 100%로 잘 읽힙니다 — <strong>잘 읽히는 축과 전혀 안 읽히는 축이 뚜렷하게 갈립니다.</strong></p>
     </div>
 
     <div class="warnbox">
-      <p class="wt">재고 초기화 — 10/02 전달분과 같지만 폭이 커집니다</p>
-      <p>카페24 설명서에 <strong>「옵션 개수 변경 시 품목 번호와 재고 수량이 초기화」</strong>된다고 적혀 있고, 1,938개 중 <strong>1,936개가 조합형</strong>입니다. 10/02 전달분은 옵션세트 3개를 넣는 전제였는데 10/16 안은 <strong>35개</strong>라 바뀌는 폭이 훨씬 큽니다. 작업 시점과 재고 담당은 여전히 쏭스에서 정해 주셔야 합니다.</p>
+      <p class="wt">새로 알려 드리는 한계 — 세대와 모델의 짝이 흐려집니다</p>
+      <p>분류는 「세대 › 16」과 「모델 › 프로」를 <strong>각각 따로</strong> 답니다. 그래서 어떤 상품이 <strong>16 프로 전용인지, 16 일반과 15 프로를 함께 지원하는지</strong> 분류만으로는 구분되지 않습니다. 여러 기종을 지원하는 상품에서 생기는 일입니다.</p>
+      <p>이 영향에 노출되는 상품이 <strong>666개(전체의 31.0%)</strong>입니다. 다만 이건 <strong>노출된 수</strong>이고 실제로 틀린 결과가 나오는 수는 이보다 적습니다 — 여러 세대를 지원하면서 모든 모델을 함께 지원하는 상품은 틀리지 않습니다.</p>
+      <p class="dim">근본적으로 고치려면 기기 · 세대 · 모델의 <strong>가능한 짝</strong>을 따로 보관하는 작업이 필요하고, 이건 위 표에 넣지 않은 별도 개발입니다. 그대로 두실지 추가하실지 §4 06번에서 여쭙습니다.</p>
     </div>
   </div>
 </section>
@@ -704,7 +736,7 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
 
     <div class="agenda">
       <div class="item"><span class="q">01</span>
-        <div><p class="qt">상품 1,938개 반영을 내부 인원으로 하실지, 저희 쪽에 맡겨 주실지?</p><p class="qd">내부로 하시면 172~215시간(인건비 206만~258만원), 저희가 하면 6.5영업일 · 142만원(부가세 포함)입니다. <strong>어느 쪽이든 ①의 추가금액(115만 2,500원)은 먼저 필요합니다.</strong></p></div>
+        <div><p class="qt">상품 2,146개 반영을 내부 인원으로 하실지, 저희 쪽에 맡겨 주실지?</p><p class="qd">내부로 하시면 163~204시간(인건비 196만~244만원), 저희가 하면 7영업일 · 154만원(부가세 포함)입니다. <strong>어느 쪽이든 ①의 추가금액(211만 7,500원)은 먼저 필요합니다.</strong></p></div>
         <div class="qr"><b>필요</b>선택</div></div>
 
       <div class="item"><span class="q">02</span>
@@ -716,23 +748,23 @@ h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0
         <div class="qr"><b>필요</b>값 확정</div></div>
 
       <div class="item"><span class="q">04</span>
-        <div><p class="qt">재고를 어떻게 지킬까요?</p><p class="qd">작업 시점과 재고를 다시 맞출 담당을 정해야 합니다. 옵션세트가 3개에서 35개가 되어 10/02 판보다 바뀌는 폭이 큽니다.</p></div>
-        <div class="qr"><b>필요</b>시점 · 담당</div></div>
+        <div><p class="qt">대·중·소분류를 「못 고치게」 막는 것은 카페24에서 안 됩니다. 어떻게 할까요?</p><p class="qd">카페24 부운영자 권한이 <strong>메뉴 단위</strong>입니다. 「분류 관리」를 열어 드리면 대·중·소분류도 함께 열리고, 막으면 담당자가 고쳐야 할 상세분류까지 막힙니다. <strong>탐지(위 표에 넣은 검증 스크립트 1영업일)로 갈지, 뼈대가 잠긴 별도 등록 화면을 추가로 만들지</strong> 정해 주셔야 합니다. 후자는 위 표에 없는 별도 개발입니다.</p></div>
+        <div class="qr"><b>필요</b>방식 선택</div></div>
 
       <div class="item"><span class="q">05</span>
-        <div><p class="qt">대분류 「맥세이프」를 숨겨도 됩니까?</p><p class="qd">612개 · 530개 두 개가 제품군 분류와 겹칩니다. 검색 유입이 있을 수 있어 지우기 전에 먼저 숨기는 방법도 있습니다. <span class="mut">10/02 판에서 이어지는 항목입니다.</span></p></div>
+        <div><p class="qt">기존 분류와 겹치는 3개를 재사용할까요, 새로 만들까요?</p><p class="qd">카드지갑 · 체인지톡 · 이어폰케이스가 <strong>지금 운영 중인 분류와 경로까지 똑같습니다.</strong> 재사용할 분류 번호를 먼저 정하지 않고 새로 만들면 같은 이름의 대분류가 두 개가 됩니다. 함께 — 대분류 「맥세이프」(612개 · 530개)를 숨겨도 되는지도 여쭙습니다. <span class="mut">10/02 판에서 이어지는 항목입니다.</span></p></div>
         <div class="qr"><b>필요</b>선택</div></div>
 
       <div class="item"><span class="q">06</span>
-        <div><p class="qt">상품등록 화면의 「고를 거리」를 저희가 만들어 둬도 됩니까?</p><p class="qd">옵션세트가 3개에서 <strong>35개</strong>로 늘었습니다. 미리 만들어 두면 등록하실 때 타이핑하던 자리가 고르는 자리로 바뀝니다. 운영하시는 분의 작업 방식이 달라져 먼저 여쭙습니다. <span class="mut">10/02 판에서 이어지는 항목입니다.</span></p></div>
+        <div><p class="qt">세대와 모델의 짝이 흐려지는 것(상품 666개 · 31.0%)을 그대로 둘까요?</p><p class="qd">§3 두 번째 상자의 내용입니다. 그대로 두면 「아이폰 16 + 프로」로 걸렀을 때 실제로는 16 일반과 15 프로를 지원하는 상품이 섞여 나올 수 있습니다. 고치려면 기기 · 세대 · 모델의 가능한 짝을 따로 보관하는 <strong>별도 개발</strong>이 필요합니다. <strong>먼저 그대로 열고 반응을 본 뒤 결정하셔도 됩니다.</strong></p></div>
         <div class="qr"><b>대기</b>컨펌 후 진행</div></div>
     </div>
   </div>
 </section>
 
 <footer class="doc">
-  <p>노페일디자인 × (주)쏭스디자인 · 2026-10-22</p>
-  <p class="dim">10월 2일 명세서는 <a href="../plan/">그대로 유효</a>합니다. 이 문서는 그 뒤에 더해진 일만 「쏭스스토어 메뉴정리_1016」 6장을 화면으로 옮겨 직접 센 수를 근거로 산정한 것입니다. 상품 수는 2026-08-20 기준 판매 중(진열 Y) 1,938개입니다.</p>
+  <p>노페일디자인 × (주)쏭스디자인 · 2026-10-23</p>
+  <p class="dim">10월 2일 명세서는 <a href="../plan/">그대로 유효</a>합니다. 이 문서는 그 뒤에 더해진 일만 <strong>10/23 확정한 분류 구조</strong>를 파일에서 직접 센 수를 근거로 산정한 것입니다. 상품 수는 2026-08-20 기준 전체 2,146개(판매 중 1,938 · 미진열 208)입니다. 확정 구조와 그 한계는 독립 검증을 한 번 거쳐 반영했습니다.</p>
 </footer>
 
 </div>
