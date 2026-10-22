@@ -1,0 +1,779 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>쇭스 필터 개편 ② — 10/16 안 반영 재산정</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#FBFAF7;
+  --surface:#FFFFFF;
+  --sunk:#F3F1EC;
+  --ink:#17181A;
+  --ink2:#53575C;
+  --ink3:#84888D;
+  --rule:#DFDCD4;
+  --rule2:#EDEAE3;
+  --ok:#2E6B52;
+  --ok-bg:#E4EFE9;
+  --block:#9C3B2A;
+  --block-bg:#F6E6E1;
+  --warn:#856313;
+  --warn-bg:#F4ECD8;
+  --sel:#17181A;
+
+  --f-sans:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-mono:"IBM Plex Mono","IBM Plex Sans KR",ui-monospace,monospace;
+
+  --w:min(100% - 40px, 1080px);
+  --prose:66ch;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141517;
+    --surface:#1B1D20;
+    --sunk:#202225;
+    --ink:#E9E7E2;
+    --ink2:#A9ACB0;
+    --ink3:#787C81;
+    --rule:#33363A;
+    --rule2:#26292C;
+    --ok:#7FC3A4;
+    --ok-bg:#1D2E27;
+    --block:#E09079;
+    --block-bg:#33221E;
+    --warn:#D9B45E;
+    --warn-bg:#302819;
+    --sel:#E9E7E2;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141517;
+  --surface:#1B1D20;
+  --sunk:#202225;
+  --ink:#E9E7E2;
+  --ink2:#A9ACB0;
+  --ink3:#787C81;
+  --rule:#33363A;
+  --rule2:#26292C;
+  --ok:#7FC3A4;
+  --ok-bg:#1D2E27;
+  --block:#E09079;
+  --block-bg:#33221E;
+  --warn:#D9B45E;
+  --warn-bg:#302819;
+  --sel:#E9E7E2;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--f-sans);font-size:15.5px;line-height:1.72;
+  font-weight:400;letter-spacing:-.005em;
+  -webkit-font-smoothing:antialiased;
+  word-break:keep-all;
+}
+.wrap{width:var(--w);margin:0 auto}
+p{margin:0 0 1em;max-width:var(--prose)}
+p:last-child{margin-bottom:0}
+strong{font-weight:600}
+em{font-style:normal;background:var(--sunk);padding:0 .28em;border-radius:2px}
+a{color:inherit}
+
+/* ── 머리말 ─────────────────────────────────────────── */
+header.doc{
+  border-bottom:1.5px solid var(--ink);
+  padding:56px 0 22px;margin-bottom:0;
+}
+.kicker{
+  font-family:var(--f-mono);font-size:11.5px;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);
+  margin:0 0 18px;
+}
+h1{
+  font-size:clamp(30px,5.2vw,46px);line-height:1.14;font-weight:600;
+  letter-spacing:-.03em;margin:0 0 14px;text-wrap:balance;max-width:16ch;
+}
+.dek{font-size:17px;color:var(--ink2);max-width:56ch;margin:0 0 30px;line-height:1.6}
+.meta{
+  display:flex;flex-wrap:wrap;gap:0 34px;
+  font-family:var(--f-mono);font-size:11.5px;color:var(--ink3);
+  letter-spacing:.01em;
+}
+.meta b{font-weight:500;color:var(--ink2)}
+
+/* ── 요약 ──────────────────────────────────────────── */
+.summary{padding:34px 0 42px;border-bottom:1px solid var(--rule)}
+.finds{display:grid;gap:14px;margin:0 0 34px;max-width:var(--prose)}
+.find{display:grid;grid-template-columns:22px 1fr;gap:14px;align-items:baseline}
+.find .n{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;
+}
+.find p{margin:0}
+
+.figs{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));
+  border-top:1px solid var(--rule);
+}
+.fig{
+  padding:18px 20px 16px 0;border-right:1px solid var(--rule2);
+}
+.fig:last-child{border-right:0}
+.fig .v{
+  font-family:var(--f-mono);font-size:27px;font-weight:500;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums;display:block;
+}
+.fig .v small{font-size:14px;font-weight:400;color:var(--ink3);margin-left:2px}
+.fig .k{display:block;margin-top:9px;font-size:12.5px;color:var(--ink2);line-height:1.45}
+
+/* ── 섹션 ──────────────────────────────────────────── */
+section{
+  padding:52px 0;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:70px minmax(0,1fr);gap:0 24px;
+}
+section > .sn{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  letter-spacing:.04em;padding-top:7px;
+}
+section > .sbody{min-width:0}
+h2{
+  font-size:25px;font-weight:600;letter-spacing:-.025em;line-height:1.28;
+  margin:0 0 8px;text-wrap:balance;
+}
+.sublede{color:var(--ink2);font-size:15px;margin:0 0 30px;max-width:58ch}
+h3{
+  font-size:13px;font-weight:600;letter-spacing:.02em;margin:38px 0 12px;
+  color:var(--ink);
+}
+h3:first-of-type{margin-top:0}
+h3 .hn{font-family:var(--f-mono);color:var(--ink3);margin-right:8px;font-weight:500}
+
+/* ── 표 ────────────────────────────────────────────── */
+.tw{overflow-x:auto;margin:0 0 8px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+caption{
+  caption-side:bottom;text-align:left;font-size:12px;color:var(--ink3);
+  padding-top:10px;line-height:1.55;
+}
+th,td{
+  text-align:left;padding:9px 14px 9px 0;
+  border-bottom:1px solid var(--rule2);vertical-align:top;
+}
+th{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);
+  border-bottom:1px solid var(--rule);padding-bottom:8px;white-space:nowrap;
+}
+td.num,th.num{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;padding-right:20px}
+tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+td code,.mono{font-family:var(--f-mono);font-size:12.5px}
+.dim{color:var(--ink3)}
+
+/* ── 태그 ──────────────────────────────────────────── */
+.tag{
+  display:inline-block;font-family:var(--f-mono);font-size:10.5px;font-weight:500;
+  letter-spacing:.06em;padding:2px 7px;border-radius:2px;white-space:nowrap;
+  line-height:1.5;
+}
+.t-ok{background:var(--ok-bg);color:var(--ok)}
+.t-block{background:var(--block-bg);color:var(--block)}
+.t-warn{background:var(--warn-bg);color:var(--warn)}
+.t-flat{background:var(--sunk);color:var(--ink2)}
+
+/* ── 분류 트리 ──────────────────────────────────────── */
+.tree{
+  font-family:var(--f-mono);font-size:12.5px;line-height:1.95;
+  background:var(--surface);border:1px solid var(--rule);
+  padding:20px 22px;overflow-x:auto;white-space:pre;
+  color:var(--ink2);
+}
+.tree b{font-weight:500;color:var(--ink)}
+.tree .k-prod{color:var(--ink);font-weight:500}
+.tree .k-axis{color:var(--ok);font-weight:500}
+.tree .k-promo{color:var(--warn);font-weight:500}
+.tree .c{color:var(--ink3)}
+.legend{
+  display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:14px;
+  font-size:12px;color:var(--ink2);
+}
+.legend span{display:inline-flex;align-items:center;gap:7px}
+.legend i{width:9px;height:9px;border-radius:1px;display:block;flex:none}
+
+/* ── 막대 ──────────────────────────────────────────── */
+.bars{display:grid;gap:9px;margin:0 0 8px;max-width:640px}
+.bar{display:grid;grid-template-columns:132px 1fr 62px;gap:12px;align-items:center}
+.bar .bl{font-size:13px;color:var(--ink2)}
+.bar .bt{height:16px;background:var(--sunk);border-radius:1px;overflow:hidden}
+.bar .bf{height:100%;background:var(--ink);border-radius:1px}
+.bar .bf.alt{background:var(--ink3)}
+.bar .bv{
+  font-family:var(--f-mono);font-size:12.5px;text-align:right;
+  font-variant-numeric:tabular-nums;color:var(--ink2);
+}
+
+/* ── 층 다이어그램 ───────────────────────────────────── */
+.stack{display:grid;gap:0;border:1px solid var(--rule);background:var(--surface);margin:0 0 10px}
+.layer{
+  display:grid;grid-template-columns:88px minmax(0,1fr) 168px;gap:20px;
+  padding:18px 20px;border-bottom:1px solid var(--rule2);align-items:start;
+}
+.layer:last-child{border-bottom:0}
+.layer .ln{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);padding-top:3px;
+}
+.layer .lt{font-weight:600;font-size:14.5px;margin:0 0 3px}
+.layer .ld{font-size:13px;color:var(--ink2);margin:0;line-height:1.6;max-width:46ch}
+.layer .lo{font-size:12.5px;line-height:1.6}
+.layer .lo b{display:block;font-weight:600;font-size:12.5px;margin-bottom:2px}
+.layer.hot{background:var(--sunk)}
+
+/* ── 지금 / 바꾼 뒤 대비 ─────────────────────────────── */
+.compare{
+  display:grid;grid-template-columns:1fr 1fr;
+  border:1px solid var(--rule);background:var(--surface);margin:0 0 10px;
+}
+.cc{padding:20px 22px;min-width:0}
+.cc + .cc{border-left:1px solid var(--rule)}
+.cc .ct{
+  font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;margin:0 0 16px;
+}
+.cc.now .ct{color:var(--block)}
+.cc.aft .ct{color:var(--ok)}
+.cs{
+  display:grid;grid-template-columns:15px minmax(0,1fr);gap:0 11px;
+  margin:0 0 13px;font-size:13.2px;line-height:1.6;
+}
+.cs:last-of-type{margin-bottom:0}
+.cs .m{font-family:var(--f-mono);font-size:12px;line-height:1.75}
+.cs.no .m{color:var(--block)}
+.cs.yes .m{color:var(--ok)}
+.cs .tx{margin:0}
+.cs .why{
+  grid-column:2;font-size:12.5px;color:var(--ink3);line-height:1.58;
+  border-left:2px solid var(--rule2);padding-left:11px;margin-top:6px;
+}
+.cc .tot{
+  margin-top:17px;padding-top:12px;border-top:1px solid var(--rule2);
+  font-family:var(--f-mono);font-size:11.5px;color:var(--ink2);letter-spacing:.02em;
+}
+@media (max-width:760px){
+  .compare{grid-template-columns:1fr}
+  .cc + .cc{border-left:0;border-top:1px solid var(--rule)}
+}
+
+/* ── 절차 ──────────────────────────────────────────── */
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s;display:grid;gap:0}
+ol.steps li{
+  counter-increment:s;display:grid;grid-template-columns:34px 1fr;gap:16px;
+  padding:15px 0;border-bottom:1px solid var(--rule2);align-items:baseline;
+}
+ol.steps li:last-child{border-bottom:0}
+ol.steps li::before{
+  content:counter(s);font-family:var(--f-mono);font-size:12px;font-weight:600;
+  color:var(--ink3);font-variant-numeric:tabular-nums;
+}
+ol.steps .st{font-weight:600;display:block;margin-bottom:2px;font-size:14.5px}
+ol.steps .sd{font-size:13.5px;color:var(--ink2);line-height:1.62;max-width:56ch}
+ol.steps .who{
+  font-family:var(--f-mono);font-size:10.5px;letter-spacing:.06em;
+  color:var(--ink3);margin-left:8px;
+}
+
+/* ── 안건 ──────────────────────────────────────────── */
+.agenda{display:grid;gap:0;border-top:1px solid var(--rule)}
+.item{
+  display:grid;grid-template-columns:34px minmax(0,1fr) 150px;gap:0 18px;
+  padding:20px 0;border-bottom:1px solid var(--rule2);align-items:start;
+}
+.item .q{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  font-variant-numeric:tabular-nums;padding-top:2px;
+}
+.item .qt{font-weight:600;font-size:15px;margin:0 0 5px;line-height:1.45}
+.item .qd{font-size:13.5px;color:var(--ink2);margin:0;line-height:1.62;max-width:52ch}
+.item .qr{font-size:12.5px;color:var(--ink2);line-height:1.55;padding-top:2px}
+.item .qr b{
+  display:block;font-family:var(--f-mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink3);font-weight:500;margin-bottom:4px;
+}
+
+/* ── 용어 ──────────────────────────────────────────── */
+.gloss{
+  padding:38px 0 46px;border-bottom:1px solid var(--rule);
+  display:grid;grid-template-columns:70px minmax(0,1fr);gap:0 24px;
+}
+.gloss > .sn{
+  font-family:var(--f-mono);font-size:12px;font-weight:600;color:var(--ink3);
+  letter-spacing:.04em;padding-top:5px;
+}
+.gloss .ghead{font-size:19px;font-weight:600;letter-spacing:-.02em;margin:0 0 4px}
+.gloss .gsub{font-size:13.5px;color:var(--ink2);margin:0 0 22px;max-width:56ch}
+.gterms{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));
+  gap:0 40px;margin:0;
+}
+.gt{padding:12px 0;border-bottom:1px solid var(--rule2);scroll-margin-top:24px}
+.gt dt{font-weight:600;font-size:13.5px;margin:0 0 3px;letter-spacing:-.01em}
+.gt dt .en{font-family:var(--f-mono);font-size:11px;color:var(--ink3);font-weight:400;margin-left:6px}
+.gt dd{margin:0;font-size:13px;color:var(--ink2);line-height:1.62}
+.gt dd code{font-family:var(--f-mono);font-size:11.5px}
+.gt:target{background:var(--sunk);box-shadow:0 0 0 9px var(--sunk);border-radius:1px}
+
+/* 본문 안 용어 표시 — 눌러서 풀이로 이동 */
+a.gl{
+  text-decoration:none;color:inherit;
+  border-bottom:1px dotted var(--ink3);cursor:help;
+}
+a.gl:hover{border-bottom-color:var(--ink);border-bottom-style:solid}
+.tree a.gl{border-bottom-color:currentColor;opacity:.95}
+
+/* ── 주석 ──────────────────────────────────────────── */
+.note{
+  border-left:2px solid var(--rule);padding:2px 0 2px 18px;margin:24px 0;
+  font-size:13.5px;color:var(--ink2);max-width:58ch;line-height:1.68;
+}
+.note b{color:var(--ink);font-weight:600}
+
+footer.doc{
+  padding:38px 0 64px;font-family:var(--f-mono);font-size:11.5px;
+  color:var(--ink3);line-height:1.9;
+}
+footer.doc b{font-weight:500;color:var(--ink2)}
+
+@media (max-width:760px){
+  body{font-size:15px}
+  section{grid-template-columns:1fr;gap:0}
+  section > .sn{padding:0 0 10px}
+  .layer{grid-template-columns:1fr;gap:8px}
+  .layer .ln{padding-top:0}
+  .item{grid-template-columns:26px 1fr;gap:0 14px}
+  .item .qr{grid-column:2;padding-top:12px}
+  .bar{grid-template-columns:104px 1fr 54px;gap:9px}
+  .fig{border-right:0;border-bottom:1px solid var(--rule2);padding-right:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+:focus-visible{outline:2px solid var(--sel);outline-offset:2px}
+
+/* ── 이 문서에서 새로 쓰는 것 ── */
+p.cap{margin:34px 0 10px;font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--ink3)}
+.sbody h3{margin:40px 0 6px;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.tree u{text-decoration:none;border-bottom:1px solid currentColor;padding-bottom:1px}
+.tree b{font-weight:600}
+table td[rowspan]{vertical-align:top}
+td.easy{color:var(--ok);font-weight:600}
+td.xrow{color:var(--block);background:var(--block-bg);font-weight:600}
+
+/* 화면 사진 */
+figure.shot{margin:18px 0 0;padding:0}
+figure.shot img{display:block;width:100%;height:auto;border:1px solid var(--rule2);
+  border-radius:6px;background:var(--surface)}
+figure.shot figcaption{margin-top:8px;font-size:12.5px;color:var(--ink2);line-height:1.6}
+figure.shot figcaption b{font-weight:600;color:var(--ink)}
+
+/* 3단 비교 */
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}
+.steps3 figure.shot{margin:0}
+.stepn{display:inline-flex;align-items:center;justify-content:center;
+  width:19px;height:19px;border-radius:50%;background:var(--ink);color:var(--paper);
+  font-size:11px;font-weight:700;margin-right:6px;vertical-align:1px}
+@media(max-width:760px){ .steps3{grid-template-columns:1fr} }
+
+/* 그림 */
+figure.chart{margin:22px 0 0;padding:0}
+figure.chart svg{display:block;width:100%;height:auto}
+
+/* 값 목록 알약 */
+.chips-ok{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.pill{display:inline-flex;align-items:baseline;gap:7px;padding:7px 13px;
+  border-radius:999px;font-size:13px;font-weight:600;border:1px solid}
+.pill i{font-style:normal;font-weight:500;font-size:11.5px;opacity:.75}
+.pill .sub{font-size:10.5px;font-weight:500;opacity:.6;margin-left:-3px}
+.pill.ok{color:var(--ok);background:var(--ok-bg);border-color:var(--ok)}
+.pill.warn{color:var(--warn);background:var(--warn-bg);border-color:var(--warn)}
+
+/* 주의 상자 */
+.warnbox{margin-top:26px;padding:20px 22px;border-radius:8px;
+  background:var(--warn-bg);border:1px solid var(--warn)}
+.warnbox .wt{margin:0 0 8px;font-size:14.5px;font-weight:700;color:var(--warn)}
+.warnbox p{margin:0 0 8px;font-size:14px;line-height:1.75;color:var(--ink)}
+.warnbox p:last-child{margin-bottom:0}
+
+/* ══ 필터 값 매핑표 ══════════════════════════════════════════ */
+.maptbl table{font-size:12.5px}
+.maptbl td,.maptbl th{padding:7px 10px;vertical-align:top;line-height:1.5}
+.maptbl tr.grp td{background:var(--sunk);font-size:11px;font-weight:600;
+  letter-spacing:.03em;color:var(--ink3);padding:7px 10px}
+.maptbl td.w{white-space:nowrap;font-weight:600}
+.maptbl td.m{white-space:nowrap;font-family:var(--f-mono);font-size:11px;color:var(--ink3)}
+.maptbl .ok2{color:var(--ok)}
+.maptbl .fix{color:var(--block);font-weight:500}
+
+/* ══ 대표 보고서 전용 — 비용·역할 표 ══════════════════════════ */
+
+/* 누가 무엇을 하나 — 두 칸 */
+.who2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:26px 0 8px}
+.who2 .col{border:1px solid var(--rule);border-radius:10px;overflow:hidden;background:var(--surface)}
+.who2 .ch{padding:13px 16px;background:var(--sunk);border-bottom:1px solid var(--rule)}
+.who2 .ch b{display:block;font-size:14.5px;letter-spacing:-.01em}
+.who2 .ch span{display:block;margin-top:3px;font-size:11.5px;color:var(--ink3)}
+.who2 ul{list-style:none;margin:0;padding:10px 16px 15px}
+.who2 li{position:relative;padding:8px 0 8px 17px;font-size:13px;line-height:1.62;
+  border-bottom:1px dashed var(--rule2)}
+.who2 li:last-child{border-bottom:0}
+.who2 li::before{content:"";position:absolute;left:0;top:15px;
+  width:5px;height:5px;border-radius:50%;background:var(--ink3)}
+.who2 li b{font-weight:600}
+.who2 li .sub{display:block;margin-top:2px;font-size:11.5px;color:var(--ink3);line-height:1.55}
+.who2 .col.ours .ch{background:var(--block-bg)}
+.who2 .col.ours li::before{background:var(--block)}
+.who2 .tagd{display:inline-block;margin-left:5px;padding:1px 6px;border-radius:4px;
+  font-size:10.5px;font-weight:600;background:var(--warn-bg);color:var(--warn);
+  vertical-align:1px;letter-spacing:.01em}
+@media(max-width:720px){ .who2{grid-template-columns:1fr} }
+
+/* 작업량 표 */
+.wt2{width:100%;border-collapse:collapse;margin:20px 0 6px;font-size:12.5px}
+.wt2 th,.wt2 td{padding:9px 11px;border-bottom:1px solid var(--rule2);text-align:left;
+  vertical-align:top;line-height:1.55}
+.wt2 thead th{font-size:11px;font-weight:600;color:var(--ink3);background:var(--sunk);
+  border-bottom:1px solid var(--rule);letter-spacing:.02em}
+.wt2 td.n,.wt2 th.n{text-align:right;font-family:var(--f-mono);white-space:nowrap}
+.wt2 tbody tr:last-child td{border-bottom:1px solid var(--rule)}
+.wt2 tr.sum td{background:var(--sunk);font-weight:600;border-bottom:1px solid var(--rule)}
+.wt2 .mut{color:var(--ink3);font-size:11.5px}
+
+/* 두 방법 나란히 */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:24px 0 10px}
+.vs .way{border:1px solid var(--rule);border-radius:10px;padding:17px 18px 19px;background:var(--surface)}
+.vs .way.good{border-color:var(--ok);background:var(--ok-bg)}
+.vs .wk{font-size:11px;font-weight:600;letter-spacing:.03em;color:var(--ink3);
+  text-transform:uppercase;margin:0 0 7px}
+.vs .way.good .wk{color:var(--ok)}
+.vs .wn{margin:0 0 12px;font-size:15px;font-weight:600;letter-spacing:-.012em;line-height:1.4}
+.vs .big{display:flex;align-items:baseline;gap:7px;margin:0 0 4px}
+.vs .big em{font-style:normal;font-family:var(--f-mono);font-size:33px;font-weight:600;
+  letter-spacing:-.02em;line-height:1}
+.vs .way.good .big em{color:var(--ok)}
+.vs .big span{font-size:12.5px;color:var(--ink3)}
+.vs .cal{margin:0 0 13px;font-size:11.5px;color:var(--ink3)}
+.vs ul{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule2);padding-top:11px}
+.vs li{position:relative;padding:5px 0 5px 15px;font-size:12px;line-height:1.6}
+.vs li::before{content:"";position:absolute;left:0;top:13px;width:4px;height:4px;
+  border-radius:50%;background:var(--ink3)}
+.vs .way.good li::before{background:var(--ok)}
+@media(max-width:720px){ .vs{grid-template-columns:1fr} }
+
+/* 가정 상자 */
+.assume{border:1px dashed var(--rule);border-radius:9px;padding:15px 17px;margin:22px 0;
+  background:var(--sunk)}
+.assume p.at{margin:0 0 9px;font-size:12px;font-weight:600;letter-spacing:-.005em}
+.assume table{width:100%;border-collapse:collapse;font-size:12px}
+.assume td{padding:5px 0;border-bottom:1px dashed var(--rule2);line-height:1.55}
+.assume tr:last-child td{border-bottom:0}
+.assume td:last-child{text-align:right;font-family:var(--f-mono);white-space:nowrap}
+.assume .hint{margin:10px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.6}
+
+/* 절감 결과 */
+.save{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin:22px 0 8px;
+  background:var(--rule);border:1px solid var(--rule);border-radius:10px;overflow:hidden}
+.save .c{background:var(--surface);padding:16px 15px 17px}
+.save .c.hi{background:var(--ok-bg)}
+.save .k{margin:0 0 7px;font-size:11px;color:var(--ink3);line-height:1.45}
+.save .v{margin:0;font-family:var(--f-mono);font-size:23px;font-weight:600;letter-spacing:-.02em}
+.save .c.hi .v{color:var(--ok)}
+.save .s{margin:5px 0 0;font-size:11px;color:var(--ink3)}
+@media(max-width:720px){ .save{grid-template-columns:1fr} }
+
+/* 일정 띠 */
+.gantt{margin:22px 0 8px;font-size:12px}
+.gantt .gr{display:grid;grid-template-columns:148px 1fr;gap:12px;align-items:center;
+  padding:7px 0;border-bottom:1px solid var(--rule2)}
+.gantt .gr:last-child{border-bottom:0}
+.gantt .gl{line-height:1.5}
+.gantt .gl b{display:block;font-weight:600}
+.gantt .gl span{font-size:11px;color:var(--ink3)}
+.gantt .track{position:relative;height:22px;background:var(--sunk);border-radius:5px;overflow:hidden}
+.gantt .seg{position:absolute;top:0;bottom:0;border-radius:5px;background:var(--block);
+  display:flex;align-items:center;padding:0 8px;color:#fff;font-size:10.5px;font-weight:600;
+  white-space:nowrap}
+.gantt .seg.c2{background:var(--ink3)}
+.gantt .seg.c3{background:var(--ok)}
+.gantt .axis{display:grid;grid-template-columns:148px 1fr;gap:12px;margin-top:6px}
+.gantt .axis .ax{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink3)}
+@media(max-width:720px){
+  .gantt .gr,.gantt .axis{grid-template-columns:1fr;gap:5px}
+}
+
+/* 엑셀 칸 값 — 보이는 그대로 */
+.wt2 code{font-family:var(--f-mono);font-size:11.5px;background:var(--sunk);
+  padding:2px 6px;border-radius:4px;display:inline-block;line-height:1.7;
+  word-break:break-all}
+
+/* 방법 카드의 비용 한 줄 */
+.vs .cost{margin:0 0 13px;font-size:12.5px;line-height:1.5}
+.vs .cost b{font-weight:600}
+.vs .cost span{display:block;margin-top:2px;font-size:11px;color:var(--ink3)}
+.vs .big em{font-size:30px}
+
+/* §4 안의 ① / ② 구분 */
+h3.part{margin:34px 0 10px;font-size:16px;font-weight:600;letter-spacing:-.015em;
+  display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+h3.part:first-of-type{margin-top:20px}
+h3.part span{font-size:11.5px;font-weight:500;color:var(--ink3);letter-spacing:0}
+.cost.standalone{margin:14px 0 4px;padding:12px 15px;border-radius:8px;
+  background:var(--sunk);font-size:13px}
+.cost.standalone b{font-size:15px;font-weight:600}
+.cost.standalone span{display:block;margin-top:3px;font-size:11px;color:var(--ink3)}
+.wt2.total{margin-top:26px}
+.wt2.total tbody tr:last-child td{background:var(--sunk)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="doc">
+  <p class="kicker">노페일디자인 → (주)쏭스디자인 · 과업 변경 통지 겸 재견적</p>
+  <h1>필터 개편 ② — 10/16 안을<br>반영하면 얼마가 드는지</h1>
+  <p class="dek">10월 2일 명세서는 <strong>옵션세트 3개 · 엑셀 세 칸</strong>을 전제로 뽑은 금액입니다. 10월 16일에 주신 「쏭스스토어 메뉴정리」 안은 그 전제를 바꿉니다. <strong>무엇이 얼마나 늘었는지와 다시 계산한 금액</strong>을 정리했습니다.</p>
+  <div class="meta">
+    <span><b>작성</b> 2026-10-22</span>
+    <span><b>기준</b> 「쏭스스토어 메뉴정리_1016」 6장</span>
+    <span><b>이전 명세서</b> <a href="../plan/">10/02 판</a></span>
+    <span><b>화면</b> <a href="../v12/client/">와이어프레임 v12</a></span>
+  </div>
+</header>
+
+<section>
+  <div class="sn">§ 1</div>
+  <div class="sbody">
+    <h2>전제가 어떻게 바뀌었나</h2>
+    <p class="sublede">10/02 명세서의 금액은 아래 왼쪽 칸을 전제로 나온 값입니다. 오른쪽은 10/16 안을 화면으로 옮겨 <strong>직접 센 수</strong>입니다.</p>
+
+    <table class="wt2">
+      <thead><tr><th>전제</th><th>10/02 명세서</th><th>10/16 안 (실측)</th></tr></thead>
+      <tbody>
+        <tr><td><b>옵션세트</b></td>
+            <td>3개 <span class="mut">케이스 기능 · 카드지갑 형태 · 체인지톡 디자인</span></td>
+            <td><strong>35개</strong> — 분류마다 2~4단으로 갈립니다</td></tr>
+        <tr><td><b>엑셀 칸</b></td>
+            <td>세 칸을 1,938줄</td>
+            <td>상품 1개당 <strong>평균 3.66칸</strong></td></tr>
+        <tr><td><b>필터 값</b></td>
+            <td>35개 <span class="mut">읽을 수 있음 22 / 담을 곳 없음 13</span></td>
+            <td><strong>109개</strong> <span class="mut">읽을 수 있음 68 / <strong>담을 곳 없음 41</strong></span></td></tr>
+        <tr><td><b>상품분류</b></td>
+            <td>신규 약 10개 · 숨김 2개</td>
+            <td>거기에 <strong>신규 대분류 2개</strong>(360 링홀더 · 키링)와 그 하위가 더해집니다</td></tr>
+        <tr><td><b>제품군</b></td>
+            <td>6대분류</td>
+            <td><strong>8대분류</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p class="sublede" style="margin-top:20px">분류별로 보면 이렇습니다. <strong>「사람이 판단해야 하는 축」</strong>은 그 값이 지금 상품분류에도 상품옵션에도 없어서, 변환 도구가 채울 수 없고 상품을 하나씩 열어 봐야 하는 자리입니다.</p>
+
+    <table class="wt2">
+      <thead><tr><th>분류</th><th class="n">축</th><th class="n">값</th><th class="n">담을 곳 없는 값</th><th class="n">판단 필요 축</th><th class="n">상품</th></tr></thead>
+      <tbody>
+        <tr><td><b>케이스</b></td><td class="n">5</td><td class="n">21</td><td class="n">8</td><td class="n">4</td><td class="n">523</td></tr>
+        <tr><td><b>카드지갑</b></td><td class="n">7</td><td class="n">31</td><td class="n">8</td><td class="n">3</td><td class="n">373</td></tr>
+        <tr><td><b>체인지톡</b></td><td class="n">9</td><td class="n">24</td><td class="n">7</td><td class="n">4</td><td class="n">819</td></tr>
+        <tr><td><b>이어폰케이스</b></td><td class="n">5</td><td class="n">30</td><td class="n">10</td><td class="n">4</td><td class="n">153</td></tr>
+        <tr><td><b>360 링홀더</b> <span class="mut">신규</span></td><td class="n">7</td><td class="n">19</td><td class="n">13</td><td class="n">7</td><td class="n">0</td></tr>
+        <tr><td><b>키링</b> <span class="mut">신규</span></td><td class="n">2</td><td class="n">3</td><td class="n">1</td><td class="n">1</td><td class="n">0</td></tr>
+        <tr class="sum"><td>합</td><td class="n">35</td><td class="n">128</td><td class="n">47</td><td class="n">23</td><td class="n">1,868</td></tr>
+      </tbody>
+    </table>
+    <p class="note">값 128은 줄마다 센 수이고, 같은 축의 같은 값을 한 번만 세면 109개입니다. <strong>상품이 있는 네 분류 전부가 「판단 필요 축」을 갖고 있습니다.</strong> 1,938개 중 사실상 전부가 최소 한 칸은 사람이 보고 골라야 합니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 2</div>
+  <div class="sbody">
+    <h2>① 신규 DB 구축 — 다시 계산</h2>
+    <p class="sublede">10/02 판은 <strong>2영업일 · 38만 5천원</strong>이었습니다. 늘어난 부분만 더합니다.</p>
+
+    <table class="wt2">
+      <thead><tr><th>하는 일</th><th>10/02</th><th>10/16 안</th><th class="n">비용</th></tr></thead>
+      <tbody>
+        <tr><td><b>상품분류 개편</b></td>
+            <td>신규 약 10개 · 숨김 2개</td>
+            <td>거기에 대분류 2개와 하위</td>
+            <td class="n"><span class="mut">§ 4 서비스</span></td></tr>
+        <tr><td><b>옵션세트 등록</b></td>
+            <td>3개</td>
+            <td><strong>35개</strong> — 32개가 새로 생깁니다</td>
+            <td class="n"><b>96만원</b></td></tr>
+        <tr><td><b>엑셀 양식 · 변환 도구</b></td>
+            <td>세 칸</td>
+            <td>평균 3.66칸 · 축 35개에 맞춰 <strong>다시 설계</strong></td>
+            <td class="n"><b>19만 2,500원</b></td></tr>
+        <tr><td><b>샘플 검증</b></td>
+            <td>포함</td>
+            <td>분류 6종으로 확대</td>
+            <td class="n"><span class="mut">포함</span></td></tr>
+        <tr><td><b>10/02 판 금액</b></td>
+            <td colspan="2"><span class="mut">그대로 유지</span></td>
+            <td class="n"><b>38만 5천원</b></td></tr>
+        <tr class="sum"><td>① 합계</td><td colspan="2">약 7영업일</td><td class="n">153만 7,500원</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note"><b>옵션세트 단가의 근거</b> — 계약 제9조 나항은 <strong>「DB 추가비용 1~3만원/개」</strong>로 정해져 있습니다. 새로 등록하는 32개는 문언 그대로 <strong>「추가할 DB」</strong>라 이 단가를 적용했습니다(개당 3만원). 기존 분류를 옮기는 일과 달리 해석의 여지가 없는 부분입니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 3</div>
+  <div class="sbody">
+    <h2>② 상품 1,938개에 반영 — 다시 계산</h2>
+    <p class="sublede">세 칸이 아니라 <strong>평균 3.66칸</strong>이 됐고, 그중 <strong>약 1.38칸은 변환 도구가 채울 수 없습니다.</strong> 담을 곳 없는 값이 109개 중 41개(37.6%)이기 때문입니다.</p>
+
+    <div class="vs">
+      <div class="way">
+        <p class="wk">방법 A</p>
+        <p class="wn">쏭스에서 관리자 화면으로</p>
+        <div class="big"><em>172~215</em><span>시간</span></div>
+        <p class="cal">하루 3시간씩 <strong>58~72일</strong></p>
+        <p class="cost">예상 인건비 <b>206만 ~ 258만원</b><span>시급 12,000원 기준 · 10/02 판 96만~120만원</span></p>
+        <ul>
+          <li>변환 가능한 칸 2.28칸 × 0.67분 = <strong>1.53분</strong></li>
+          <li>판단해야 하는 칸 1.38칸 × 2분 = <strong>2.76분</strong></li>
+          <li>건당 약 <strong>4.3분</strong> × 1,938개 = 139시간이 하한입니다</li>
+          <li>10/02 판과 같은 여유율(1.24~1.55배)을 적용해 172~215시간으로 봅니다</li>
+        </ul>
+      </div>
+      <div class="way">
+        <p class="wk">방법 B</p>
+        <p class="wn">노페일에서 엑셀 변환</p>
+        <div class="big"><em>6.5</em><span>영업일</span></div>
+        <p class="cost">비용 <b>142만원</b><span>부가세 포함 · 10/02 판 66만원</span></p>
+        <ul>
+          <li>작업량이 2.15배라 3영업일이 6.5영업일이 됩니다</li>
+          <li>같은 규칙을 1,938줄에 적용하는 것은 전과 같습니다</li>
+          <li><strong>다만 규칙이 있는 값에 한합니다</strong> — 아래 상자를 봐 주세요</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="warnbox">
+      <p class="wt">방법 B의 성격이 달라집니다 — 41개 값은 규칙이 없습니다</p>
+      <p>10/02 판의 방법 B는 <strong>「같은 규칙을 1,938줄 모두에 적용」</strong>하는 일이었습니다. 그런데 10/16 안의 값 109개 중 <strong>41개는 지금 상품분류에도 상품옵션에도 근거가 없습니다.</strong> 투명범퍼 · 투명쿠션 · 아이언 · 1세대 / 2세대 · 폴드톡 · 구슬톡 · 1단 / 2단 홀더 · 양면자석 같은 값입니다. 읽을 자리가 없으니 변환으로는 채울 수 없습니다.</p>
+      <p>그래서 <strong>이 41개는 방법 B의 범위 밖</strong>입니다. 쏭스에서 상품별 값을 먼저 정해 주시거나, 저희가 1,938개를 하나씩 보고 지정하는 <strong>별도 작업으로 나눠야</strong> 합니다. 비용이 아니라 <strong>선행 조건</strong>이라 먼저 말씀드립니다.</p>
+      <p class="dim">어떤 값에 근거가 없는지는 와이어프레임 v12에서 바로 보실 수 있습니다. 화면 오른쪽 아래 <strong>「DB 연결 보기」</strong>를 누르면 값마다 라벨이 뜨고, <strong>빨간 라벨이 곧 근거가 없는 값</strong>입니다.</p>
+    </div>
+
+    <div class="warnbox">
+      <p class="wt">재고 초기화 — 10/02 판과 같지만 폭이 커집니다</p>
+      <p>카페24 설명서에 <strong>「옵션 개수 변경 시 품목 번호와 재고 수량이 초기화」</strong>된다고 적혀 있고, 1,938개 중 <strong>1,936개가 조합형</strong>입니다. 10/02 판은 옵션세트 3개를 넣는 전제였는데 지금은 <strong>35개</strong>라 바뀌는 폭이 훨씬 큽니다. 작업 시점과 재고 담당은 여전히 쏭스에서 정해 주셔야 합니다.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 4</div>
+  <div class="sbody">
+    <h2>추가된 작업 — 서비스 제공</h2>
+    <p class="sublede">아래 세 가지는 10/02 명세서에도, 계약서에도 없던 일입니다. 공수를 적어 두되 <strong>청구하지 않고 서비스로 제공</strong>합니다.</p>
+
+    <table class="wt2">
+      <thead><tr><th>항목</th><th>하는 일</th><th class="n">공수</th><th class="n">금액</th></tr></thead>
+      <tbody>
+        <tr><td><b>신규 분류 2종</b><br><span class="mut">360 링홀더 · 키링</span></td>
+            <td>분류 생성과 연결, 상단 메뉴 · 드롭다운 · 모바일 메뉴 · 분류 원형 줄 반영, 목록과 상세 노출</td>
+            <td class="n">2영업일</td>
+            <td class="n"><b>38만 5천원</b><br><span class="mut">서비스 제공</span></td></tr>
+        <tr><td><b>다축 조합 필터 개발</b></td>
+            <td>카페24 기본 기능에 없는 기능입니다. 공통 종속 엔진 3~4단 2일 + 분류별 축 구성과 검증 6종 3일 + 모바일 시트 · 정렬 연동 1일</td>
+            <td class="n">6영업일</td>
+            <td class="n"><b>115만 5천원</b><br><span class="mut">서비스 제공</span></td></tr>
+        <tr><td><b>테마 11종 재작업</b></td>
+            <td>8월 22일에 확정받은 테마 11종을 케이스 · 카드지갑에서 걷어내고 이어폰케이스 전용으로 다시 정리</td>
+            <td class="n">1영업일</td>
+            <td class="n"><b>19만 2,500원</b><br><span class="mut">서비스 제공</span></td></tr>
+        <tr class="sum"><td>합</td><td>청구하지 않습니다</td><td class="n">9영업일</td><td class="n">173만 2,500원</td></tr>
+      </tbody>
+    </table>
+
+    <p class="note">공수 단가는 ①의 <strong>2영업일 · 38만 5천원</strong>에서 나온 <strong>1영업일 19만 2,500원</strong>을 그대로 썼습니다. 값 대표 이미지는 <strong>쏭스에서 주시기로</strong> 하여 이 표에 넣지 않았습니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 5</div>
+  <div class="sbody">
+    <h2>합계</h2>
+
+    <table class="wt2">
+      <thead><tr><th>항목</th><th class="n">10/02 명세서</th><th class="n">재산정</th><th class="n">차액</th></tr></thead>
+      <tbody>
+        <tr><td><b>① 신규 DB 구축</b></td><td class="n">38만 5천원</td><td class="n">153만 7,500원</td><td class="n">+115만 2,500원</td></tr>
+        <tr><td><b>② 상품 1,938개 반영</b> <span class="mut">방법 B</span></td><td class="n">66만원</td><td class="n">142만원</td><td class="n">+76만원</td></tr>
+        <tr class="sum"><td>청구 합계</td><td class="n">104만 5천원</td><td class="n">295만 7,500원</td><td class="n">+191만 2,500원</td></tr>
+        <tr><td><b>추가된 작업 3종</b> <span class="mut">§ 4</span></td><td class="n">—</td><td class="n">173만 2,500원</td><td class="n"><strong>서비스 제공</strong></td></tr>
+      </tbody>
+    </table>
+
+    <p class="cost standalone">청구 금액 <b>295만 7,500원</b><span>부가세 포함 · 서비스 제공분 173만 2,500원은 포함하지 않았습니다</span></p>
+
+    <p class="sublede" style="margin-top:20px"><strong>방법 A를 고르시면</strong> ②의 142만원 대신 쏭스 내부 인건비 <strong>206만~258만원</strong>이 들고, 저희 청구는 ①의 <strong>153만 7,500원</strong>만 남습니다. 41개 값 문제는 방법 A에서도 똑같이 생깁니다.</p>
+  </div>
+</section>
+
+<section>
+  <div class="sn">§ 6</div>
+  <div class="sbody">
+    <h2>정해 주셔야 하는 것</h2>
+
+    <div class="agenda">
+      <div class="item"><span class="q">01</span>
+        <div><p class="qt">상품 1,938개 반영을 내부 인원으로 하실지, 저희 쪽에 맡겨 주실지?</p><p class="qd">내부로 하시면 172~215시간(인건비 206만~258만원), 저희가 하면 6.5영업일 · 142만원(부가세 포함)입니다. <strong>어느 쪽이든 ①(153만 7,500원)은 먼저 필요합니다.</strong></p></div>
+        <div class="qr"><b>필요</b>선택</div></div>
+
+      <div class="item"><span class="q">02</span>
+        <div><p class="qt">근거가 없는 값 41개를 상품에 어떻게 붙일까요?</p><p class="qd">지금 상품분류에도 상품옵션에도 없는 값입니다. <strong>방법 B를 고르시면 이게 선행 조건입니다.</strong> 쏭스에서 목록을 주시거나, 저희가 상품을 하나씩 보고 지정하는 별도 작업으로 나눠야 합니다.</p></div>
+        <div class="qr"><b>필요</b>선행 조건</div></div>
+
+      <div class="item"><span class="q">03</span>
+        <div><p class="qt">아직 정해지지 않은 값들을 확정해 주세요.</p><p class="qd">카드지갑 머리말은 3카드팩 12종 · 2카드슬롯 8종인데 칩은 10개 · 6개입니다. 형태 6개(블랙 가죽 · 투명 · 투명＋아크릴 톡 · 케이스 일체형 · 2카드슬롯 · 3카드팩)는 어느 디자인군인지 적혀 있지 않습니다. 「부착형」과 「접착형」, 「칼라」와 「단색」이 섞여 있고 실제 상품에는 <strong>「컬러」가 413개</strong>입니다. <strong>확정 전에 작업을 시작하면 그 작업이 다시 재작업이 됩니다.</strong></p></div>
+        <div class="qr"><b>필요</b>값 확정</div></div>
+
+      <div class="item"><span class="q">04</span>
+        <div><p class="qt">360 링홀더 · 키링은 언제 어떤 상품이 올라갑니까?</p><p class="qd">두 분류는 등록된 상품이 0개입니다. 필터 축은 주신 안대로 만들어 두었습니다. 판매 상품 · 수량 · 출시 시점을 알려 주시면 목록을 채웁니다.</p></div>
+        <div class="qr"><b>필요</b>상품 · 시점</div></div>
+
+      <div class="item"><span class="q">05</span>
+        <div><p class="qt">재고를 어떻게 지킬까요?</p><p class="qd">작업 시점과 재고를 다시 맞출 담당을 정해야 합니다. 옵션세트가 3개에서 35개가 되어 10/02 판보다 바뀌는 폭이 큽니다.</p></div>
+        <div class="qr"><b>필요</b>시점 · 담당</div></div>
+
+      <div class="item"><span class="q">06</span>
+        <div><p class="qt">계약 제2조4항의 필터칩 문언을 어떻게 할까요?</p><p class="qd">계약서에 <strong>「전 리스트 공통 필터칩(기종 · 맥세이프 · 테마 · 가격)」</strong>이 적혀 있습니다. 10/16 안은 가격을 빼고, 테마를 이어폰케이스만 남기고, 맥세이프를 「종류」 안으로 넣습니다. 비용 문제가 아니라 <strong>문언을 맞추는 서면 합의</strong>가 필요합니다.</p></div>
+        <div class="qr"><b>필요</b>서면 합의</div></div>
+
+      <div class="item"><span class="q">07</span>
+        <div><p class="qt">대분류 「맥세이프」를 숨겨도 됩니까?</p><p class="qd">612개 · 530개 두 개가 제품군 분류와 겹칩니다. 검색 유입이 있을 수 있어 지우기 전에 먼저 숨기는 방법도 있습니다. <span class="mut">10/02 판에서 이어지는 항목입니다.</span></p></div>
+        <div class="qr"><b>필요</b>선택</div></div>
+
+      <div class="item"><span class="q">08</span>
+        <div><p class="qt">상품등록 화면의 「고를 거리」를 저희가 만들어 둬도 됩니까?</p><p class="qd">옵션세트가 3개에서 <strong>35개</strong>로 늘었습니다. 미리 만들어 두면 등록하실 때 타이핑하던 자리가 고르는 자리로 바뀝니다. 운영하시는 분의 작업 방식이 달라져 먼저 여쭙습니다. <span class="mut">10/02 판에서 이어지는 항목입니다.</span></p></div>
+        <div class="qr"><b>대기</b>컨펌 후 진행</div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="doc">
+  <p>노페일디자인 × (주)쏭스디자인 · 2026-10-22</p>
+  <p class="dim">10월 2일 명세서는 <a href="../plan/">그대로 보존</a>돼 있습니다. 이 문서는 「쏭스스토어 메뉴정리_1016」 6장을 화면으로 옮겨 직접 센 수를 근거로 다시 계산한 것입니다. 상품 수는 2026-08-20 기준 판매 중(진열 Y) 1,938개입니다.</p>
+</footer>
+
+</div>
+</body>
+</html>
