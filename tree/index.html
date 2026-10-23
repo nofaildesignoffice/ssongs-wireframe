@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>쏭스 분류 트리 — depth 1·2·3·4</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+:root{--ground:#F2F5F4;--surface:#FFF;--line:#DCE3E1;--ink:#121B1A;--muted:#5B6866;
+  --accent:#0E5C57;--accent-soft:#E2EFED;
+  --d1:#0E5C57;--d2:#1F7A73;--d3:#8A6D2F;--own:#B5471E;
+  --opt:#E6F0EA;--opt-i:#1E6B44;--cat:#E7EEF7;--cat-i:#1F4E8C;
+  --syn:#FBF0DC;--syn-i:#8A6115;--none:#FBE4DE;--none-i:#9B2F13;--etc:#EEF0EF;--etc-i:#5B6866}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo",system-ui,sans-serif;
+  line-height:1.6;-webkit-text-size-adjust:100%}
+.wrap{max-width:1100px;margin:0 auto;padding:44px 18px 80px}
+h1{font-size:25px;font-weight:800;letter-spacing:-.025em;margin:0 0 6px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 24px}
+.sub b{color:var(--ink)}
+code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;
+  background:#EEF2F1;border-radius:4px;padding:1px 5px}
+
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin:0 0 14px}
+@media(min-width:720px){.stats{grid-template-columns:repeat(5,1fr)}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:13px 14px}
+.stat .n{font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.stat .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+
+.bar{background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 14px;
+  margin:0 0 18px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.bar .sep{flex:1 1 100%;height:0;margin:0}
+@media(min-width:720px){.bar .sep{flex:1 1 auto;height:auto}}
+.lg{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);
+  border:0;background:none;padding:0;cursor:pointer;font-family:inherit}
+.lg .sw{width:12px;height:12px;border-radius:3px;flex:none}
+.lg.off{opacity:.35;text-decoration:line-through}
+.sw.opt{background:var(--opt);border:1px solid var(--opt-i)}
+.sw.cat{background:var(--cat);border:1px solid var(--cat-i)}
+.sw.syn{background:var(--syn);border:1px solid var(--syn-i)}
+.sw.none{background:var(--none);border:1px solid var(--none-i)}
+.sw.etc{background:var(--etc);border:1px solid var(--etc-i)}
+input[type=search]{flex:1 1 180px;min-width:150px;font-family:inherit;font-size:13px;padding:7px 11px;
+  border:1px solid var(--line);border-radius:8px;background:#FAFBFB;color:inherit}
+input[type=search]:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+.btn{font-family:inherit;font-size:12px;font-weight:700;padding:7px 12px;border-radius:8px;
+  border:1px solid var(--line);background:#FAFBFB;color:var(--muted);cursor:pointer}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+
+.cat1{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin:0 0 11px;overflow:hidden}
+.h1r{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:none;
+  font-family:inherit;padding:15px 17px;cursor:pointer;color:inherit}
+.h1r:hover{background:#FAFBFB}
+.h1r .tw{font-size:11px;color:var(--muted);width:10px;flex:none;transition:transform .12s}
+.cat1.open .h1r .tw{transform:rotate(90deg)}
+.h1r .nm{font-size:16.5px;font-weight:800;letter-spacing:-.02em}
+.h1r .dp{font-size:10.5px;font-weight:700;color:#fff;background:var(--d1);border-radius:4px;padding:2px 5px;flex:none}
+.h1r .ct{font-size:11.5px;color:var(--muted);margin-left:auto;flex:none}
+.body1{display:none;padding:0 17px 6px;border-top:1px solid #EEF2F1}
+.cat1.open .body1{display:block}
+
+.n2{padding:13px 0 3px;border-bottom:1px solid #F4F7F6}
+.body1 .n2:last-child{border-bottom:0}
+.r2{display:flex;align-items:center;gap:8px;margin:0 0 2px}
+.r2 .dp{font-size:10px;font-weight:700;color:#fff;background:var(--d2);border-radius:4px;padding:1px 5px}
+.r2 .nm{font-size:14px;font-weight:800;letter-spacing:-.01em}
+.r2 .fx{font-size:11px;color:var(--muted)}
+
+.n3{display:flex;gap:10px;padding:7px 0 7px 14px;border-left:2px solid #E9EEED;margin-left:5px}
+.n3 + .n3{border-top:1px dashed #F0F4F3}
+.l3{flex:0 0 112px;padding-top:3px}
+.l3 .dp{display:inline-block;font-size:9.5px;font-weight:700;color:#fff;background:var(--d3);
+  border-radius:3px;padding:1px 4px;margin-right:4px}
+.l3 .nm{font-size:13px;font-weight:700}
+.l3 .cn{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.vals{flex:1 1 auto;display:flex;flex-wrap:wrap;gap:5px;min-width:0}
+.v{font-size:12px;font-weight:600;padding:3px 8px;border-radius:14px;white-space:nowrap}
+.v.opt{background:var(--opt);color:var(--opt-i);border:1px solid #CBE2D5}
+.v.cat{background:var(--cat);color:var(--cat-i);border:1px solid #CFDDEE}
+.v.syn{background:var(--syn);color:var(--syn-i);border:1px solid #EFDCB4}
+.v.none{background:var(--none);color:var(--none-i);border:1px solid #F2C9BD}
+.v.etc{background:var(--etc);color:var(--etc-i);border:1px solid #DFE3E2}
+.v.hit{outline:2px solid var(--accent);outline-offset:1px}
+.empty{font-size:12px;color:var(--muted);font-style:italic;padding-top:3px}
+.hidden{display:none !important}
+@media(max-width:560px){.n3{flex-direction:column;gap:4px}.l3{flex:none;padding-top:0}}
+
+.note{margin-top:22px;font-size:12.5px;color:var(--muted);background:var(--surface);
+  border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;padding:14px 16px}
+.note b{color:var(--ink)}
+.note ul{margin:8px 0 0;padding-left:18px}
+.note li{margin:4px 0}
+table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--surface);
+  border:1px solid var(--line);border-radius:11px;overflow:hidden;margin-top:18px}
+th,td{text-align:left;padding:9px 13px;border-bottom:1px solid #EEF2F1}
+th{background:#FAFBFB;font-size:11px;letter-spacing:.04em;color:var(--muted);font-weight:700}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+.owner{font-size:12px;font-weight:700;color:var(--own)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>쏭스 분류 트리 — depth 1 · 2 · 3 · 4</h1>
+<p class="sub">카페24 상품분류 4단 확정안 · 출처 <b>_docs\분류트리-설계.csv</b> · 2026-10-23</p>
+<div class="stats">
+<div class="stat"><div class="n">9</div><div class="l">depth1 대분류</div></div>
+<div class="stat"><div class="n">13</div><div class="l">depth2 옵션 항목</div></div>
+<div class="stat"><div class="n">30</div><div class="l">depth3 세부 항목</div></div>
+<div class="stat"><div class="n">178</div><div class="l">depth4 필터 값</div></div>
+<div class="stat"><div class="n">230</div><div class="l">분류 총 개수</div></div>
+</div>
+<div class="bar">
+<input type="search" id="q" placeholder="값 검색 — 아이폰, S24, 맥세이프 …" autocomplete="off">
+<button class="btn" id="exp">전체 펼치기</button><button class="btn" id="col">전체 접기</button>
+<span class="sep"></span>
+<button class="lg" data-src="opt"><span class="sw opt"></span>상품 옵션에서 추출 <b>78</b></button>
+<button class="lg" data-src="cat"><span class="sw cat"></span>현 운영 분류에서 추출 <b>45</b></button>
+<button class="lg" data-src="syn"><span class="sw syn"></span>동의어 매핑 승인 필요 <b>12</b></button>
+<button class="lg" data-src="none"><span class="sw none"></span>근거 없음 — 갑 확정 필요 <b>41</b></button>
+<button class="lg" data-src="etc"><span class="sw etc"></span>기타 <b>2</b></button>
+</div>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">케이스</span><span class="ct">뼈대 11 · 값 80</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">기종</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">기기</span><span class="cn">값 5개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">아이폰</span>
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 S</span>
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 노트</span>
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 A</span>
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">Z플립</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">세대</span><span class="cn">값 38개</span></div><div class="vals">
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">17</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">16</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">15</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">14</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">13</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">12</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">11</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">X · XR · XS</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">SE · 7 · 8</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">6 · 6S</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S26</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S25</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S24</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S23</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S22</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S21</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S20</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S10</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">S9</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">노트 20</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">노트 10</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">노트 9</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A54</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A53</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A52</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A42</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A34</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A33</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A32</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A25</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A24</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A23</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 7</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 6</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 5</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 4</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 3</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 3 · 4</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">모델</span><span class="cn">값 18개</span></div><div class="vals">
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">기본</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Air</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Pro</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Pro Max</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Plus</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">16e</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">mini</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">X / XS</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">XR</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">XS Max</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">SE2 · SE3 · 7 · 8</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">7+ / 8+</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">6 / 6S</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">6+ / 6S+</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Ultra</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">Edge</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">FE</span>
+<span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">5G</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">타입</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v etc" data-src="etc" title="  ·  축 type">맥세이프</span>
+<span class="v etc" data-src="etc" title="  ·  축 type">일반</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 11개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 kind">에폭시케이스</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 kind">도어 (카드2장)</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 kind">포켓 (카드1장)</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">투명범퍼</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">투명쿠션</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 kind">블랙범퍼</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">아이언 (카드2장)</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">아이언케이스</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">도어 360 링</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 kind">에어범퍼</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kind">에어쿠션</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">바디</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 body">블랙</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 body">실버</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">디자인</span><span class="cn">값 4개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 design">칼라</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">꼼지락</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 design">그라데이션1</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">카드지갑</span><span class="ct">뼈대 8 · 값 27</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ckind">3카드팩</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ckind">2카드슬롯</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ckind">접착형</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">형태</span><span class="cn">값 15개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">기본</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">기본 + 톡</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">기본 + 스탠드</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">기본 + 스탠드 톡</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">투명 에폭시</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">투명 에폭시 + 톡</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">투명에폭시 체인지용</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">투명 에폭시 + 아크릴 톡</span>
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 shape">투명 미러</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">블랙 가죽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">투명</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">투명 + 아크릴 톡</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 shape">케이스 일체형</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">2카드슬롯</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">3카드팩</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">기본 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 cdes_base">단색</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 cdes_base">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 cdes_base">꼼지락</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">에폭시 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 cdes_epoxy">단색</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 cdes_epoxy">그라데이션</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 cdes_epoxy">그래픽</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">미러 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 cdes_mirror">그래픽</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 cdes_mirror">하트</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 cdes_mirror">도트</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">체인지톡</span><span class="ct">뼈대 11 · 값 22</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">타입</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 attach">맥세이프</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 attach">접착형</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">세대</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">체인지톡 1세대</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">2세대 (상판 교체)</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">형태</span><span class="cn">값 5개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">아크릴톡</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 shape">에폭시톡</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">폴드톡</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">구슬톡</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 shape">미러톡</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">아크릴 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 design">칼라</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">꼼지락</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">에폭시 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 design">칼라</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">꼼지락</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">미러 디자인</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">꼼지락</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">폴드 디자인</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 design">가죽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">미러</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">구슬 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v syn" data-src="syn" title="분류 · 동의어 매핑 승인 필요  ·  축 design">칼라</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">그래픽</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 design">꼼지락</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">360 링홀더</span><span class="ct">뼈대 7 · 값 16</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 4개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">1단 홀더</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 홀더 / 양면자석</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">빅서클 2단 홀더</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">빅서클 2단 홀더 / 양면자석</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">바디 칼라</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 rbody">블랙</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rbody">실버</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">링 디자인</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 ring_d">단색</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 ring_d">그라데이션</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ring_d">그래픽</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">탑데코 디자인</span><span class="cn">값 7개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 top_d">꼼지락</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 top_d">실사</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 top_d">그래픽</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 top_d">단색</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 top_d">그라데이션</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 top_d">미러</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 top_d">가죽</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">이어폰케이스</span><span class="ct">뼈대 7 · 값 30</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">기기</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 edev">에어팟</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 edev">버즈</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">세대</span><span class="cn">값 14개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 egen">에어팟 5</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 4</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 3</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 2</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 1</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 egen">에어팟 Pro 3</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 Pro 2</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">에어팟 Pro 1</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 egen">버즈 4</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 egen">버즈 4 Pro</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">버즈 3</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 egen">버즈 3 Pro</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 egen">버즈 라이브</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 egen">버즈 플러스</span>
+</div></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 3개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ekind">기본형</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 ekind">기본형 + 잠금</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 ekind">에폭시형</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">테마</span><span class="cn">값 11개</span></div><div class="vals">
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">파스텔</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">비비드</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 theme">모노톤</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 theme">뉴트럴</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">도트</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 theme">스트라이프</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 theme">플로럴</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">체크</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">마블텍스처</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 theme">그래픽</span>
+<span class="v opt" data-src="opt" title="상품 옵션  ·  축 theme">캐릭터</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">키링</span><span class="ct">뼈대 5 · 값 3</span></button>
+<div class="body1">
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 1개</span></div><div class="vals">
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 kkind">체인형</span>
+</div></div>
+</div>
+<div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">디자인</span><span class="fx">고정</span></div>
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">테마</span><span class="cn">값 2개</span></div><div class="vals">
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ktheme">꼼지락</span>
+<span class="v cat" data-src="cat" title="분류 · 제품 종류  ·  축 ktheme">그래픽</span>
+</div></div>
+</div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">스트랩</span><span class="ct">뼈대 1 · 값 0</span></button>
+<div class="body1">
+<div class="n2"><div class="empty">하위 분류 없음 — 옵션 축이 없어 depth1 단독으로 둔다</div></div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">강화유리</span><span class="ct">뼈대 1 · 값 0</span></button>
+<div class="body1">
+<div class="n2"><div class="empty">하위 분류 없음 — 옵션 축이 없어 depth1 단독으로 둔다</div></div>
+</div></section>
+<section class="cat1 open">
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">차량 거치대</span><span class="ct">뼈대 1 · 값 0</span></button>
+<div class="body1">
+<div class="n2"><div class="empty">하위 분류 없음 — 옵션 축이 없어 depth1 단독으로 둔다</div></div>
+</div></section>
+<table><thead><tr><th>대분류</th><th class="num">뼈대 (D1·2·3)</th><th class="num">depth4 값</th><th class="num">근거 없음</th></tr></thead><tbody>
+<tr><td>케이스</td><td class="num">11</td><td class="num">80</td><td class="num">8</td></tr>
+<tr><td>카드지갑</td><td class="num">8</td><td class="num">27</td><td class="num">5</td></tr>
+<tr><td>체인지톡</td><td class="num">11</td><td class="num">22</td><td class="num">6</td></tr>
+<tr><td>360 링홀더</td><td class="num">7</td><td class="num">16</td><td class="num">11</td></tr>
+<tr><td>이어폰케이스</td><td class="num">7</td><td class="num">30</td><td class="num">10</td></tr>
+<tr><td>키링</td><td class="num">5</td><td class="num">3</td><td class="num">1</td></tr>
+<tr><td>스트랩</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
+<tr><td>강화유리</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
+<tr><td>차량 거치대</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
+<tr><td><b>합계</b></td><td class="num"><b>52</b></td><td class="num"><b>178</b></td><td class="num"><b>41</b></td></tr>
+</tbody></table>
+<div class="note">
+<b>읽는 법</b>
+<ul>
+<li><b>depth1 · 2 · 3</b> (초록 · 청록 · 금색 배지) = 타이틀과 구조를 <b>고정</b>하는 영역.
+  개발자가 한 번 만들고 그 뒤로 추가 · 수정 · 삭제하지 않습니다.</li>
+<li><b>depth4</b> (알약 모양 칩) = <span class="owner">고객사 담당자</span>가 직접 추가 · 수정 · 삭제하는 영역.
+  상품등록 페이지에서 드롭다운으로 고르는 값이 바로 이 칩입니다.</li>
+<li>칩 색은 그 값을 어디서 가져왔는지입니다. 칩에 마우스를 올리면 출처와 축 ID가 나옵니다.
+  위쪽 범례를 눌러 색별로 숨길 수 있습니다.</li>
+<li>depth3은 「세대」처럼 <b>라벨</b>로 고정합니다 — <code>케이스 › 기종 › 세대 › 16</code>.
+  「18」 같은 값을 depth3에 두면 담당자가 depth3을 건드려야 해서 구조 고정이 깨집니다.</li>
+<li>종속 관계(맥세이프 → 맥세이프 종류 등)는 트리 깊이로 넣지 않습니다.
+  4단을 넘겨 버리므로, 형제로 나란히 두고 화면단 조건 표시로 처리합니다.</li>
+</ul>
+</div>
+<div class="note" style="border-left-color:var(--none-i)">
+<b>붉은 칩 = 결정이 필요한 곳</b> — 현재 상품 데이터나 운영 분류에서 근거를 찾지 못한 값입니다.
+그대로 만들면 빈 분류가 되므로 「쓴다 / 안 쓴다」를 확정해 주셔야 합니다.
+근거와 한계는 <code>_docs\분류체계-확정안.md</code> §6에 정리해 두었습니다.
+</div>
+
+<script>
+(function(){
+  document.querySelectorAll(".h1r").forEach(function(b){
+    b.addEventListener("click", function(){ b.closest(".cat1").classList.toggle("open"); });
+  });
+  document.getElementById("exp").addEventListener("click", function(){
+    document.querySelectorAll(".cat1").forEach(function(s){ s.classList.add("open"); });
+  });
+  document.getElementById("col").addEventListener("click", function(){
+    document.querySelectorAll(".cat1").forEach(function(s){ s.classList.remove("open"); });
+  });
+
+  /* 범례 — 출처별로 칩을 숨긴다 */
+  document.querySelectorAll(".lg[data-src]").forEach(function(b){
+    b.addEventListener("click", function(){
+      b.classList.toggle("off");
+      var on = !b.classList.contains("off"), k = b.getAttribute("data-src");
+      document.querySelectorAll('.v[data-src="' + k + '"]').forEach(function(v){
+        v.classList.toggle("hidden", !on);
+      });
+    });
+  });
+
+  /* 검색 — 맞는 칩만 남기고, 남은 칩이 없는 가지는 숨긴다 */
+  var q = document.getElementById("q");
+  q.addEventListener("input", function(){
+    var s = q.value.trim().toLowerCase();
+    document.querySelectorAll(".v").forEach(function(v){
+      v.classList.toggle("hit", !!s && v.textContent.toLowerCase().indexOf(s) >= 0);
+    });
+    document.querySelectorAll(".n3").forEach(function(n){
+      n.classList.toggle("hidden", !!s && !n.querySelector(".v.hit"));
+    });
+    document.querySelectorAll(".n2").forEach(function(n){
+      n.classList.toggle("hidden", !!s && !n.querySelector(".n3:not(.hidden)"));
+    });
+    document.querySelectorAll(".cat1").forEach(function(c){
+      var any = !s || c.querySelector(".n2:not(.hidden)");
+      c.classList.toggle("hidden", !any);
+      if (s && any) c.classList.add("open");
+    });
+  });
+})();
+</script>
+</div>
+</body>
+</html>
