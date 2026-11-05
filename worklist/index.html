@@ -177,6 +177,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   <div class="note bad"><b>이 문서의 원칙</b> — 확인되지 않은 것을 확인된 것처럼 쓰지 않았습니다.
     「확인필요」가 붙은 작업은 <strong>확인이 끝나기 전에는 실행하지 않습니다.</strong>
     되돌릴 수 있다는 것과 영향이 없다는 것은 다른 얘기입니다.</div>
+  <div class="note"><b>교차 검수</b> — 이 문서는 두 개의 AI 모델이 <strong>서로 검수</strong>해서 만들었습니다.
+    한쪽이 카페24 공식 문서를 전수 조사해 초안을 쓰고, 다른 쪽(Codex)이 독립적으로 같은 계획을 세운 뒤
+    초안의 사실 오류·논리 구멍·누락을 지적했습니다.
+    그 결과 <strong>사실 오류 7건과 논리 구멍 10건을 수정</strong>했고,
+    SEO · 외부 피드 · 게시판 데이터 · 법적 표기 · 속도 · 접근성 · 추적 정확도 등
+    <strong>빠져 있던 작업 9건을 추가</strong>했습니다.</div>
 </section>
 
 <!-- ══════════ 핵심 결론 ══════════ -->
@@ -203,8 +209,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           그런데 카페24 API는 분류를 만들 때 <code>use_display: "F"</code>(표시안함) ·
           <code>use_main: "F"</code>(메인 표시안함) · <code>display_type: "F"</code>(PC·모바일 모두 사용안함)를
           <strong>생성 요청에 같이 넣을 수 있습니다.</strong>
-          API 문서 원문: <em>“표시안함 일 경우 해당 상품분류에 접근할 수 없다.”</em>
-          즉 <strong>230개 분류는 처음부터 닫힌 상태로 태어납니다.</strong> 라이브 메뉴·검색·경로 어디에도 나타나지 않습니다.</p>
+          API 문서(버전 2026-09-01) 원문: <em>“표시안함 일 경우 해당 상품분류에 접근할 수 없다.”</em>
+          즉 <strong>230개 분류를 처음부터 닫힌 상태로 만들 수 있습니다.</strong></p>
+        <p style="margin:8px 0 0;font-size:13.5px;color:var(--gray)">
+          단 이것은 <strong>문서에 근거한 설계</strong>입니다. 「실제로 어디에도 안 뜬다」는 것은
+          <strong>소량(3개)으로 먼저 만들어 눈으로 확인한 뒤</strong>(Phase 4-3) 230개를 진행합니다.
+          문서를 믿고 대량 실행하지 않습니다.</p>
       </div>
     </div>
     <div class="keyrow">
@@ -248,6 +258,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
     <div class="term"><strong>쇼핑 큐레이션</strong><p>카페24의 유료 부가서비스. 해시태그 기반 상품 필터·속성검색·자동진열을 제공합니다. 우리 다축 필터의 후보 중 하나입니다.</p></div>
     <div class="term"><strong>Admin API</strong><p>관리자 화면을 손으로 누르는 대신 프로그램으로 분류·상품을 다루는 통로. 230개 분류를 손으로 만들면 며칠, API면 몇 분입니다.</p></div>
     <div class="term"><strong>해시태그</strong><p>상품에 붙이는 검색용 꼬리표. 카페24 기본 필터가 읽는 값의 출처입니다. 필터 축을 늘릴 때 쓰입니다.</p></div>
+    <div class="term"><strong>뎁스 (depth)</strong><p>분류의 단계. 뎁스1 = 대분류, 뎁스2 = 중분류, 뎁스3 = 소분류, 뎁스4 = 상세분류. 카페24는 뎁스4까지만 됩니다.</p></div>
+    <div class="term"><strong>GNB</strong><p>화면 맨 위에 늘 붙어 있는 공통 메뉴 줄 (Global Navigation Bar).</p></div>
+    <div class="term"><strong>바닐라 JS</strong><p>jQuery 같은 외부 도구 없이 쓴 자바스크립트. 카페24에 내장된 라이브러리와 충돌할 위험이 적습니다.</p></div>
+    <div class="term"><strong>PG</strong><p>결제대행사. 카드·계좌 결제를 실제로 처리하는 외부 회사입니다.</p></div>
   </div>
 </section>
 
@@ -262,7 +276,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   <summary>
     <span class="pn">PHASE 0</span>
     <span class="pt">기준선 확보 — 「원래 어땠는지」를 먼저 남긴다</span>
-    <span class="pc">읽기 전용 · 5개 작업</span>
+    <span class="pc">읽기 전용 · 6개 작업</span>
   </summary>
   <div class="pbody">
     <div class="pgoal"><b>목표</b> — 나중에 뭔가 틀어졌을 때 「원래 이랬다」를 증명할 자료를 만든다.
@@ -302,7 +316,9 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <dl class="dl">
         <dt>경로</dt><dd><code>디자인 → 디자인 보관함 → PC(탭) / 모바일(탭)</code>. 대표 디자인에는 제목에 <code>[대표 디자인]</code>이 붙습니다</dd>
         <dt>금지</dt><dd><strong>기존 유료 스킨의 소스는 열지도, 복사하지도 않습니다.</strong>
-          스킨명·번호·적용 상태만 적습니다 (디자인플로어 저작권)</dd>
+          스킨명·번호·적용 상태만 적습니다.<br>
+          <span style="color:var(--gray)">근거 — 갑(쏭스디자인) 지시사항이며, 해당 스킨이 디자인플로어 유료 상품입니다.
+          실제 라이선스 조항상 금지인지는 별도 확인 사항이고, 확인 전까지는 <strong>갑 지시를 그대로 따릅니다.</strong></span></dd>
       </dl>
     </div>
 
@@ -328,7 +344,23 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <dl class="dl">
         <dt>확인할 것</dt><dd>부운영자 권한을 메뉴 단위로 제한할 수 있는가 · 「상품정보 일괄변경」·「디자인 복구」·「대표 디자인 설정」을 뺄 수 있는가</dd>
         <dt>금지 목록</dt><dd>기존 분류 삭제·이름변경·순서변경 / 상품 기본분류 교체 / 상품 옵션·품목 수정 /
-          상품정보 일괄변경 / 대표 디자인 변경 / 앱 설치·삭제 / 결제·배송·약관 설정</dd>
+          상품정보 일괄변경 / 대표 디자인 변경 / <strong>디자인 삭제</strong> / 디자인 복구 /
+          앱 설치·삭제 / 결제·배송·약관 설정</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">0-6</span><span class="tt">백업에 안 들어가는 자산 목록화 · 별도 보관</span>
+        <span class="b none">없음</span><span class="b yes">확인됨</span></div>
+      <p class="why">카페24 디자인 백업은 <strong>HTML만</strong> 받습니다.
+        이미지가 날아가면 HTML을 복구해도 화면은 깨진 채입니다. 백업이 있다고 안심하면 안 됩니다.</p>
+      <dl class="dl">
+        <dt>목록화 대상</dt><dd>현재 화면이 쓰는 이미지(로고·배너·아이콘) · CSS · JS · 폰트 ·
+          외부에서 불러오는 파일(CDN 주소) · 상품 이미지 경로</dd>
+        <dt>보관</dt><dd>웹FTP로 내려받아 <strong>날짜를 붙여 로컬 + 외부 저장소 2중</strong> 보관.
+          백업 보관 기간이 7일뿐이므로 카페24에만 두면 안 됩니다</dd>
+        <dt>복구 연습</dt><dd>「HTML + 이미지로 실제로 되돌릴 수 있는가」를 작업본에서 한 번 해 봅니다.
+          해 보지 않은 복구 절차는 복구 절차가 아닙니다</dd>
       </dl>
     </div>
   </div>
@@ -461,17 +493,24 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <div class="th"><span class="id">2-3</span><span class="tt">필터 축 사전 만들기 — 어떤 값이 어디서 오는가</span>
         <span class="b none">없음</span><span class="b chk">확인필요</span></div>
       <p class="why">필터 칩에 들어갈 값(기종·색상·타입…)은 <strong>어딘가에 데이터로 있어야</strong> 합니다.
-        트리 230줄의 값 출처를 이미 분류해 뒀습니다. 이걸 카페24의 어느 그릇에 담을지 정합니다.</p>
+        트리의 <strong>말단(뎁스4) 178줄</strong>에 대해 값 출처를 이미 분류해 뒀습니다
+        (나머지 52줄은 뼈대 — 뎁스1 9 + 뎁스2 13 + 뎁스3 30). 이걸 카페24의 어느 그릇에 담을지 정합니다.</p>
       <div class="tw"><table>
-        <tr><th>값 출처</th><th>개수</th><th>카페24에서 담을 곳</th><th>확신도</th></tr>
-        <tr><td>상품 옵션에서 나오는 값</td><td>78</td><td>쇼핑 큐레이션 필터가 <strong>상품 옵션을 자동 반영</strong></td><td><span class="b yes">확인됨</span></td></tr>
+        <tr><th>값 출처 (뎁스4 178줄 기준)</th><th>개수</th><th>카페24에서 담을 곳</th><th>확신도</th></tr>
+        <tr><td>상품 옵션에서 나오는 값</td><td>78</td>
+          <td><strong>색상·사이즈</strong>는 쇼핑 큐레이션이 상품 옵션을 자동 반영.<br>
+            <strong>그 밖의 옵션</strong>(기종·타입 등)은 <code>필터 조건 추가</code> + <code>검색 정보</code>를 직접 넣어야 함</td>
+          <td>색상·사이즈 <span class="b yes">확인됨</span><br>나머지 <span class="b chk">확인필요</span></td></tr>
         <tr><td>분류로 표현되는 값</td><td>45</td><td>신규 상품분류 (Phase 4)</td><td><span class="b yes">확인됨</span></td></tr>
         <tr><td>동의어 (같은 걸 다르게 부른 것)</td><td>12</td><td>해시태그 또는 검색 정보로 흡수</td><td><span class="b chk">확인필요</span></td></tr>
         <tr><td>데이터가 아직 없는 값</td><td>41</td><td><strong>담당자 입력이 선행</strong> — 분류는 만들되 비어 있음</td><td><span class="b yes">확인됨</span></td></tr>
+        <tr><td>기타</td><td>2</td><td>개별 판단</td><td><span class="b chk">확인필요</span></td></tr>
+        <tr><td><strong>합계</strong></td><td><strong>178</strong></td><td colspan="2">+ 뼈대 52 = 트리 전체 <strong>230줄</strong></td></tr>
       </table></div>
       <dl class="dl">
-        <dt>확인됨</dt><dd>쇼핑 큐레이션의 사이즈·색상 필터 값은 <strong>기존 상품 옵션이 자동 반영</strong>됩니다.
-          색상·사이즈 외의 옵션을 필터로 쓰려면 <code>필터 조건 추가</code> + <code>검색 정보</code> 입력이 필요합니다</dd>
+        <dt>확인됨</dt><dd>쇼핑 큐레이션의 <strong>사이즈·색상</strong> 필터 값은 기존 상품 옵션이 자동 반영됩니다.
+          <strong>그 외 옵션은 자동이 아닙니다</strong> — <code>필터 조건 추가</code> + <code>검색 정보</code> 입력이 필요합니다.
+          쏭스의 핵심 축인 <strong>기종</strong>이 여기에 해당하므로, 이 작업량을 반드시 산정해야 합니다</dd>
         <dt>주의</dt><dd>상품에 「아이폰 17」 옵션과 「블랙」 옵션이 각각 있다는 것이
           <strong>「아이폰 17 × 블랙」 조합이 실제로 팔린다</strong>는 뜻은 아닙니다.
           조합·품절 판정은 따로 검증해야 합니다 <span class="b chk">확인필요</span></dd>
@@ -487,8 +526,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <dl class="dl">
         <dt>재료</dt><dd>0-1 상품 엑셀 + 2-2 분류 트리</dd>
         <dt>식별자</dt><dd>상품명이나 엑셀 행 번호를 쓰지 않습니다. <strong>상품번호(product_no)</strong>로만 연결합니다</dd>
-        <dt>산출물</dt><dd><code>product_no → [신규 분류번호 목록]</code> 매핑 CSV.
+        <dt>산출물</dt><dd>「상품번호 → 분류 목록」 <strong>연결표</strong>(CSV 한 장).
           한 상품이 여러 분류에 들어가므로 <strong>연결 건수는 2,146보다 훨씬 많습니다</strong></dd>
+        <dt>중요</dt><dd>이 시점에는 <strong>카페24 분류번호가 아직 없습니다</strong> (Phase 4-3에서 발급됨).
+          그래서 연결표는 우선 <strong>우리가 정한 임시 식별자</strong>(예: <code>D4-아이폰17-투명</code>)로 만들고,
+          분류를 만든 뒤 <strong>실제 번호로 치환</strong>합니다. 치환 후 누락 0건을 다시 확인합니다</dd>
         <dt>검수</dt><dd>자동 매칭이 애매한 상품은 <strong>예외 목록으로 분리</strong>해 담당자 확인을 받습니다.
           트리에 없는 기종(S8·A55·LG 계열)이 그 예입니다</dd>
       </dl>
@@ -501,7 +543,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   <summary>
     <span class="pn">PHASE 3</span>
     <span class="pt">스킨 퍼블리싱 — 와이어프레임을 카페24 문법으로</span>
-    <span class="pc">작업본에서만 · 6개 작업</span>
+    <span class="pc">작업본에서만 · 8개 작업</span>
   </summary>
   <div class="pbody">
     <div class="pgoal"><b>목표</b> — 디자인은 그대로 두고, 가짜 데이터를 <b>카페24 실제 데이터</b>로 갈아 끼운다.
@@ -534,9 +576,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           <code>{$product_no}</code> <code>{$soldout_icon}</code> <code>{$param}</code> <code>{$form.category_no}</code> 등</dd>
         <dt>확인필요</dt><dd>상품 상세·분류 페이지의 모듈명과 변수 전체 목록. 가장 확실한 방법은
           <strong>작업본 스킨(기본 디자인)의 실제 소스를 읽는 것</strong>입니다 — 이미 우리 보관함에 있으므로 안전합니다</dd>
-        <dt>절대 규칙</dt><dd>모듈 안의 반복 요소는 <strong><code>&lt;li&gt;</code> 하나만 목업으로 남깁니다.</strong>
-          여러 개 하드코딩하면 서버 루프가 중복 증식시킵니다. <code>module="product_listmain_[seq]"</code>의
+        <dt>기본 규칙</dt><dd>모듈 안의 반복 요소는 <strong><code>&lt;li&gt;</code> 하나만 목업으로 남기는 것이 기본</strong>입니다
+          (여러 개 하드코딩하면 서버 루프가 중복 증식). <code>module="product_listmain_[seq]"</code>의
           <code>_[seq]</code> 숫자는 바꾸지 않습니다</dd>
+        <dt>예외</dt><dd>반복문을 <code>only_html</code>로 지정하는 모듈은 <strong>노출 개수만큼 <code>&lt;li&gt;</code>를 쓰는 방식도 공식 문서에 있습니다.</strong>
+          모듈마다 다르므로 <strong>작업본 스킨의 기본 소스를 먼저 읽고</strong> 그 모듈의 반복 방식을 확인한 뒤 고칩니다 <span class="b chk">확인필요</span></dd>
       </dl>
     </div>
 
@@ -552,8 +596,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           ④ <code>module="..."</code> 유지 · ⑤ 주문·회원·옵션 폼은 <strong>마크업 동결, CSS만</strong></dd>
         <dt>금지</dt><dd>Prettier 등 <strong>자동 포매터를 이 HTML에 돌리지 않습니다</strong></dd>
         <dt>jQuery 주의</dt><dd>스마트디자인에 <strong>jQuery 1.4.4가 내장</strong>되어 있습니다.
-          추가로 jQuery를 불러오면 충돌합니다. 와이어프레임은 바닐라 JS라 유리하지만,
-          전역 클릭 가로채기가 <strong>구매 버튼을 막지 않는지</strong> 확인해야 합니다</dd>
+          공식 문서 표현은 <em>“추가로 제이쿼리를 호출하면 충돌이 생길 수 있습니다”</em> —
+          즉 <strong>항상 깨지는 건 아니지만 위험</strong>합니다. 우리 와이어프레임은 바닐라 JS라 유리하지만,
+          ① 실제 로딩되는 jQuery 버전 ② 전역 변수 충돌 ③ 전역 클릭 가로채기가
+          <strong>구매·옵션 버튼을 막지 않는지</strong>를 각각 확인해야 합니다 <span class="b chk">확인필요</span></dd>
       </dl>
     </div>
 
@@ -592,6 +638,43 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           둘 다 확인해야 합니다</dd>
       </dl>
     </div>
+
+    <div class="task">
+      <div class="th"><span class="id">3-7</span><span class="tt">법적 필수 표기 이식</span>
+        <span class="b none">없음</span><span class="b chk">확인필요</span></div>
+      <p class="why">관리자 설정을 하나도 안 바꿔도, <strong>새 스킨에서 표기를 빼먹으면 법적으로 문제</strong>가 됩니다.
+        전자상거래법상 쇼핑몰에 반드시 떠 있어야 하는 정보들입니다.</p>
+      <dl class="dl">
+        <dt>확인 목록</dt><dd>사업자 정보(상호·대표자·사업자등록번호·통신판매업 신고번호·주소·전화·이메일) ·
+          <strong>사업자정보 확인 링크</strong> · 이용약관 · 개인정보처리방침 · 개인정보 수집·이용 동의 UI ·
+          배송 안내 · <strong>교환·반품·환불 안내</strong> · 에스크로/구매안전서비스 표기</dd>
+        <dt>성인인증</dt><dd>연령 제한 상품이 있다면 목록·상세·직접 URL 접근·구매 경로 <strong>네 군데 모두</strong> 차단되는지 확인</dd>
+        <dt>방법</dt><dd>현재 운영 화면에 떠 있는 표기를 <strong>그대로 목록화</strong>해서 새 스킨과 1:1 대조.
+          빠진 항목이 0이 될 때까지 반복</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">3-8</span><span class="tt">SEO 구현 — 검색 유입을 잃지 않게</span>
+        <span class="b none">없음</span><span class="b chk">확인필요</span></div>
+      <p class="why">스킨을 바꾸면 <strong>검색엔진이 읽는 정보도 같이 바뀝니다.</strong>
+        잘못되면 네이버·구글 유입이 조용히 줄어듭니다. 광고와 달리 <strong>회복에 몇 달</strong>이 걸립니다.</p>
+      <dl class="dl">
+        <dt>먼저 기록</dt><dd>현재 스킨의 페이지별 <code>title</code>·<code>description</code> ·
+          검색엔진 <strong>소유권 확인 메타태그</strong>(네이버 서치어드바이저·구글 서치콘솔) ·
+          <code>robots.txt</code> · 사이트맵 주소 · 구조화 데이터</dd>
+        <dt>새 스킨에 반영</dt><dd>같은 메타 구조 유지 ·
+          <strong>소유권 확인 태그를 빠뜨리지 않기</strong>(빠지면 서치콘솔 연결이 끊깁니다) ·
+          상품/분류 페이지의 대표 URL 지정(<code>canonical</code>)</dd>
+        <dt>필터 URL 정책</dt><dd>다축 필터는 조합마다 URL이 생깁니다.
+          그대로 두면 <strong>검색엔진이 같은 상품 목록을 수백 개로 중복 수집</strong>합니다.
+          어떤 조합을 색인하고 어떤 걸 뺄지 미리 정합니다 <span class="b chk">확인필요</span></dd>
+        <dt>절대 주의</dt><dd>테스트 중에 넣은 <code>noindex</code>나 접근 차단이
+          <strong>전환 후에 남아 있으면 사이트가 검색에서 사라집니다.</strong> 전환 체크리스트에 「제거 확인」을 넣습니다.<br>
+          그리고 <code>robots.txt</code>는 <strong>비공개 수단이 아닙니다</strong> —
+          수집을 막아 달라는 요청일 뿐이고 주소를 아는 사람은 그대로 들어옵니다</dd>
+      </dl>
+    </div>
   </div>
 </details>
 
@@ -600,14 +683,17 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   <summary>
     <span class="pn">PHASE 4</span>
     <span class="pt">분류 230개 만들기 — 닫힌 상태로</span>
-    <span class="pc">운영 데이터 쓰기 · 4개 작업</span>
+    <span class="pc">운영 데이터 쓰기 · 5개 작업</span>
   </summary>
   <div class="pbody">
     <div class="pgoal"><b>목표</b> — 신규 분류 230개를 <b>고객이 접근할 수 없는 상태</b>로 만들고 실제 분류번호를 받는다.
       여기서 처음으로 운영 데이터에 쓰기가 일어납니다.</div>
 
-    <div class="note bad"><b>이 Phase는 Phase 7의 격리 검증을 통과한 뒤에만 실행합니다.</b>
-      「일단 만들고 바로 숨기기」는 금지입니다. 만드는 요청에 숨김 설정을 <strong>같이 넣어서</strong> 보냅니다.</div>
+    <div class="note bad"><b>검증을 두 번에 나눕니다.</b>
+      ① <strong>사전 격리 시험</strong>(4-3) — 분류 <strong>3개만</strong> 만들어 라이브에 안 새는지 확인.
+      ② <strong>전체 인수검증</strong>(Phase 7) — 230개와 상품 연결까지 다 끝난 뒤 전수 검증.<br>
+      ①을 통과하지 못하면 대량 생성(4-4)으로 넘어가지 않습니다.
+      「일단 만들고 바로 숨기기」는 금지 — 만드는 요청에 숨김 설정을 <strong>같이 넣어서</strong> 보냅니다.</div>
 
     <div class="task">
       <div class="th"><span class="id">4-1</span><span class="tt">Admin API 앱 등록 · 인증 구성</span>
@@ -638,31 +724,65 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <tr><td><code>use_display</code></td><td><code>"F"</code></td><td>표시상태 끔. 문서 원문 — <em>“표시안함 일 경우 해당 상품분류에 접근할 수 없다”</em></td></tr>
         <tr><td><code>use_main</code></td><td><code>"F"</code></td><td>메인분류 표시 끔 — 메뉴에 안 뜸</td></tr>
         <tr><td><code>display_type</code></td><td><code>"F"</code></td><td>PC·모바일 <strong>모두 사용안함</strong></td></tr>
-        <tr><td><code>sub_category_product_display</code></td><td><code>"F"</code></td><td>하위분류 상품진열 안 함 — 상위 분류로 상품이 새지 않게</td></tr>
+        <tr><td><code>sub_category_product_display</code></td><td>설계 후 결정</td>
+          <td><strong>이 분류를 열었을 때 하위 분류의 상품까지 같이 보여줄지</strong>를 정하는 값입니다.
+          자식 분류에 <code>"F"</code>를 넣어도 <strong>부모 분류의 노출을 막는 효과는 없습니다</strong></td></tr>
         <tr><td><code>hashtag_product_display</code></td><td><code>"F"</code></td><td>해시태그 자동진열 끔 (큐레이션 사용 시에만 유효)</td></tr>
       </table></div>
       <div class="note care"><b><code>use_display</code>는 멀티쇼핑몰별로 설정할 수 없습니다 — 전 몰 공통입니다.</b>
         API 문서 원문: <em>“해당 설정은 멀티쇼핑몰별로 설정할 수 없으며 모든 쇼핑몰에 적용된다.”</em>
         그래서 <strong>「테스트몰에서만 열어 두고 본몰에서는 닫는다」는 불가능합니다.</strong>
         이게 Phase 7에서 검증 방법을 따로 설계해야 하는 이유입니다.</div>
-      <div class="note bad"><b>카페24 공식 경고</b> — 분류를 닫아 두는 설정에 대해
-        <em>“쇼핑큐레이션이 적용되어 있는 경우는 위와 같은 설정이 반영되지 않을 수 있어요.”</em>
-        라고 되어 있습니다. 우리는 필터 때문에 큐레이션을 쓸 가능성이 높으므로,
-        <strong>큐레이션을 신청하기 전에 닫힌 분류를 먼저 만들고, 신청 후 닫힘이 유지되는지 재확인</strong>해야 합니다 <span class="b chk">확인필요</span></div>
+      <div class="note bad"><b>카페24 공식 경고 — 순서가 중요합니다</b><br>
+        분류를 닫아 두는 설정에 대해 <em>“쇼핑큐레이션이 적용되어 있는 경우는 위와 같은 설정이 반영되지 않을 수 있어요.”</em>
+        라고 되어 있습니다. 우리는 필터 때문에 큐레이션을 쓸 가능성이 높습니다.<br>
+        <strong>그래서 「먼저 230개 만들고 나중에 큐레이션 신청」은 금지입니다.</strong>
+        큐레이션을 쓸지 먼저 정하고(Phase 6-1), <strong>실제로 쓸 구성에서 3개로 격리 시험(4-3)</strong>을 통과한 뒤에
+        230개를 만듭니다. 나중에 확인하면 그 사이에 이미 노출됩니다 <span class="b chk">확인필요</span></div>
+      <div class="note"><b>하위 분류가 없는 상위 분류는 빈 목록이 됩니다</b> —
+        상품을 말단(뎁스4)에만 붙이고 <code>sub_category_product_display</code>를 모두 <code>"F"</code>로 두면
+        대·중·소분류를 열었을 때 <strong>상품이 하나도 없습니다.</strong>
+        상위 분류에 상품을 직접 붙일지, 하위 상품을 합쳐 보여줄지 <strong>Phase 2-4에서 미리 정하고</strong>
+        대·중·소분류별 예상 상품 수를 계산해 둡니다</div>
     </div>
 
     <div class="task">
-      <div class="th"><span class="id">4-3</span><span class="tt">부모 → 자식 순서로 230개 생성 · 번호 대응표 확보</span>
+      <div class="th"><span class="id">4-3</span><span class="tt">사전 격리 시험 — 분류 3개만 만들어 본다</span>
+        <span class="b risk">위험</span><span class="b chk">확인필요</span></div>
+      <p class="why">문서에 「접근할 수 없다」고 적혀 있다는 것과, <strong>실제로 어디에도 안 뜬다</strong>는 것은 다릅니다.
+        230개를 만들기 전에 <strong>3개로 먼저 확인</strong>합니다. 이 시험이 프로젝트 전체의 안전장치입니다.</p>
+      <dl class="dl">
+        <dt>시험 대상</dt><dd>뎁스1 1개 → 그 아래 뎁스2 1개 → 그 아래 뎁스4까지 1개.
+          <strong>트리의 실제 분류가 아니라 시험용 이름</strong>(예: <code>ZZ_격리시험_1</code>)으로 만듭니다</dd>
+        <dt>선행 조건</dt><dd>Phase 6-1의 필터 방식이 결정되어 있어야 합니다.
+          <strong>큐레이션을 쓸 거라면 큐레이션이 켜진 상태에서</strong> 시험해야 의미가 있습니다</dd>
+        <dt>확인 지점</dt><dd>4-5의 7개 지점 전부</dd>
+        <dt>통과 기준</dt><dd>7개 지점 모두에서 <strong>안 보임</strong>. 한 곳이라도 보이면
+          <strong>Phase 4 전체를 중단</strong>하고 다른 격리 방법을 찾습니다</dd>
+        <dt>되돌리기</dt><dd>시험용 분류 3개는 <code>DELETE</code>로 삭제.
+          <strong>시험용 이름을 쓰는 이유</strong>가 여기 있습니다 — 실제 트리 분류를 삭제하면 번호가 바뀌어 곤란해집니다</dd>
+        <dt>왜 위험 등급인가</dt><dd>고객 화면에는 안 나타날 설계지만 <strong>운영 쇼핑몰 데이터에 실제로 쓰기</strong>입니다.
+          대표 컨펌 후 실행합니다</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">4-4</span><span class="tt">부모 → 자식 순서로 230개 생성 · 번호 대응표 확보</span>
         <span class="b risk">위험</span><span class="b yes">확인됨</span></div>
       <p class="why">카페24가 분류번호를 <strong>자동으로</strong> 붙여 줍니다. 우리는 그 번호를 받아
         「트리의 어느 줄 = 몇 번 분류」 대응표를 만듭니다. 스킨이 이 번호로 상품을 불러옵니다.</p>
       <dl class="dl">
         <dt>실행 순서</dt><dd>뎁스1 9개 → 뎁스2 13개 → 뎁스3 30개 → 뎁스4 178개.
           부모 번호를 먼저 받아야 자식을 만들 수 있습니다</dd>
-        <dt>호출 제한</dt><dd>40회/초 · 요청당 1건 · 10분당 3,000회 / 호출시간 600초.
-          공식 권장은 <strong>병렬 금지, 순차 호출 + 요청 간 최소 0.5초</strong>, 배치는 업무시간 외.
-          230건이면 약 2분</dd>
-        <dt>실패 처리</dt><dd>429(호출 초과)면 1→2→4→8→16초 지수 백오프.
+        <dt>선행 조건</dt><dd><strong>4-3 사전 격리 시험 통과</strong></dd>
+        <dt>호출 제한</dt><dd>쉽게 말해 <strong>「물통에 40칸이 있고 초당 2칸씩 비워진다」</strong>는 구조입니다.
+          한 번에 몰아 보내면 금방 가득 차서 막힙니다(429 오류).
+          그래서 공식 권장대로 <strong>한 건씩 순서대로, 요청 사이에 최소 0.5초</strong> 쉬며 보냅니다.
+          230건이면 약 2분.<br>
+          10분 한도는 <strong>호출 3,000회</strong>와 <strong>누적 처리시간 600초</strong>입니다
+          (600초는 기다리는 시간이 아니라 서버가 일한 시간의 합). 배치는 업무시간 외에 돌립니다</dd>
+        <dt>실패 처리</dt><dd>429(호출 초과)가 나면 <strong>기다리는 시간을 배로 늘려 재시도</strong>합니다 —
+          1 → 2 → 4 → 8 → 16초.
           <strong>응답이 안 왔다고 바로 재시도하지 않습니다</strong> — 서버에서는 성공했는데 응답만 유실된 경우가 있어
           중복 분류가 생깁니다. 반드시 <code>GET /admin/categories</code>로 확인 후 재개</dd>
         <dt>되돌리기</dt><dd><code>DELETE</code>로 삭제 가능하지만 <strong>복구 API는 없습니다.</strong>
@@ -674,13 +794,19 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
     </div>
 
     <div class="task">
-      <div class="th"><span class="id">4-4</span><span class="tt">생성 직후 라이브 무영향 확인</span>
+      <div class="th"><span class="id">4-5</span><span class="tt">노출 검사 7개 지점 — 세 번 반복한다</span>
         <span class="b none">없음</span><span class="b chk">확인필요</span></div>
       <p class="why">만들었으니 <strong>정말로 안 보이는지</strong> 눈으로 확인합니다. 한 군데라도 새면 즉시 중단합니다.</p>
       <dl class="dl">
         <dt>확인 지점</dt><dd>① 운영 사이트 메뉴 · ② 검색 화면의 분류 선택 목록 ·
           ③ 상품 상세의 분류 경로 표시 · ④ 사이트맵 · ⑤ 분류 URL 직접 입력 ·
           ⑥ 네이버쇼핑 등 연동 피드 · ⑦ 설치된 앱 화면</dd>
+        <dt>세 번 반복</dt><dd><strong>ⓐ 4-3 사전 시험 직후 · ⓑ 4-4 생성 직후 · ⓒ Phase 5 상품 배정 완료 후.</strong><br>
+          빈 분류는 안 보였는데 <strong>상품이 붙으면 보이기 시작하는</strong> 경우가 있습니다 —
+          분류 경로나 외부 피드는 상품이 있어야 생기기 때문입니다.
+          쇼핑 큐레이션을 새로 켠 직후에도 다시 확인합니다</dd>
+        <dt>검사 방법</dt><dd><strong>로그아웃 상태 · 시크릿 창</strong>에서 봅니다.
+          관리자로 로그인한 채 보면 운영자에게만 보이는 것을 걸러내지 못합니다</dd>
         <dt>중단 기준</dt><dd>한 곳이라도 신규 분류가 보이면 <strong>즉시 중단 → 해당 분류 닫기 재확인 → 원인 파악까지 다음 단계 금지</strong></dd>
       </dl>
     </div>
@@ -703,10 +829,14 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <p class="why">두 방법 모두 「추가」로 동작합니다. 어느 쪽이 안전하고 빠른지 정합니다.</p>
       <div class="tw"><table>
         <tr><th></th><th>API</th><th>엑셀</th></tr>
-        <tr><td>방식</td><td><code>POST /admin/categories/{분류번호}/products</code><br>상품번호를 <strong>배열</strong>로 전달</td>
-          <td>상품목록 엑셀 다운 → 분류번호 열에 <code>ㅣ</code>로 여러 개 입력 → 업로드</td></tr>
+        <tr><td>방식</td><td><code>POST /admin/categories/{분류번호}/products</code><br>
+            상품번호를 <strong>배열</strong>로 전달 — 문서 예제 <code>"product_no": [10, 12, 14]</code></td>
+          <td>상품목록 엑셀 다운 → 분류번호 열에 구분기호로 여러 개 입력 → 업로드</td></tr>
         <tr><td>기존 분류</td><td>유지 (여러 분류 동시 배정 가능)</td><td><strong>유지</strong> — 공식 문서 명시</td></tr>
-        <tr><td>단위</td><td>분류 1개당 1회 → 약 230회</td><td>한 번에 최대 <strong>1,000개 상품</strong> → 최소 3회</td></tr>
+        <tr><td>단위</td><td>분류 1개당 1회면 약 230회.
+            단 <strong>한 요청에 상품을 몇 개까지 담을 수 있는지는 문서에 없습니다</strong>(예제는 3개).
+            한도에 따라 호출 수와 소요 시간이 달라집니다 <span class="b chk">확인필요</span></td>
+          <td>한 번에 최대 <strong>1,000개 상품</strong> → 최소 3회</td></tr>
         <tr><td>위험</td><td>옵션·가격 열을 아예 건드리지 않음 <strong>(안전)</strong></td>
           <td>전체 상품 열을 다시 올리므로 <strong>다른 열이 덮어써질 위험</strong></td></tr>
         <tr><td>추천</td><td colspan="2"><strong>API 우선.</strong> 엑셀은 열 하나만 고쳐도 파일 전체가 올라가서, 옵션·재고 열이 섞일 위험이 있습니다</td></tr>
@@ -715,7 +845,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <dt>확인필요</dt><dd>API 한 번에 보낼 수 있는 상품번호 개수 (문서 예시는 3개, 「요청제한 1건」 표기와 함께 검증 필요) ·
           같은 상품을 두 번 배정했을 때의 동작</dd>
         <dt>엑셀 쓸 경우 주의</dt><dd><code>상품분류번호</code>·<code>상품분류 신상품 영역</code>·<code>상품분류 추천상품영역</code>
-          <strong>세 열의 개수가 같아야</strong> 합니다 (<code>25ㅣ124</code> → <code>NㅣN</code>)</dd>
+          <strong>세 열의 개수가 같아야</strong> 합니다 (<code>25|124</code> → <code>N|N</code>)</dd>
+        <dt>구분기호 함정</dt><dd>구분기호가 <strong>파이프 <code>|</code>(키보드 Enter 위, Shift+₩)</strong>인지
+          <strong>한글 모음 <code>ㅣ</code></strong>인지 자료마다 다르게 적혀 있습니다
+          (카페24 고객센터 본문에는 <code>ㅣ</code>로 표기된 곳이 있고, 다른 안내에는 <code>|</code>로 나옵니다).
+          <strong>생긴 게 거의 같아서 눈으로 구별이 안 됩니다.</strong>
+          반드시 <strong>내려받은 엑셀 양식의 안내 문구를 그대로 확인</strong>하고, 상품 1개로 먼저 시험합니다 <span class="b chk">확인필요</span></dd>
       </dl>
     </div>
 
@@ -739,8 +874,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <p class="why">명세대로 전부 붙이고, <strong>붙인 결과가 명세와 100% 같은지</strong> 기계로 대조합니다.</p>
       <dl class="dl">
         <dt>실행 시점</dt><dd><strong>업무시간 외</strong> (공식 권장). 주문이 몰리는 시간대를 피합니다</dd>
-        <dt>합격 기준</dt><dd>모든 상품에서 <strong>「작업 전 분류 집합 ⊆ 작업 후 분류 집합」</strong>이 성립.
-          신규 연결 누락 0건 · 오배정 0건 · 중복 0건</dd>
+        <dt>합격 기준</dt><dd>모든 상품에서 <strong>작업 전에 연결돼 있던 분류가 하나도 빠지지 않았고</strong>,
+          거기에 새 분류만 더해진 상태. 신규 연결 누락 0건 · 오배정 0건 · 중복 0건</dd>
+        <dt>대조 기준</dt><dd>0-1의 백업이 아니라 <strong>작업 바로 전에 다시 받은 상품 목록</strong>과 비교합니다.
+          그 사이에 담당자가 상품을 추가·수정했을 수 있습니다</dd>
         <dt>기록</dt><dd>어떤 상품에 어떤 연결을 추가했는지 전건 로그. 이게 유일한 선택적 되돌리기 수단입니다</dd>
       </dl>
       <div class="note bad"><b>절대 하지 않는 것</b> — 관리자의 <code>상품 → 상품정보 일괄변경</code>으로 분류를 다루지 않습니다.
@@ -803,8 +940,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           → <strong>상품 검색 조건은 전 몰 공통</strong>이고, <strong>필터 기능 등은 몰별로 분리 가능</strong>합니다</dd>
         <dt>확인됨</dt><dd><code>상품 목록 화면 설정</code>의 <strong>상품 정보 노출 설정은 기본몰에서만 설정되고 모든 몰에 공통 적용</strong>됩니다.
           정렬 조건은 몰별 설정 가능</dd>
-        <dt>결론</dt><dd>필터 설정 변경은 <strong>전환 직전에 몰아서</strong> 합니다.
-          미리 건드리면 지금 고객의 검색 화면이 바뀝니다</dd>
+        <dt>결론 — 두 묶음으로 나눕니다</dt>
+        <dd>① <strong>멀티쇼핑몰별로 분리되는 항목</strong>(필터 기능, 정렬 조건 등) → 테스트몰에서 <strong>미리</strong> 설정하고 6-3에서 검증.<br>
+          ② <strong>전 몰 공통 항목</strong>(상품 검색 조건, 상품 정보 노출 설정) → <strong>전환 직전에만</strong> 변경.
+          미리 건드리면 지금 고객의 검색 화면이 바뀝니다.<br>
+          테스트몰을 쓰지 않는다면 ①도 공통 설정이 되므로, 6-3 검증을 <strong>전환 직전 점검</strong>으로 옮겨야 합니다 <span class="b chk">확인필요</span></dd>
       </dl>
     </div>
 
@@ -814,10 +954,11 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <p class="why">필터는 <strong>그럴듯하게 동작하면서 틀린 결과를 주기 쉬운</strong> 기능입니다.
         「보기엔 되는데 상품이 빠진다」가 가장 흔한 사고입니다.</p>
       <dl class="dl">
-        <dt>확인됨 · 함정</dt><dd>카페24 상품 속성 검색은
-          <em>“현재 보이는 화면의 상품들을 기준으로 자동 추출되어 표시”</em>됩니다.
-          <strong>즉 1페이지에 있는 상품만 기준이 될 수 있습니다.</strong>
-          전체 상품을 대상으로 좁히는 게 맞는지 반드시 확인해야 합니다</dd>
+        <dt>함정 — 문서 원문</dt><dd>카페24 상품 속성 검색의 속성값은
+          <em>“현재 보이는 화면의 상품들을 기준으로 자동 추출되어 표시”</em>됩니다.<br>
+          여기서 「현재 보이는 화면」이 <strong>그 분류 전체인지, 지금 보고 있는 1페이지인지는 문서에 없습니다.</strong>
+          만약 1페이지 기준이면 <strong>2페이지 이후에만 있는 색상은 필터에 아예 안 나타납니다.</strong>
+          <strong>확인 방법</strong> — 2페이지 이후에만 존재하는 속성값을 하나 골라, 1페이지에서 그 칩이 보이는지 봅니다 <span class="b chk">확인필요</span></dd>
         <dt>검증 항목</dt><dd>결과 개수 · 정렬 · 페이지 넘김 · 조건 없음 · 품절 · 초기화 ·
           뒤로가기 · URL 공유 후 같은 결과가 나오는지</dd>
       </dl>
@@ -830,7 +971,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
   <summary>
     <span class="pn">PHASE 7</span>
     <span class="pt">검증 — 닫힌 상태에서 어떻게 전부 확인하나</span>
-    <span class="pc">가장 중요 · 4개 작업</span>
+    <span class="pc">가장 중요 · 9개 작업</span>
   </summary>
   <div class="pbody">
     <div class="pgoal"><b>목표</b> — 고객에게 노출하지 않으면서 <b>전환 후와 똑같은 상태</b>를 만들어 전수 검증한다.
@@ -864,6 +1005,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
             다만 <strong>디자인·회원은 분리</strong>되므로 <strong>주문·결제 흐름 리허설</strong>에는 유용.
             비용과 디자인 라이선스 소모 확인 필요</td></tr>
       </table></div>
+      <div class="note bad"><b>ⓐ를 택했다면 「해제」 작업을 잊으면 안 됩니다</b><br>
+        ⓐ는 분류를 <strong>표시함 + 운영자만 접근</strong> 상태로 두는 방법입니다.
+        전환할 때 표시상태만 켜고 <strong>접근권한을 그대로 두면 일반 고객은 계속 막힙니다</strong> —
+        우리 눈에는 다 보이니까 알아차리기 어렵습니다.<br>
+        → Phase 8-2에 <strong>「분류 230개의 접근권한을 전체 공개로 해제」</strong>를 반드시 넣고,
+        전환 후 <strong>로그아웃·시크릿 창</strong>으로 공개 여부를 확인합니다.</div>
       <div class="note care"><b>멀티쇼핑몰을 쓸 경우 주의</b> — 디자인 라이선스는
         <em>“기본 도메인 1개당 1개”</em>이고 <em>“멀티쇼핑몰은 각 쇼핑몰을 1개의 기본 도메인으로 간주”</em>합니다.
         유료 스킨을 테스트몰에 적용하면 <strong>라이선스를 추가로 소모</strong>합니다.
@@ -888,7 +1035,15 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <dt>확인필요</dt><dd>테스트 결제를 어떤 방식으로 하는지 (테스트 상품 + 즉시 취소 / PG 테스트 모드).
           <strong>실제 결제가 발생하면 수수료와 정산이 섞입니다</strong></dd>
         <dt>검증 항목</dt><dd>비회원·회원 · 옵션 선택 · 수량 · 배송비 · 할인·쿠폰 ·
-          결제 성공 / 실패 / 중간 이탈 후 복귀 · 주문완료 페이지 · <strong>재고가 정확히 1개 줄는지</strong></dd>
+          결제 성공 / 실패 / 중간 이탈 후 복귀 · 주문완료 페이지 ·
+          <strong>재고가 주문 수량만큼 정확히 줄어드는지</strong>
+          (품목별 재고 정책에 따라 기대값을 미리 계산해 두고 비교)</dd>
+        <dt>시험 후 반드시</dt><dd>시험 주문을 <strong>취소하고 뒤처리까지 확인</strong>합니다 —
+          ① 재고 복원 ② 사용한 쿠폰·적립금 복원 ③ <strong>자동 출고·배송 연동이 걸려 있지 않은지</strong>
+          ④ 고객 알림(문자·이메일)이 실제로 나가지 않았는지 ⑤ 외부 주문 연동(택배사·ERP)에 들어가지 않았는지.<br>
+          <strong>시험 주문이 실제 출고로 이어지는 사고</strong>가 가장 흔합니다</dd>
+        <dt>광고 집계</dt><dd>시험 결제가 <strong>광고 전환으로 집계되면 광고 최적화가 오염됩니다.</strong>
+          추적에서 제외할 방법을 미리 정합니다 <span class="b chk">확인필요</span></dd>
         <dt>주의</dt><dd>와이어프레임의 가짜 「주문완료」 화면이 남아 있으면
           <strong>실제로 결제가 안 됐는데 완료로 보입니다.</strong> 전부 걷어냈는지 확인</dd>
       </dl>
@@ -906,6 +1061,68 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           새 구조는 <strong>추가</strong>로만 만듭니다. 바꿔야 하면 리다이렉트 설계가 선행</dd>
       </dl>
     </div>
+
+    <div class="task">
+      <div class="th"><span class="id">7-5</span><span class="tt">외부 연동 피드 갱신 검증 (네이버쇼핑 · 구글 · 메타)</span>
+        <span class="b care">주의</span><span class="b chk">확인필요</span></div>
+      <p class="why">링크가 열리는 것만으로는 부족합니다. <strong>피드가 제대로 갱신됐는지</strong>는 다음 수집 주기까지 봐야 압니다.
+        여기가 깨지면 <strong>네이버쇼핑 노출이 통째로 빠집니다.</strong></p>
+      <dl class="dl">
+        <dt>연동별 확인</dt><dd>상품 ID가 유지됐는지 · 분류 매핑 · 가격·재고·배송비 ·
+          이미지 · <strong>랜딩 URL</strong> · 마지막 수집 시각 · 오류 건수</dd>
+        <dt>시점</dt><dd>전환 전 수치를 기록 → 전환 후 <strong>다음 수집 주기가 지난 뒤</strong> 다시 비교.
+          그 전까지는 「문제 없음」이라고 판단하지 않습니다</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">7-6</span><span class="tt">리뷰 · 상품Q&amp;A 데이터 연결 검증</span>
+        <span class="b care">주의</span><span class="b chk">확인필요</span></div>
+      <p class="why">리뷰는 <strong>쌓인 자산</strong>입니다. 스킨을 바꿀 때 게시판 연결이 끊기면
+        상품 상세에서 리뷰가 0개로 보이고, 전환율이 바로 떨어집니다.</p>
+      <dl class="dl">
+        <dt>확인</dt><dd>게시판 번호 · 게시글 번호 · <strong>상품과의 연결</strong> ·
+          리뷰 수 · 평점 · 첨부 이미지 · 답글 · 비밀글 권한</dd>
+        <dt>핵심</dt><dd>같은 게시판을 계속 쓴다면 <strong>데이터를 옮기는 게 아니라 연결만 보존</strong>하면 됩니다.
+          외부 리뷰 앱을 쓰고 있다면 그 앱이 새 스킨에서도 뜨는지가 별개 문제입니다</dd>
+        <dt>전환 중 작성분</dt><dd>전환 작업 중에 고객이 쓴 리뷰·문의가 유실되지 않는지 확인</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">7-7</span><span class="tt">속도 · 캐시 검증</span>
+        <span class="b none">없음</span><span class="b chk">확인필요</span></div>
+      <p class="why">새 스킨이 <strong>기존보다 느리면</strong> 모바일 고객이 이탈합니다. 디자인이 좋아도 매출이 줄어듭니다.</p>
+      <dl class="dl">
+        <dt>비교</dt><dd>모바일에서 메인·상품목록·상품상세·필터 동작 속도를 <strong>기존 화면과 나란히</strong> 측정.
+          이미지 용량 · 앱 스크립트 개수</dd>
+        <dt>캐시 함정</dt><dd>CSS·JS 파일명에 <strong>버전 표시</strong>를 붙입니다.
+          안 붙이면 재방문 고객의 브라우저에 <strong>옛 CSS가 남은 채 새 HTML이 떠서</strong> 화면이 깨집니다.
+          전환할 때와 <strong>되돌릴 때 양쪽 모두</strong> 확인</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">7-8</span><span class="tt">접근성 검증</span>
+        <span class="b none">없음</span><span class="b chk">확인필요</span></div>
+      <p class="why">마우스 없이도, 화면을 크게 키워도 살 수 있어야 합니다. 특히 <strong>결제까지 가는 길</strong>이 막히면 매출 손실입니다.</p>
+      <dl class="dl">
+        <dt>항목</dt><dd>키보드(Tab)만으로 메뉴·필터·옵션·결제 조작 가능 · 현재 위치 표시(초점) ·
+          팝업 닫은 뒤 원래 자리로 복귀 · 입력란 이름과 오류 안내 ·
+          이미지 대체 텍스트 · 200% 확대 시 깨짐 없음 · 글자와 배경 명도 대비</dd>
+      </dl>
+    </div>
+
+    <div class="task">
+      <div class="th"><span class="id">7-9</span><span class="tt">광고 추적 이벤트 정확도 검증</span>
+        <span class="b care">주의</span><span class="b chk">확인필요</span></div>
+      <p class="why">코드가 박혀 있는 것과 <strong>숫자가 맞는 것</strong>은 다릅니다.
+        금액이 두 번 잡히거나 통화 단위가 틀리면 광고 효율 판단이 전부 어긋납니다.</p>
+      <dl class="dl">
+        <dt>확인</dt><dd>구매 이벤트의 <strong>주문번호 · 금액 · 통화 · 상품 식별자</strong>가 실제 주문과 일치 ·
+          <strong>중복 발송이 없는지</strong> · 장바구니·상품조회·검색 이벤트도 같이</dd>
+      </dl>
+    </div>
   </div>
 </details>
 
@@ -913,7 +1130,7 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
 <details class="phase">
   <summary>
     <span class="pn">PHASE 8</span>
-    <span class="pt">전환 — 고객 화면이 바뀌는 단 하나의 순간</span>
+    <span class="pt">전환 — 고객 화면을 바꾸는 단계</span>
     <span class="pc">대표 컨펌 필수 · 4개 작업</span>
   </summary>
   <div class="pbody">
@@ -927,8 +1144,16 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <span class="b care">주의</span><span class="b chk">확인필요</span></div>
       <p class="why">전환 당일에 처음 해 보면 늦습니다. <strong>되돌리는 연습을 먼저</strong> 합니다.</p>
       <dl class="dl">
-        <dt>리허설 항목</dt><dd>순서 확정 (분류 공개 → PC 대표디자인 → 모바일 대표디자인 → 필터 설정) ·
+        <dt>리허설 항목</dt><dd>순서 확정 (분류 접근권한 해제 → 분류 공개 → PC 대표디자인 → 모바일 대표디자인 → 공통 검색 설정) ·
           각 단계 소요 시간 · <strong>되돌리기 소요 시간</strong> · 진행 중인 장바구니·주문이 깨지지 않는지</dd>
+        <dt>전환은 순간이 아닙니다</dt><dd>위 5단계는 <strong>동시에 끝나지 않습니다.</strong>
+          중간에 이런 상태가 생깁니다 — ⓐ 기존 메뉴에 새 분류가 먼저 뜬 상태 ·
+          ⓑ PC는 새 화면인데 모바일은 옛 화면 · ⓒ 새 화면인데 필터가 아직 안 붙은 상태.<br>
+          <strong>각 중간 상태에서 「고객이 주문을 끝까지 할 수 있는가」</strong>를 확인하고,
+          안 되는 상태는 <strong>단계 순서를 바꿔</strong> 없앱니다. 어느 단계에서 멈출 수 있는지도 정해 둡니다</dd>
+        <dt>전환 직전 재대조</dt><dd>0-1 백업 이후 담당자가 추가·수정한 상품이 있습니다.
+          <strong>전환 직전에 상품 목록을 다시 받아</strong> 신규 상품이 새 분류에 빠져 있지 않은지 확인하고,
+          빠진 건은 그 자리에서 연결합니다</dd>
         <dt>확인필요</dt><dd>PC와 모바일 전환 사이의 시간차에 <strong>어긋난 화면이 섞이는지</strong>.
           장바구니에 담아 둔 고객이 주문서로 넘어갈 때 버전이 섞이는지</dd>
       </dl>
@@ -942,8 +1167,16 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <dt>방법</dt><dd><code>PUT /admin/categories/{분류번호}</code>로 <code>use_display</code>·<code>display_type</code> 변경.
           <strong>스킨 전환 직전에</strong> 실행</dd>
         <dt>되돌리기</dt><dd>같은 API로 다시 <code>"F"</code>. 수 분 내 가능</dd>
+        <dt>같이 해야 하는 일</dt><dd>Phase 7-1에서 <strong>ⓐ 운영자 전용 접근</strong>으로 검증했다면,
+          여기서 <strong>230개의 접근권한을 전체 공개로 되돌려야</strong> 합니다.
+          표시상태만 켜고 접근권한을 남겨 두면 <strong>고객은 계속 막힙니다</strong> —
+          우리는 로그인 상태라 눈치채지 못합니다.
+          전환 후 반드시 <strong>로그아웃·시크릿 창</strong>으로 확인합니다</dd>
         <dt>주의</dt><dd><code>use_main</code>(메인분류 표시)은 <strong>필요한 분류만</strong> 켭니다.
           230개를 모두 켜면 <em>“중/소/상세 분류도 대분류처럼 최상위에 표시”</em>되어 메뉴가 무너집니다</dd>
+        <dt>하위 상품 표시</dt><dd>4-2에서 정한 <code>sub_category_product_display</code> 값을
+          여기서 최종 적용합니다. <strong>대·중·소분류를 열었을 때 상품이 0개인 채로 공개되지 않도록</strong>
+          공개 전에 분류별 상품 수를 한 번 더 확인합니다</dd>
       </dl>
     </div>
 
@@ -956,8 +1189,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
           이어서 모바일 탭에서 동일하게</dd>
         <dt>주의</dt><dd>멀티쇼핑몰을 쓰는 경우 <strong>적용할 쇼핑몰을 먼저 선택</strong>하고 버튼을 눌러야 합니다.
           선택하지 않으면 <strong>다른 몰의 디자인이 바뀝니다</strong></dd>
-        <dt>되돌리기</dt><dd>0-3에 기록한 기존 스킨을 다시 <code>대표 디자인 설정</code>.
-          <strong>기존 스킨은 보관함에 그대로 남아 있습니다</strong> (대표 디자인은 삭제가 불가능하므로 사라질 염려 없음)</dd>
+        <dt>되돌리기</dt><dd>0-3에 기록한 기존 스킨을 다시 <code>대표 디자인 설정</code></dd>
+        <dt>기존 스킨 보호</dt><dd><strong>전환하는 순간 기존 스킨은 「대표 디자인」이 아니게 되고,
+          삭제 보호도 풀립니다.</strong> (삭제가 막히는 건 최초 기본 디자인과 <strong>현재</strong> 대표 디자인뿐입니다.)
+          그래서 전환 전에 ① 기존 스킨을 <strong>PC로 내려받아 보관</strong>하고
+          ② 작업자 계정에서 <strong>디자인 삭제 권한을 빼</strong> 둡니다.
+          삭제하면 복구가 안 되고, 유료 스킨은 다시 살 수도 없습니다</dd>
       </dl>
     </div>
 
@@ -966,10 +1203,23 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
         <span class="b care">주의</span><span class="b chk">확인필요</span></div>
       <p class="why">공개하고 나서야 드러나는 문제가 있습니다. <strong>되돌릴 기준을 미리 정해 둡니다.</strong></p>
       <dl class="dl">
-        <dt>감시 항목</dt><dd>주문 발생률 (전주 같은 시간대 대비) · 결제 실패 로그 ·
-          오류 화면 신고 · 광고 전환 추적 수치 · 장바구니 이탈률 · 고객 문의</dd>
-        <dt>즉시 되돌리는 기준</dt><dd>결제 실패가 발생하거나 · 주문이 평소 대비 급감하거나 ·
-          특정 기기에서 화면이 깨지면 → <strong>논의 없이 바로 8-3 되돌리기</strong></dd>
+        <dt>감시 항목</dt><dd>주문 발생률 · 결제 실패 로그 · 오류 화면 신고 ·
+          광고 전환 추적 수치 · 장바구니 이탈률 · 고객 문의</dd>
+        <dt>즉시 되돌리는 기준 (사전에 숫자로 못 박습니다)</dt>
+        <dd><strong>즉시</strong> — 주문·결제 화면에서 오류가 1건이라도 나오거나, 결제 창이 안 뜨거나,
+          특정 기기에서 구매 버튼을 누를 수 없을 때. <strong>논의 없이 바로 되돌립니다.</strong><br>
+          <strong>30분 관찰 후 판단</strong> — 주문 수가 평소 같은 시간대의 절반 이하일 때.
+          단 <strong>광고를 멈췄다면 전주 비교는 쓸 수 없으므로</strong>
+          「방문자 대비 주문 비율(전환율)」로 봅니다.<br>
+          <strong>판단 주체</strong>와 연락 수단을 전환 전에 정해 둡니다 (새벽 작업이면 특히)</dd>
+        <dt>되돌릴 때는 전부 되돌립니다</dt>
+        <dd>스킨만 되돌리면 <strong>공개된 분류와 바뀐 검색 설정은 남습니다.</strong> 역순으로 전부:<br>
+          ① 공통 검색·필터 설정 원복 → ② 모바일 대표디자인 원복 → ③ PC 대표디자인 원복 →
+          ④ 분류 230개 <code>use_display:"F"</code>로 닫기 → ⑤ 접근권한 원복 →
+          ⑥ 각 단계 후 <strong>시크릿 창에서 화면 확인</strong></dd>
+        <dt>되돌려도 보존하는 것</dt><dd>전환 후에 발생한 <strong>주문 · 결제 · 회원가입 · 재고 변화는 그대로 둡니다.</strong>
+          0-1의 과거 엑셀을 복원하면 <strong>그동안 바뀐 가격·재고를 덮어써서 더 큰 사고</strong>가 납니다.
+          디자인 되돌리기는 데이터를 과거로 되돌리는 작업이 아닙니다</dd>
       </dl>
     </div>
   </div>
@@ -1014,8 +1264,8 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
 
 <!-- ══════════ 위험 ══════════ -->
 <section>
-  <h2>가장 위험한 지점 6개</h2>
-  <p class="sub">이 여섯 개만 막으면 프로젝트가 라이브를 깨뜨릴 경로가 거의 사라집니다.</p>
+  <h2>가장 위험한 지점 8개</h2>
+  <p class="sub">이 여덟 개만 막으면 프로젝트가 라이브를 깨뜨릴 경로가 거의 사라집니다.</p>
   <div class="tw"><table>
     <tr><th>#</th><th>위험</th><th>왜 치명적인가</th><th>사전 차단</th></tr>
     <tr><td>1</td><td>분류를 「만들고 나서 숨기기」</td>
@@ -1036,6 +1286,12 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
     <tr><td>6</td><td>PC만 전환하고 모바일을 잊음</td>
       <td>대표 디자인은 <strong>PC·모바일이 따로</strong>다. 주력 고객이 깨진 화면을 본다</td>
       <td>전환 체크리스트에 모바일을 <strong>별도 항목</strong>으로 두고, 실기기로 확인 후 완료 처리</td></tr>
+    <tr><td>7</td><td>되돌릴 때 스킨만 되돌림</td>
+      <td>공개된 분류 230개와 바뀐 검색 설정이 남아, <strong>옛 화면에 새 분류가 섞인 상태</strong>가 된다</td>
+      <td>롤백을 <strong>역순 6단계 체크리스트</strong>로 만들어 리허설에서 실제로 해 본다 (8-4)</td></tr>
+    <tr><td>8</td><td>검증용 「운영자만 접근」을 전환 때 안 풀음</td>
+      <td>우리 눈에는 다 보이는데 <strong>고객은 분류에 못 들어간다.</strong> 알아차리기까지 오래 걸린다</td>
+      <td>전환 체크리스트에 「접근권한 해제」를 넣고, <strong>로그아웃·시크릿 창</strong>으로 확인 (8-2)</td></tr>
   </table></div>
 </section>
 
@@ -1068,6 +1324,13 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
       <td>상품 → 상품 목록 → 아무 상품 → 표시설정</td><td>필터 값의 재료. 비어 있으면 2,146개 입력 작업이 추가된다</td></tr>
     <tr><td>10</td><td><strong>부운영자 권한</strong>을 메뉴 단위로 제한할 수 있는가</td>
       <td>고객 → 운영자 관리</td><td>사고를 사람이 아니라 시스템으로 막는다</td></tr>
+    <tr><td>11</td><td><strong>검색엔진 소유권 확인 메타태그</strong>가 스킨에 박혀 있는가
+      (네이버 서치어드바이저 · 구글 서치콘솔). <code>robots.txt</code>와 사이트맵 주소</td>
+      <td>디자인 소스 <code>&lt;head&gt;</code> · 사이트 설정</td>
+      <td>빠뜨리면 전환 후 서치콘솔 연결이 끊기고 색인이 흔들린다</td></tr>
+    <tr><td>12</td><td><strong>리뷰·상품Q&amp;A</strong>가 카페24 기본 게시판인가 외부 앱인가</td>
+      <td>게시판 관리 · 설치된 앱</td>
+      <td>기본 게시판이면 연결만 보존하면 되고, 외부 앱이면 별도 이전 작업이 생긴다</td></tr>
   </table></div>
 </section>
 
@@ -1169,9 +1432,10 @@ footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color
 
 <footer>
   <div class="wrap" style="padding:0">
-    <p>노페일디자인 × 쏭스디자인 · 2026-11-05 작성<br>
+    <p>노페일디자인 × 쏭스디자인 · 2026-11-05 작성 · Phase 0~9 · 48개 작업<br>
     이 문서의 「확인됨」은 카페24 공식 문서 인용에 근거합니다.
-    「확인필요」 항목은 관리자 화면 확인 또는 카페24 문의 후 갱신합니다.</p>
+    「확인필요」 항목은 관리자 화면 확인 또는 카페24 문의 후 갱신합니다.<br>
+    두 개의 AI 모델이 교차 검수했습니다 — 사실 오류 7건 · 논리 구멍 10건 수정, 누락 작업 9건 추가.</p>
   </div>
 </footer>
 
