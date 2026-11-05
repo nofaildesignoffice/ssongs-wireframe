@@ -1011,14 +1011,15 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 }
 
 
+/* 원형 축소 2026-11-05 */
 /* ══ 원형 카테고리 스트립 ══════════════════════════════════════════ */
 .circwrap{display:flex;gap:26px;overflow-x:auto;overflow-y:hidden;
   -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
   scrollbar-width:none;-ms-overflow-style:none;padding-bottom:2px}
 .circwrap::-webkit-scrollbar{display:none}
 .circ__i{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;
-  gap:11px;width:104px;text-decoration:none;color:inherit}
-.circ__ph{width:88px;height:88px;border-radius:50%;background:var(--ph);
+  gap:9px;width:92px;text-decoration:none;color:inherit}
+.circ__ph{width:72px;height:72px;border-radius:50%;background:var(--ph);
   border:1px solid var(--border2);display:flex;align-items:center;
   justify-content:center;color:var(--phic);transition:transform .25s ease}
 .circ__i:hover .circ__ph{transform:translateY(-3px)}
@@ -1030,8 +1031,8 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   /* 스트립은 얇게, 좌우로 화면 끝까지 흘려 잘린 원이 보이게 한다 */
   .circwrap{gap:16px;margin:0 -20px;padding:0 0 2px 20px}
   .circwrap > .circ__i:last-of-type{margin-right:20px}
-  .circ__i{width:78px;gap:8px}
-  .circ__ph{width:68px;height:68px}
+  .circ__i{width:70px;gap:7px}
+  .circ__ph{width:58px;height:58px}
   .circ__t{font-size:11.5px}
 
   /* ── 모바일 배치 — GNB 다음에 스트립, 그 아래 히어로 ────────────
@@ -1077,8 +1078,8 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   .circwrap{justify-content:center}
 }
 /* ── 원형 스트립 — 모바일: 4.2개가 보이도록 폭을 계산한다 ─────────
-   보이는 영역 = 4.2*w + 4*gap 이므로 w = (100% - 4*gap)/4.2.
-   gap 16px 기준 4*16 = 64px (온전한 원 4개 뒤에 gap 이 4번 온다). 5번째 원이 잘려 보여 더 있다는 게 드러난다. */
+   보이는 영역 = 5.2*w + 5*gap 이므로 w = (100% - 5*gap)/5.2.
+   gap 16px 기준 5*16 = 80px (온전한 원 5개 뒤에 gap 이 5번 온다). 6번째 원이 잘려 보여 더 있다는 게 드러난다. */
 @media(max-width:900px){
   .wsec.circ{padding-bottom:30px}
 }
@@ -1086,8 +1087,8 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
    잘리는 5번째가 원이 아니라 빈 공간이 되어 신호 역할을 못 한다.
    641~900 은 앞서 정한 고정 크기(78/68px) 스크롤을 그대로 쓴다. */
 @media(max-width:640px){
-  .circ__i{width:auto;flex:0 0 calc((100% - 64px)/4.2)}
-  .circ__ph{width:100%;max-width:100px;height:auto;aspect-ratio:1/1}
+  .circ__i{width:auto;flex:0 0 calc((100% - 80px)/5.2)}
+  .circ__ph{width:100%;max-width:84px;height:auto;aspect-ratio:1/1}
 }
 @media(max-width:560px){
   .wsec.circ{padding-bottom:26px}
@@ -1514,10 +1515,10 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
      그 절반만큼 섹션을 끌어올려 위아래로 정확히 반씩 걸친다.
      transform 이 아니라 음수 margin — transform 은 레이아웃을 안 건드려
      아래에 빈 공간이 남는다. */
-  #r-main > .wsec.circ{--circpill:168px;position:relative;z-index:3;
+  #r-main > .wsec.circ{--circpill:142px;position:relative;z-index:3;
     padding-top:0;margin-top:calc(var(--circpill) / -2)}
   .circwrap{width:fit-content;max-width:100%;margin-inline:auto;
-    padding:26px 44px;border-radius:999px;
+    padding:22px 40px;border-radius:999px;
     background:rgba(255,255,255,.62);
     -webkit-backdrop-filter:blur(20px) saturate(140%);
     backdrop-filter:blur(20px) saturate(140%);
