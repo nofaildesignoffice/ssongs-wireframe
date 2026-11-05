@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>쏭스디자인 카페24 스킨 전환 작업 리스트</title>
 <meta name="description" content="운영 중인 쇼핑몰을 건드리지 않고 리뉴얼 스킨과 230개 분류 필터를 구현하는 전체 작업 계획">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
 :root{
   --ink:#16181D; --dim:#363A42; --gray:#6B7280; --lt:#9AA0A8;
@@ -12,13 +14,18 @@
   --ok:#0B7A3B; --okbg:#E8F6EE; --warn:#92610A; --warnbg:#FCF3E2; --bad:#B21F2D; --badbg:#FCEBEC;
   --info:#1A4FA0; --infobg:#E9F0FB;
   --maxw:1060px; --r:10px; --r2:14px;
+  --sans:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,
+    "Apple SD Gothic Neo","Malgun Gothic",sans-serif;
   --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Malgun Gothic",sans-serif;
-  font-size:15.5px;line-height:1.75;letter-spacing:-.011em;word-break:keep-all}
+  font-family:var(--sans);
+  font-size:16px;line-height:1.78;letter-spacing:-.014em;word-break:keep-all;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"tnum" 0}
+input,button,select,textarea{font-family:inherit}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
 a{color:var(--info)}
 
@@ -118,7 +125,7 @@ td code{font-size:12.5px}
 footer{border-top:1px solid var(--line);padding:34px 0 60px;font-size:13px;color:var(--lt)}
 
 @media(max-width:760px){
-  body{font-size:15px}
+  body{font-size:15.5px}
   .terms{grid-template-columns:1fr}
   .dl{grid-template-columns:1fr;gap:2px}
   .dl dt{margin-top:8px}
