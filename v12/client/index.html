@@ -3209,6 +3209,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkbn__ov{padding:0 22px}
 }
 
+/* 라인업 3칸 2줄 2026-11-08 */
+@media(min-width:1025px){
+  .vkline__ul{display:grid;grid-template-columns:repeat(3,1fr);
+    gap:18px}
+  .vkline__ul > li{flex:none}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
@@ -4913,11 +4920,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
       var llay = function(){
         li.forEach(function(it){ it.style.transform = ""; });
         if(wide() && !still && lin.offsetHeight > 0){
-          var rw = lul.offsetWidth, iw = li[0].offsetWidth;
+          var rw = lul.offsetWidth, iw = li[0].offsetWidth, COL = 3;
           loff = li.map(function(it, i){
-            it.style.zIndex = String(li.length - i);
+            // 줄 안에서 몇 번째 칸인지 (나머지 연산은 퍼센트라 못 쓴다)
+            var cl = i - Math.floor(i / COL) * COL;
+            it.style.zIndex = String(COL - cl);
             it.style.position = "relative";
-            return rw - iw - (i * (iw + 18));
+            return rw - iw - (cl * (iw + 18));
           });
           lin.style.position = "sticky";
           lin.style.top = "0px";
