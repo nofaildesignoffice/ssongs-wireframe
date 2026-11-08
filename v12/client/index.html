@@ -3301,6 +3301,20 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkexp__tb{flex:0 0 auto}
 }
 
+/* 히어로 · 고리는 원래 높이로 2026-11-08 */
+@media(min-width:1025px){
+  #r-about > section.wsec.vkherosec,
+  #r-about > section.wsec.vkringsec{
+    min-height:0;display:block}
+  #r-about > section.wsec.vkherosec{
+    padding-top:52px;padding-bottom:18px}
+  #r-about > section.wsec.vkringsec{padding:0}
+  /* 고리 치수를 레퍼런스 고정값으로 — vh 로 깎으면
+     바닥선이 카드 띠를 가로지른다 */
+  .vkring{padding-bottom:110px}
+  .vkring__tb{margin-top:420px}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
