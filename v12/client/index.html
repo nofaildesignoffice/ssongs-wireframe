@@ -3498,7 +3498,8 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 .vkproc__sa::before{top:0;
   background:linear-gradient(to bottom,#020202 0,
     rgba(2,2,2,.55) 38%,rgba(2,2,2,0) 100%)}
-.vkproc__sa::after{bottom:0;
+/* 아래 가리개는 스크립트가 끝에서 거둔다(--vkpfb) */
+.vkproc__sa::after{bottom:0;opacity:var(--vkpfb,1);
   background:linear-gradient(to top,#020202 0,
     rgba(2,2,2,.55) 38%,rgba(2,2,2,0) 100%)}
 .vkproc__bar{z-index:3}
@@ -5255,8 +5256,14 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
       }, function(p){
         if(!wide() || still) return;
         var k = Math.min(1, p * (1 + HOLD));
-        pul.style.transform = "translate3d(0," + (-pmax() * k) + "px,0)";
+        var m = pmax();
+        pul.style.transform = "translate3d(0," + (-m * k) + "px,0)";
         pth.style.transform = "translate3d(0," + (pthm() * k) + "px,0)";
+        // 마지막 카드가 아래 가리개에 먹히지 않게, 끝에 다다르면
+        // 아래 그라데이션을 거둔다. 남은 거리가 가리개 높이(96px)
+        // 안으로 들어오면 그만큼 옷아진다.
+        var rest = m * (1 - k);
+        psa.style.setProperty("--vkpfb", String(Math.min(1, rest / 96)));
       });
       var play = function(){
         if(wide() && !still && pin.offsetHeight > 0){
@@ -5269,6 +5276,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
           pw.style.height = "";
           pul.style.transform = "";
           pth.style.transform = "";
+          psa.style.removeProperty("--vkpfb");
         }
         pupd();
       };
