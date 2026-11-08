@@ -3258,8 +3258,10 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   #r-about > section.wsec:not(.vkproc):not(.vkline):not(.vkbn){
     min-height:100vh;display:flex;flex-direction:column;
     justify-content:center;
-    padding-top:112.5px;padding-bottom:112.5px}
-  .wsec.vkherosec{padding-top:60px;padding-bottom:60px}
+    padding-top:clamp(34px,6vh,112.5px);
+    padding-bottom:clamp(34px,6vh,112.5px)}
+  .wsec.vkherosec{padding-top:clamp(28px,5vh,60px);
+    padding-bottom:clamp(28px,5vh,60px)}
   /* flex 자식이 되면서 가로 폭이 줄어드는 걸 막는다 */
   #r-about > section.wsec > .abw,
   #r-about > section.wsec > .vkring{width:100%}
