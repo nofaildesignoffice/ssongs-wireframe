@@ -3426,6 +3426,25 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkbn__in{height:100vh;height:100dvh}
 }
 
+/* 회사 3축 — 검은 알약, 모바일 원 키움 2026-11-08 */
+/* 섹션이 검은 바탕이 되면서 카드만 흰색으로 남아 있었다.
+   카드를 검게 바꾸면 그 안 글자도 같이 뒤집어야 읽힌다.
+   바탕(#020202)보다 아주 조금 밝은 검정을 써서 원의 경계를 남긴다. */
+.vkpil__ul > li{background:#0A0A0A;border-color:rgba(255,255,255,.16)}
+.vkpil__ul > li::before{
+  background:linear-gradient(180deg,rgba(255,255,255,.10) 0,
+    rgba(255,255,255,.04) 46%,rgba(255,255,255,0) 78%)}
+.vkpil__ul > li strong{color:#fff}
+.vkpil__ul > li em,
+.vkpil__ul > li > span{color:rgba(255,255,255,.62)}
+.vkpil__ul > li p{color:rgba(255,255,255,.72)}
+/* 모바일 원이 너무 작았다 — 화면 폭에 맞춰 키우고
+   글 덩어리가 원 한가운데 오도록 위 여백도 같이 늘린다. */
+@media(max-width:1024px){
+  .vkpil__ul > li{width:min(300px,78vw);height:min(300px,78vw);
+    padding:76px 34px 0}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
