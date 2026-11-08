@@ -3360,6 +3360,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .wsec.vkringsec > .abw{padding-bottom:52px}
 }
 
+/* 고리 카드 크기 키움 2026-11-08 */
+/* 카드 사이 간격은 고리 둘레를 16으로 나눈 값에서 카드 폭을 뺀 만큼이다.
+   반지름 937 → 둘레칸 368px, 모바일 반지름 512 → 칸 201px.
+   간격이 남게 데스크톱 340(남는 28), 모바일 185(남는 16)로 둔다. */
+.vkring__c{width:340px}
+@media(max-width:1024px){.vkring__c{width:185px}}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
