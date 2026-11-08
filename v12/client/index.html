@@ -5202,7 +5202,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
     var lin = lw && lw.querySelector(".vkline__in");
     var lul = lw && lw.querySelector(".vkline__ul");
     if(lw && lin && lul && lul.children.length){
-      var li = [].slice.call(lul.children), loff = [], LD = 800;
+      var li = [].slice.call(lul.children), loff = [], LD = 800, lvert = false;
       var lupd = scrub(function(){
         if(!loff.length) return 1;
         var r = lw.getBoundingClientRect();
@@ -5215,7 +5215,10 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
         if(!loff.length) return;
         var e = 1 - (1 - p) * (1 - p);
         li.forEach(function(it, i){
-          it.style.transform = "translate3d(" + (loff[i] * (1 - e)) + "px,0,0)";
+          var d = loff[i] * (1 - e);
+          it.style.transform = lvert
+            ? "translate3d(0," + d + "px,0)"
+            : "translate3d(" + d + "px,0,0)";
         });
       });
       var llay = function(){
@@ -5223,12 +5226,21 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
         var lwide = wide();
         if(!still && lin.offsetHeight > 0){
           var COL = lwide ? 3 : 2, GAP = lwide ? 18 : 12;
-          var rw = lul.offsetWidth, iw = li[0].offsetWidth;
+          // 넓은 화면은 오른쪽에서 왼쪽으로, 좁은 화면은 위에서 아래로.
+          lvert = !lwide;
+          var rw = lul.offsetWidth, iw = li[0].offsetWidth, ih = li[0].offsetHeight;
           loff = li.map(function(it, i){
-            // 줄 안에서 몇 번째 칸인지 (나머지 연산은 퍼센트라 못 쓴다)
-            var cl = i - Math.floor(i / COL) * COL;
-            it.style.zIndex = String(COL - cl);
+            // 줄 번호와 줄 안 칸 번호 (나머지 연산은 퍼센트라 못 쓴다)
+            var rowi = Math.floor(i / COL);
+            var cl = i - rowi * COL;
             it.style.position = "relative";
+            if(lvert){
+              // 모든 줄을 첫 줄 자리로 끌어올렸다가 제자리로 내려놓는다.
+              // 윗줄이 위에 깔려야 걹쳐 있을 때 모양이 산다.
+              it.style.zIndex = String(li.length - rowi);
+              return -(rowi * (ih + GAP));
+            }
+            it.style.zIndex = String(COL - cl);
             return rw - iw - (cl * (iw + GAP));
           });
           if(lwide){
