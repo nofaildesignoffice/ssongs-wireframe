@@ -3255,7 +3255,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 
 /* 섹션 한 칸이 화면 한 장을 채우게 */
 @media(min-width:1025px){
-  #r-about > section.wsec:not(.vkproc):not(.vkline):not(.vkbn){
+  #r-about > section.wsec:not(.vkproc):not(.vkline):not(.vkbn):not(.vkherosec):not(.vkringsec){
     min-height:100vh;display:flex;flex-direction:column;
     justify-content:center;
     padding-top:clamp(34px,6vh,112.5px);
@@ -3314,15 +3314,6 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkring{padding-bottom:110px}
   .vkring__tb{margin-top:420px}
 }
-
-/* 고리 아래쪽 사라짐 2026-11-08 */
-.vkring::after{content:"";position:absolute;left:0;right:0;
-  bottom:0;height:300px;z-index:1;pointer-events:none;
-  background:linear-gradient(to top,var(--white) 18%,
-    rgba(255,255,255,0))}
-/* 글은 가리개 위에 */
-.vkring__tb{z-index:2}
-@media(max-width:1024px){.vkring::after{height:150px}}
 
 /* 라인업 제목은 공정과 같은 크기 2026-11-08 */
 @media(min-width:1025px){
