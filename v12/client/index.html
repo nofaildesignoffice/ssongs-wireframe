@@ -3480,15 +3480,11 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 @media(min-width:1025px){
   .vkproc__in{padding:clamp(48px,7vh,96px) 0}
   .vkproc__sa{margin-top:clamp(28px,4vh,52px)}
-  /* 100vh - 고정값 으로 계산했더니 1080px 창에서 12px 넘쳤다.
-     여백 자체가 vh 로 줄었다 늘었다 하니 빼야 할 값이 창마다
-     달라진다. 그래서 숫자를 쓰지 말고 남는 자리를 통이 먹게 한다. */
-  .vkproc__in{display:flex;flex-direction:column;
-    height:100vh;box-sizing:border-box}
-  .vkproc__in > .abw{flex:1 1 auto;min-height:0;
-    display:flex;flex-direction:column}
-  .vkproc__sa{flex:1 1 auto;min-height:468px}
-  .vkproc__ul{height:100%}
+  /* 통 높이만 창 높이에 맞춰 늘린다. .vkproc__in 을 flex 통으로
+     바꿔 봤다가 .abw 의 margin:auto 때문에 가로폭이 내용 크기로
+     쪼그라들어 제목이 겹쳤다 — 구조는 건드리지 않는다.
+     빼는 416px 은 위아래 여백 + 머리말 + 사이 간격의 최대치다. */
+  .vkproc__ul{height:clamp(468px,calc(100vh - 416px),760px)}
   /* 막대는 통 높이를 따라가게 — 463px 고정값을 버린다 */
   .vkproc__bar{height:auto;top:0;bottom:5px}
   /* 카드 세로폭을 조금 키운다 */
