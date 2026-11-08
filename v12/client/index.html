@@ -3287,6 +3287,18 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkexp__p .ph.sq{height:clamp(124px,22vh,216px)}
 }
 
+/* EXPERTISE 한 화면 채우기 2026-11-08 */
+@media(min-width:1025px){
+  .wsec.vkdark > .abw{flex:1 1 auto;min-height:0;
+    display:flex;flex-direction:column}
+  .vkexp__ul{flex:1 1 auto;min-height:0}
+  .vkexp__ul > li{min-height:0}
+  .vkexp__b{display:flex;flex-direction:column;height:100%}
+  .vkexp__p{flex:1 1 auto;min-height:72px}
+  .vkexp__p .ph.sq{height:100%;aspect-ratio:auto}
+  .vkexp__tb{flex:0 0 auto}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
