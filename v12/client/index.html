@@ -3406,6 +3406,15 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vknum__box > li{flex:0 0 calc(50% - 4.5px)}
 }
 
+/* 라인업 모바일 2x3 격자 2026-11-08 */
+/* 가로로 밀어 보던 띠를 두 칸 격자로 바꾼다. 카드가 오른쪽에서
+   밀려 들어오는 동안 가로 스크롤이 생기면 안 되니 넘침을 숨긴다. */
+@media(max-width:1024px){
+  .vkline__list{overflow:hidden;scroll-snap-type:none;border-radius:6px}
+  .vkline__ul{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .vkline__ul > li{flex:none;scroll-snap-align:none}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
@@ -5184,7 +5193,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
     if(lw && lin && lul && lul.children.length){
       var li = [].slice.call(lul.children), loff = [], LD = 800;
       var lupd = scrub(function(){
-        return loff.length ? clamp(-lw.getBoundingClientRect().top / LD) : 1;
+        if(!loff.length) return 1;
+        var r = lw.getBoundingClientRect();
+        if(wide()) return clamp(-r.top / LD);
+        // 좁은 화면은 섹션을 붙여 두지 않는다 — 3줄짜리 격자가 화면보다
+        // 높아서 붙이면 아랫줄이 잘린다. 대신 섹션이 아래에서 올라오는
+        // 동안 펼쳐지게 한다.
+        return clamp((innerHeight - r.top) / Math.max(1, innerHeight * 0.85));
       }, function(p){
         if(!loff.length) return;
         var e = 1 - (1 - p) * (1 - p);
@@ -5194,18 +5209,26 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
       });
       var llay = function(){
         li.forEach(function(it){ it.style.transform = ""; });
-        if(wide() && !still && lin.offsetHeight > 0){
-          var rw = lul.offsetWidth, iw = li[0].offsetWidth, COL = 3;
+        var lwide = wide();
+        if(!still && lin.offsetHeight > 0){
+          var COL = lwide ? 3 : 2, GAP = lwide ? 18 : 12;
+          var rw = lul.offsetWidth, iw = li[0].offsetWidth;
           loff = li.map(function(it, i){
             // 줄 안에서 몇 번째 칸인지 (나머지 연산은 퍼센트라 못 쓴다)
             var cl = i - Math.floor(i / COL) * COL;
             it.style.zIndex = String(COL - cl);
             it.style.position = "relative";
-            return rw - iw - (cl * (iw + 18));
+            return rw - iw - (cl * (iw + GAP));
           });
-          lin.style.position = "sticky";
-          lin.style.top = "0px";
-          lw.style.height = (lin.offsetHeight + LD) + "px";
+          if(lwide){
+            lin.style.position = "sticky";
+            lin.style.top = "0px";
+            lw.style.height = (lin.offsetHeight + LD) + "px";
+          } else {
+            lin.style.position = "";
+            lin.style.top = "";
+            lw.style.height = "";
+          }
         } else {
           loff = [];
           li.forEach(function(it){
@@ -5232,13 +5255,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
     if(bw && bin && bim){
       var btg = 1;
       var bupd = scrub(function(){
-        if(still || !wide() || !bw.offsetHeight) return 0;
+        if(still || !bw.offsetHeight) return 0;
         var r = bw.getBoundingClientRect(), h = bin.offsetHeight;
         // 붙어 있는 구간(1.2h) 중 앞 0.7h 안에 다 커지고, 남은 0.5h 는
         // 꽉 찬 상태로 버틴다 — 배경 사진이 된 순간을 보여 주는 구간이다.
         return clamp(-r.top / Math.max(1, h * 0.7));
       }, function(p){
-        if(still || !wide()) return;
+        if(still) return;
         bim.style.transform = "scale(" + (1 + (btg - 1) * p) + ")";
         bim.style.setProperty("--vkbr", (10 - 10 * p) + "px");
         if(!bov) return;
@@ -5254,7 +5277,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
         // 머리카락 같은 틈이 생기지 않게 하려는 것이다.
         btg = Math.max(Math.max(1, bin.clientWidth) / iw,
                        Math.max(1, h) / ih) * 1.06;
-        if(wide() && !still && h > 0){
+        if(!still && h > 0){
           bin.style.position = "sticky";
           bin.style.top = "0px";
           bw.style.height = Math.round(h * 2.2) + "px";
