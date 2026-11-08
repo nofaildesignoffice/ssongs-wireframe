@@ -3267,6 +3267,18 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   #r-about > section.wsec > .vkring{width:100%}
 }
 
+/* 한 화면 맞춤 2026-11-08 */
+@media(min-width:1025px){
+  /* 글을 밀어 두는 거리와 아래 여백 — 도는 카드 자리다 */
+  .vkring{padding-bottom:clamp(40px,9vh,110px)}
+  .vkring__tb{margin-top:clamp(286px,46vh,420px)}
+  /* 카드 그림 — 정사각 대신 화면 높이에 맞춘 높이 */
+  .vkexp__p .ph.sq{aspect-ratio:auto;
+    height:clamp(132px,24vh,216px)}
+  .vkexp__tb{margin-top:clamp(20px,3.4vh,40px)}
+  .vkexp__n{font-size:clamp(48px,6.2vw,112px)}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
