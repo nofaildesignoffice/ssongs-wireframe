@@ -3455,6 +3455,23 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   #r-about > section.wsec.vkdark.vkpilsec:not(.vkproc):not(.vkline):not(.vkbn):not(.vkherosec):not(.vkringsec){min-height:0}
 }
 
+/* EXPERTISE 카드 — 모바일은 그림 왼쪽, 글 오른쪽 2026-11-08 */
+/* 모바일에서 그림이 가로폭을 다 먹어 카드 한 칸이 628px 이나 됐다.
+   그림을 왼쪽 칸에 넣고 번호와 글을 오른쪽에 세운다.
+   그림은 두 줄에 걸쳐 두고 세로 가운데에 맞춘다.
+   데스크톱 규칙은 전부 min-width:1025px 안에 있어 건드리지 않는다. */
+@media(max-width:1024px){
+  .vkexp__b{display:grid;
+    grid-template-columns:38% 1fr;
+    grid-template-rows:auto auto;
+    column-gap:18px;align-items:center;
+    padding:18px 0 22px}
+  .vkexp__p{grid-column:1;grid-row:1 / span 2;
+    margin:0;max-width:none;align-self:center}
+  .vkexp__n{grid-column:2;grid-row:1;line-height:1}
+  .vkexp__tb{grid-column:2;grid-row:2;margin:12px 0 0}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
