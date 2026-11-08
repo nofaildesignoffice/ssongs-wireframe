@@ -3398,6 +3398,14 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkpil__ul > li.rvc.in{animation:none}
 }
 
+/* 숫자 네 칸은 모바일에서도 2x2 2026-11-08 */
+/* 모바일에서 한 줄에 하나씩 쌓이던 걸 두 칸씩 되돌린다.
+   그 구간 gap 은 9px 이라 반칸은 4.5px 을 뺀다. */
+@media(max-width:1024px){
+  .vknum__box{flex-direction:row;flex-wrap:wrap}
+  .vknum__box > li{flex:0 0 calc(50% - 4.5px)}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
