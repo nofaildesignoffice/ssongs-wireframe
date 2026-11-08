@@ -3333,6 +3333,8 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 /* .vkhd__t 와 같은 값 — clamp(34px,5.2vw,75px) */
 #r-about .abhd h2{font-size:clamp(34px,5.2vw,75px);
   line-height:1.4;letter-spacing:-.02em}
+/* 라인업 제목이 데스크톱에서 75px 로 고정돼 있어 같이 고정한다 */
+@media(min-width:1025px){#r-about .abhd h2{font-size:75px}}
 @media(max-width:1024px){
   #r-about .abhd h2{font-size:28.5px;line-height:1.26}
 }
