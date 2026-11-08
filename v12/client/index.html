@@ -3345,6 +3345,12 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 .ipc{border:0}
 .ipc .ph{aspect-ratio:210/297;border-radius:var(--r2);overflow:hidden}
 
+/* 지식재산권 슬라이더 — 커서 그대로 2026-11-08 */
+/* .slider .viewport 는 기본이 grab(손모양)이다. 이 카드는 눌러도
+   열리는 게 없으니 화살표 그대로 둔다. 끌어서 넘기는 건 그대로다. */
+.ipgrp .slider .viewport,
+.ipgrp .slider .viewport.dragging{cursor:auto}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
