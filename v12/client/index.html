@@ -3472,6 +3472,37 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .vkexp__tb{grid-column:2;grid-row:2;margin:12px 0 0}
 }
 
+/* 공정 — 통을 키우고 위아래로 사라지게 2026-11-08 */
+/* 붙어 있는 .vkproc__in 이 화면보다 높으면 아래가 잘린다.
+   900px 짜리 창에서 이미 22px 넘치고 있었다. 그래서 통을 키우기 전에
+   위아래 여백과 머리말 사이 간격을 화면 높이에 맞춰 줄이고,
+   거기서 번 자리를 통 높이로 돌린다. 지금보다 작아지지는 않는다. */
+@media(min-width:1025px){
+  .vkproc__in{padding:clamp(48px,7vh,96px) 0}
+  .vkproc__sa{margin-top:clamp(28px,4vh,52px)}
+  .vkproc__ul{height:clamp(468px,calc(100vh - 392px),760px)}
+  /* 막대는 통 높이를 따라가게 — 463px 고정값을 버린다 */
+  .vkproc__bar{height:auto;top:0;bottom:5px}
+  /* 카드 세로폭을 조금 키운다 */
+  .vkproc__ul > li > .ph{height:150px}
+}
+/* 위아래 검은 그라데이션 — 섹션 바탕(#020202)으로 녹아든다.
+   진행 막대는 그 위에 남긴다. */
+.vkproc__sa::before,.vkproc__sa::after{content:"";
+  position:absolute;left:0;right:0;height:96px;
+  z-index:2;pointer-events:none}
+.vkproc__sa::before{top:0;
+  background:linear-gradient(to bottom,#020202 0,
+    rgba(2,2,2,.55) 38%,rgba(2,2,2,0) 100%)}
+.vkproc__sa::after{bottom:0;
+  background:linear-gradient(to top,#020202 0,
+    rgba(2,2,2,.55) 38%,rgba(2,2,2,0) 100%)}
+.vkproc__bar{z-index:3}
+@media(max-width:1024px){
+  /* 좁은 화면은 통이 아니라 그냥 세로 목록이라 가리개가 없어야 한다 */
+  .vkproc__sa::before,.vkproc__sa::after{display:none}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
