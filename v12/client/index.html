@@ -3324,6 +3324,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 .vkring__tb{z-index:2}
 @media(max-width:1024px){.vkring::after{height:150px}}
 
+/* 라인업 제목은 공정과 같은 크기 2026-11-08 */
+@media(min-width:1025px){
+  .wsec.vkline .vkhd.stack .vkhd__t,
+  .wsec.vkproc .vkhd.stack .vkhd__t{font-size:75px}
+  .wsec.vkline .vkhd.stack{gap:18px}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
