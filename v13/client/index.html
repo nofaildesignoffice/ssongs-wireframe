@@ -3573,6 +3573,11 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 @media(prefers-reduced-motion:reduce){
   .slider.mhsl .sbtn{transition:none}}
 
+/* 원형 줄 컨테이너 폭 고정 — 케이스 기준 2026-11-09 */
+@media(min-width:1025px){
+  .pgtop__l{flex:0 0 264px;max-width:264px}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
