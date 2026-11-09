@@ -3513,6 +3513,11 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .pgtop__l{flex:0 0 264px;max-width:264px}
 }
 
+/* 원형 줄 칸 폭 9칸 격자 2026-11-09 */
+@media(min-width:1025px){
+  .pgtop__r .cs__i{flex:0 1 calc((100% - 8*clamp(14px,1.6vw,26px))/9)}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
