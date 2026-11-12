@@ -3666,6 +3666,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .pgtop > .pgtop__r{align-self:stretch}
 }
 
+/* 신제품 줄 플링 — 여러 장 쭉 2026-11-12 */
+@media(max-width:900px){
+  /* 베스트 줄(.mobsl)과 같은 설정 */
+  .slider.npsl .viewport{scroll-snap-type:x proximity}
+  .slider.npsl .track > *{scroll-snap-stop:normal}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
