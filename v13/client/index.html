@@ -3652,6 +3652,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .circ__t{font-size:clamp(12.5px,.95vw,13.5px)}
 }
 
+/* 목록 원형 keep-all 이 상자를 밀어내지 않게 2026-11-12 */
+@media(max-width:900px){
+  /* flex 자동 최소 크기(min-width:auto) 를 끈다 —
+     켜 두면 이름의 min-content 만큼 상자가 늘어나 문서가 넓어진다 */
+  .pgtop__r{min-width:0}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
