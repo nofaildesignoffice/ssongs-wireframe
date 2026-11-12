@@ -3674,6 +3674,19 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .slider.npsl .track > *{scroll-snap-stop:normal}
 }
 
+/* 원형 줄 섹션 여백 66% 2026-11-12 */
+.wsec.circ{padding-bottom:17px}
+.wsec.circ.tight{padding-top:20px}
+#r-main > .pbar + .wsec.circ{padding-top:20px}
+@media(max-width:900px){
+  .wsec.circ{padding-bottom:13px}
+  .wsec.circ.tight{padding-top:13px}
+  #r-main > .pbar + .wsec.circ{padding-top:13px}}
+@media(max-width:560px){
+  .wsec.circ{padding-bottom:11px}
+  .wsec.circ.tight{padding-top:11px}
+  #r-main > .pbar + .wsec.circ{padding-top:11px}}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
