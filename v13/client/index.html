@@ -3669,7 +3669,8 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 /* 신제품 줄 플링 — 여러 장 쭉 2026-11-12 */
 @media(max-width:900px){
   /* 베스트 줄(.mobsl)과 같은 설정 */
-  .slider.npsl .viewport{scroll-snap-type:x proximity}
+  /* 베스트 줄과 같은 자유 스크롤 — 민 만큼 간다 */
+  .slider.npsl .viewport{scroll-snap-type:none}
   .slider.npsl .track > *{scroll-snap-stop:normal}
 }
 
