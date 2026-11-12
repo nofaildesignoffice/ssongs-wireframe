@@ -3659,6 +3659,13 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .pgtop__r{min-width:0}
 }
 
+/* 목록 원형 줄 폭 확정 (cross 축) 2026-11-12 */
+@media(max-width:900px){
+  /* 세로 flex + align-items:flex-start 이면 width 가 fit-content 라
+     이름의 min-content 만큼 상자가 늘어난다. cross 축을 늘려 막는다 */
+  .pgtop > .pgtop__r{align-self:stretch}
+}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
