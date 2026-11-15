@@ -5566,10 +5566,17 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
     }
     if(!("IntersectionObserver" in window)) return;
     // 화면 위 35퍼센트 지점을 지난 마지막 섹션이 현재 단계다
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(e.isIntersecting) mark(e.target.getAttribute("data-sf"));
+    // 콜백이 올 때마다 자리를 다시 잰다 — 멀리 뛰어도 맞는다.
+    // 들어온 항목 순서에 기대면 한 번에 여러 변화가 오는 경우 틀린다.
+    function current(){
+      var line = innerHeight * 0.35, cur = secs[0];
+      Array.prototype.forEach.call(secs, function(el){
+        if(el.getBoundingClientRect().top <= line) cur = el;
       });
+      return cur.getAttribute("data-sf");
+    }
+    var io = new IntersectionObserver(function(){
+      mark(current());
     }, { rootMargin: "-35% 0px -55% 0px", threshold: 0 });
     Array.prototype.forEach.call(secs, function(el){ io.observe(el); });
   })();
