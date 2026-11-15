@@ -3754,15 +3754,16 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 .sfsub{font-size:14px;color:var(--gray);margin:8px 0 0}
 .sffields{display:flex;flex-direction:column;gap:24px;margin-top:28px}
 .sflb{display:block;font-size:14px;font-weight:600;color:var(--gray);margin-bottom:5px}
-/* 입력칸은 밑줄만 — 레퍼런스와 같다 */
-.sfinp{display:flex;align-items:center;min-height:49px;padding:12px 0;
-  font-size:15px;color:var(--lt);border-bottom:1px solid var(--border2)}
-.sfinp.area{min-height:180px;align-items:flex-start;padding:16px 0}
-/* 문의 종류 셀렉트도 같은 밑줄로 — 기구(드롭다운/바텀시트)는 그대로다 */
-.sfmain .sortwrap.selwide .wsel.wide{border:0;border-radius:0;background:transparent;
-  border-bottom:1px solid var(--border2);padding:12px 0;min-height:49px;
-  height:auto;font-size:15px;color:var(--dim)}
-.sfmain .sortwrap.selwide .wsel.wide:hover{border-bottom-color:var(--ink)}
+/* 입력칸 — 둥근 테두리 상자 (갑 지시). 사이트 기존 .inp 과 같은 테두리 */
+.sfinp{display:flex;align-items:center;min-height:49px;padding:0 16px;
+  font-size:15px;color:var(--lt);background:var(--white);
+  border:1px solid var(--border2);border-radius:var(--r1)}
+.sfinp.area{min-height:180px;align-items:flex-start;padding:15px 16px}
+/* 문의 종류 셀렉트도 같은 상자로 — 기구(드롭다운/바텀시트)는 그대로다 */
+.sfmain .sortwrap.selwide .wsel.wide{border:1px solid var(--border2);
+  border-radius:var(--r1);background:var(--white);padding:0 16px;
+  min-height:49px;height:49px;font-size:15px;color:var(--dim)}
+.sfmain .sortwrap.selwide .wsel.wide:hover{border-color:var(--ink)}
 
 .sffoot{display:flex;align-items:center;justify-content:space-between;
   gap:18px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:24px}
