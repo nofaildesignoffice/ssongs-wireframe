@@ -3616,8 +3616,10 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 @media(max-width:900px){
   /* 좁은 화면에서는 단계 줄을 본문 위로 눕힌다 */
   .sfgrid{display:block;max-width:none}
-  .sfnav{width:auto;position:static;margin-bottom:26px;
-    padding-bottom:18px;border-bottom:1px solid var(--border)}
+  /* GNB(2행 통째 고정, 아랫변 105px) 바로 아래에 붙인다 */
+  .sfnav{width:auto;position:sticky;top:var(--navh);z-index:40;
+    background:var(--white);margin-bottom:26px;
+    padding:12px 0 14px;border-bottom:1px solid var(--border)}
   .sfsteps{display:flex;gap:10px}
   .sfstep{flex:1;padding:0;align-items:center;gap:9px}
   .sfstep::after{display:none}
