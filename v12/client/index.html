@@ -1144,10 +1144,13 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 .wfoot .acccopy:hover{border-color:rgba(255,255,255,.6);color:var(--white)}
 .wfoot .accown{margin-top:6px}
 /* 푸터 문의하기 — 계좌 안내 열 맨 아래 (갑 지정 자리) */
-.wfoot .fcontact{margin-top:16px;border-color:rgba(255,255,255,.45);
-  background:transparent;color:#FFF}
-.wfoot .fcontact svg{opacity:.8}
-@media(hover:hover){.wfoot .fcontact:hover{background:#FFF;color:var(--black);border-color:#FFF}}
+.wfoot .fcontact{margin-top:16px;background:transparent;
+  color:var(--black);border-color:var(--border2)}
+.wfoot .fcontact svg{opacity:.5}
+@media(hover:hover){
+  .wfoot .fcontact:hover{background:var(--black);color:var(--white);
+    border-color:var(--black)}
+  .wfoot .fcontact:hover svg{opacity:1}}
 @media(max-width:900px){.wfoot .fcontact{width:100%;margin-top:12px}}
 /* SOCIALS */
 .wfoot .soc a{display:inline-flex;align-items:center;gap:7px;
