@@ -3792,6 +3792,11 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   .sffoot{flex-direction:column;align-items:stretch}
   .sffoot .btn{width:100%;padding:0 20px}}
 
+/* 문의하기 머리를 본문 칸에 맞춤 2026-11-15 */
+#r-contact .cshead{max-width:1120px;padding-left:260px}
+@media(max-width:900px){
+  #r-contact .cshead{max-width:none;padding-left:0}}
+
 /* ══ 그림 + 이름 칩 (.chips.pic) ═══════════════════════════════════
    갑 요청 — 「투명범퍼 / 투명쿠션」 처럼 글자만으로는 구분이 안 되는 값은
    원형 줄(.cstrip)과 같은 그림 + 이름 타일로 고른다.
