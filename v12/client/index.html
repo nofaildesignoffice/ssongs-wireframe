@@ -4246,7 +4246,18 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
       var a = ev.target.closest('a[href^="#/"]');
       if(!a) return;
       var to = a.getAttribute("href");
-      if(to === (location.hash || "#/main")) return;   // 지금 페이지면 안 끼어든다
+      if(to === (location.hash || "#/main")){
+        // 지금 페이지로 가는 링크 — 해심이 안 바뎀어 hashchange 가 없다.
+        // 그래도 서람은 닫아 줄다. 안 그러니 눌러도 아무 일도 없어 보인다.
+        var wasOpen = document.body.classList.contains("navopen")
+                   || document.body.classList.contains("fopen");
+        document.body.classList.remove("navopen");
+        document.body.classList.remove("fopen");
+        var hbs = document.querySelectorAll(".hamb");
+        for(var k=0;k<hbs.length;k++) hbs[k].setAttribute("aria-expanded","false");
+        if(wasOpen) window.scrollTo(0,0);
+        return;
+      }
       if(rtStill()) return;
       ev.preventDefault();
       document.body.classList.add("rtleave");
