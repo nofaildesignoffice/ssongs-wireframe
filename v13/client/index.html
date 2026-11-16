@@ -2267,7 +2267,9 @@ body.navopen #r-brand .wnav{background:var(--white)}
   /* 위로 올라갔으니 여백도 뒤집는다 — 위에 margin 을 두면 화면
      꼭대기에 붙어 버린다 */
   .pgtop__r{order:-1;margin-top:0;margin-bottom:20px}
-  .pgtop__r .cstrip{margin:0 -15px;padding:0 15px}
+  /* 15px 이 아니라 섹션 패딩 그대로 — 561~900 구간은 --pad 가 20 이라
+     15 로 박아 두면 메인 원형보다 칸이 5px 좁아진다 2026-11-16 */
+  .pgtop__r .cstrip{margin:0 calc(var(--pad) * -1);padding:0 var(--pad)}
 }
 
 
@@ -2530,7 +2532,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
      빠져나간 만큼은 부모에 min-height 로 남긴다(JS 가 재서 넣는다).
      배경이 없으면 본문 글이 원 사이로 비친다. */
   .pgtop__r.stuck > .cstrip{position:fixed;top:105px;left:0;right:0;z-index:40;
-    background:var(--white);margin:0;padding:10px 15px 8px;
+    background:var(--white);margin:0;padding:10px 6px 8px var(--pad);
     box-shadow:0 1px 0 var(--border)}
 }
 
