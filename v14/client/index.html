@@ -1092,7 +1092,10 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
    잘리는 5번째가 원이 아니라 빈 공간이 되어 신호 역할을 못 한다.
    641~900 은 앞서 정한 고정 크기(78/68px) 스크롤을 그대로 쓴다. */
 @media(max-width:640px){
-  .circ__i{width:auto;flex:0 0 calc((100% - 80px)/5.2)}
+  /* min-width:0 — 플렉스 칸의 기본 최소폭은 글자의 min-content 다.
+     「이어폰케이스」는 공백이 없어 한 덩어리(56.4px)라 그 칸만 2.6px
+     넓어지고, 원도 같이 커져 줄이 안 맞았다 2026-11-17 */
+  .circ__i{width:auto;min-width:0;flex:0 0 calc((100% - 80px)/5.2)}
   .circ__ph{width:100%;max-width:84px;height:auto;aspect-ratio:1/1}
 }
 @media(max-width:560px){
@@ -3555,7 +3558,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 }
 @media(max-width:640px){
   /* 원 5개가 온전히 보이고 6번째가 잘려 더 있다는 게 드러난다 */
-  .pgtop__r .cs__i{width:auto;flex:0 0 calc((100% - 80px)/5.2)}
+  .pgtop__r .cs__i{width:auto;min-width:0;flex:0 0 calc((100% - 80px)/5.2)}
   .pgtop__r .cs__ph{width:100%;max-width:84px;height:auto;
     aspect-ratio:1/1}
 }
