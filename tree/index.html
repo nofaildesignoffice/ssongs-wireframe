@@ -105,36 +105,37 @@ tr:last-child td{border-bottom:0}
 <body>
 <div class="wrap">
 <h1>쏭스 분류 트리 — depth 1 · 2 · 3 · 4</h1>
-<p class="sub">카페24 상품분류 4단 확정안 · 출처 <b>_docs\분류트리-설계.csv</b> · 2026-11-13</p>
+<p class="sub">카페24 상품분류 4단 확정안 · 출처 <b>_docs\분류트리-설계.csv</b> · 2026-11-17</p>
 <div class="stats">
 <div class="stat"><div class="n">9</div><div class="l">depth1 대분류</div></div>
 <div class="stat"><div class="n">13</div><div class="l">depth2 옵션 항목</div></div>
 <div class="stat"><div class="n">30</div><div class="l">depth3 세부 항목</div></div>
-<div class="stat"><div class="n">168</div><div class="l">depth4 필터 값</div></div>
-<div class="stat"><div class="n">220</div><div class="l">분류 총 개수</div></div>
+<div class="stat"><div class="n">175</div><div class="l">depth4 필터 값</div></div>
+<div class="stat"><div class="n">227</div><div class="l">분류 총 개수</div></div>
 </div>
 <div class="bar">
 <input type="search" id="q" placeholder="값 검색 — 아이폰, S24, 맥세이프 …" autocomplete="off">
 <button class="btn" id="exp">전체 펼치기</button><button class="btn" id="col">전체 접기</button>
 <span class="sep"></span>
 <button class="lg" data-src="opt"><span class="sw opt"></span>상품 옵션에서 추출 <b>70</b></button>
-<button class="lg" data-src="cat"><span class="sw cat"></span>현 운영 분류에서 추출 <b>23</b></button>
+<button class="lg" data-src="cat"><span class="sw cat"></span>현 운영 분류에서 추출 <b>24</b></button>
 <button class="lg" data-src="syn"><span class="sw syn"></span>동의어 매핑 승인 필요 <b>45</b></button>
-<button class="lg" data-src="none"><span class="sw none"></span>근거 없음 — 갑 확정 필요 <b>28</b></button>
+<button class="lg" data-src="none"><span class="sw none"></span>근거 없음 — 갑 확정 필요 <b>34</b></button>
 <button class="lg" data-src="etc"><span class="sw etc"></span>기타 <b>2</b></button>
 </div>
 <section class="cat1 open">
-<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">케이스</span><span class="ct">뼈대 11 · 값 79</span></button>
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">케이스</span><span class="ct">뼈대 11 · 값 85</span></button>
 <div class="body1">
 <div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">기종</span><span class="fx">고정</span></div>
-<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">기기</span><span class="cn">값 5개</span></div><div class="vals">
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">기기</span><span class="cn">값 6개</span></div><div class="vals">
 <span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">아이폰</span>
 <span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 S</span>
 <span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 노트</span>
 <span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">갤럭시 A</span>
 <span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">Z플립</span>
+<span class="v cat" data-src="cat" title="분류 · 기종  ·  축 fam">Z폴드</span>
 </div></div>
-<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">세대</span><span class="cn">값 38개</span></div><div class="vals">
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">세대</span><span class="cn">값 43개</span></div><div class="vals">
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">17</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">16</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">15</span>
@@ -167,12 +168,17 @@ tr:last-child td{border-bottom:0}
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A25</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A24</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">A23</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">플립 8</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 7</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 6</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 5</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 4</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 3</span>
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 gen">플립 3 · 4</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">폴드 8</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">폴드 8 Ultra</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">폴드 7</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 gen">폴드 6</span>
 </div></div>
 <div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">모델</span><span class="cn">값 18개</span></div><div class="vals">
 <span class="v opt" data-src="opt" title="상품 옵션 · 기종  ·  축 model">기본</span>
@@ -320,14 +326,15 @@ tr:last-child td{border-bottom:0}
 </div>
 </div></section>
 <section class="cat1 open">
-<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">360 링홀더</span><span class="ct">뼈대 7 · 값 12</span></button>
+<button class="h1r"><span class="tw">▶</span><span class="dp">D1</span><span class="nm">360 링홀더</span><span class="ct">뼈대 7 · 값 13</span></button>
 <div class="body1">
 <div class="n2"><div class="r2"><span class="dp">D2</span><span class="nm">종류</span><span class="fx">고정</span></div>
-<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 4개</span></div><div class="vals">
+<div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">종류</span><span class="cn">값 5개</span></div><div class="vals">
 <span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">1단 홀더</span>
-<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 홀더 / 양면자석</span>
-<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">빅서클 2단 홀더</span>
-<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">빅서클 2단 홀더 / 양면자석</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 홀더 빅서클</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 홀더 캐릭터</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 스몰 / 양면자석</span>
+<span class="v none" data-src="none" title="갑 확정 필요 · 데이터 없음  ·  축 rkind">2단 빅서클 / 양면자석</span>
 </div></div>
 <div class="n3"><div class="l3"><span class="dp">D3</span><span class="nm">바디 칼라</span><span class="cn">값 2개</span></div><div class="vals">
 <span class="v opt" data-src="opt" title="상품 옵션  ·  축 rbody">블랙</span>
@@ -417,16 +424,16 @@ tr:last-child td{border-bottom:0}
 <div class="n2"><div class="empty">하위 분류 없음 — 옵션 축이 없어 depth1 단독으로 둔다</div></div>
 </div></section>
 <table><thead><tr><th>대분류</th><th class="num">뼈대 (D1·2·3)</th><th class="num">depth4 값</th><th class="num">근거 없음</th></tr></thead><tbody>
-<tr><td>케이스</td><td class="num">11</td><td class="num">79</td><td class="num">7</td></tr>
+<tr><td>케이스</td><td class="num">11</td><td class="num">85</td><td class="num">12</td></tr>
 <tr><td>카드지갑</td><td class="num">8</td><td class="num">27</td><td class="num">4</td></tr>
 <tr><td>체인지톡</td><td class="num">11</td><td class="num">24</td><td class="num">5</td></tr>
-<tr><td>360 링홀더</td><td class="num">7</td><td class="num">12</td><td class="num">5</td></tr>
+<tr><td>360 링홀더</td><td class="num">7</td><td class="num">13</td><td class="num">6</td></tr>
 <tr><td>이어폰케이스</td><td class="num">7</td><td class="num">22</td><td class="num">6</td></tr>
 <tr><td>키링</td><td class="num">5</td><td class="num">4</td><td class="num">1</td></tr>
 <tr><td>스트랩</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
 <tr><td>강화유리</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
 <tr><td>차량 거치대</td><td class="num">1</td><td class="num">0</td><td class="num">—</td></tr>
-<tr><td><b>합계</b></td><td class="num"><b>52</b></td><td class="num"><b>168</b></td><td class="num"><b>28</b></td></tr>
+<tr><td><b>합계</b></td><td class="num"><b>52</b></td><td class="num"><b>175</b></td><td class="num"><b>34</b></td></tr>
 </tbody></table>
 <div class="note">
 <b>읽는 법</b>
