@@ -3639,7 +3639,10 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
   background:var(--ph);color:var(--phic);
   box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .18s}
 .chip.pic .cph > img{width:100%;height:100%;object-fit:cover;display:block}
-.chip.pic .ctxt{display:block;margin-top:9px;word-break:keep-all}
+/* 알약 칩의 white-space:nowrap 를 되돌린다 — 긴 이름이 타일 밖으로
+   삐져나와 옆 칩과 겹쳤다. keep-all 이라 공백에서만 끊긴다 2026-11-17 */
+.chip.pic .ctxt{display:block;margin-top:9px;word-break:keep-all;
+  white-space:normal}
 .chip.pic.on{background:none;color:var(--black)}
 .chip.pic.on .cph{box-shadow:inset 0 0 0 2px var(--black)}
 .chip.pic:hover{border-color:transparent}
