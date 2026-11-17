@@ -2566,6 +2566,17 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .fwrap.ctl[data-label="제품"] .cs__ph{width:68px;height:68px}
 .fwrap.ctl[data-label="제품"] .cs__t{font-size:11.5px;margin-top:8px}
 
+/* 제품 박스 원형 줄 — 데스크탑 패널에서는 3×3 격자 (갑 지시)
+   패널 안이라 가로로 흘릴 일이 없다. 9개를 3열로 끊고, 위아래 여백이
+   0 이던 것을 .frow(13px) 와 같은 리듬으로 준다. */
+@media(min-width:768px){
+  .fwrap.ctl[data-label="제품"] .cstrip{padding:14px 0}
+  .fwrap.ctl[data-label="제품"] .cstrip__in{display:grid;
+    grid-template-columns:repeat(3,84px);justify-content:center;
+    gap:18px 22px}
+  .fwrap.ctl[data-label="제품"] .cs__next{display:none !important}
+}
+
 /* 바텀시트에서는 내용이 원형 줄 하나뿐이라 시트가 260px 남짓으로 끝난다.
    다른 시트는 행이 여럿이라 화면 절반을 넘는데 이것만 납작하다.
    바닥을 정해 두고, 생긴 자리만큼 원도 키운다 — 손가락으로 누르는
