@@ -2649,6 +2649,13 @@ body.fopen .gotop,body.navopen .gotop{opacity:0;visibility:hidden}
    끝까지 밀면 더 있을 게 없는데도 마지막 원이 흐리게 남는다. 끈다. */
 .cstrip.hasmore.atend .cstrip__in{mask-image:none;-webkit-mask-image:none}
 
+/* ── 모바일 원형 줄 — 오른쪽 페이드 끔 (갑 지시) ────────────────────
+   데스크탑은 "더 있다" 표시로 그대로 두고, 모바일에서만 끈다.
+   모바일은 › 화살표도 숨겨 둔 상태라 스와이프로 넘기는 줄이다. */
+@media(max-width:900px){
+  .cstrip.hasmore .cstrip__in{mask-image:none;-webkit-mask-image:none}
+}
+
 
 /* ══ v10 페이지 전환 ══════════════════════════════════════════════
    라우트는 hidden 토글이라 전환이 한 프레임에 끝났다. 나가는 쪽은
