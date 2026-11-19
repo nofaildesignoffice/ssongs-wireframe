@@ -2065,9 +2065,10 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .herocount .hcsep{opacity:.32}
 .herocount .hctot{opacity:.38}
 @media(max-width:767px){.herocount{font-size:14px;gap:2px}}
-/* 카피 블록을 5px 위로 (갑 요청). transform 을 쓰면 안쪽 요소의
-   containing block 이 바뀌므로 relative/top 으로 민다. */
-.herotxt .inner{position:relative;top:-5px}
+/* 카피 블록을 위로 (갑 요청 2026-11-19: 5px → 45px, 40px 더).
+   transform 을 쓰면 안쪽 요소의 containing block 이 바뀌므로
+   relative/top 으로 민다. */
+.herotxt .inner{position:relative;top:-45px}
 
 
 /* ── 문의 CTA — 흰 섹션 위 카드 ────────────────────────────────────
@@ -3868,6 +3869,17 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
    스냅이 --barh 만큼 끌어내려 띠배너가 가려진다. 같은 값을 빼 준다. */
 #r-main > .hero{scroll-snap-align:start;scroll-margin-top:var(--barh)}
 #r-main > .pbar{scroll-snap-align:start;scroll-margin-top:var(--navh)}
+
+/* 히어로 세로 100% 2026-11-19 */
+/* 히어로 높이 = 브라우저 세로 100%.
+   앞서 데스크탑은 calc(100vh + 50px), 900px 이하는 고정 900px 이었다.
+   둘 다 @media 안에 있지만 미디어쿼리는 특이성을 안 올리므로,
+   같은 특이성으로 맨 끝에 한 번 적으면 둘 다 덮인다.
+   svh = 주소창이 접혔다 펴져도 안 흔들리는 높이 (dvh 는 출렁이고,
+   vh 는 iOS 에서 주소창만큼 아래가 잘린다). */
+#r-main .hero .viewport{height:100svh;max-height:none;min-height:0}
+@supports not (height:100svh){
+  #r-main .hero .viewport{height:100vh}}
 @media(prefers-reduced-motion:reduce){
   html:has(#r-main:not([hidden])){scroll-snap-type:none}}
 
