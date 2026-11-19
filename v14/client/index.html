@@ -19,13 +19,22 @@
   --r1:8px; --r2:12px; --maxw:1380px; --ctrl:48px; --navh:72px; --barh:34px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;
+  /* 삼성인터넷/안드로이드 크롬이 OS 글자크기 설정대로 웹 글자를 키우는 걸 막는다.
+     iOS 는 원래 안 키우므로, 이게 없으면 갤럭시만 간격이 깨져 보인다. */
+  -webkit-text-size-adjust:100%; -moz-text-size-adjust:100%; text-size-adjust:100%}
 body{
   margin:0; background:var(--white); color:var(--ink);
   font-family:"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   font-size:15px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  /* Pretendard 가 아직 안 받아졌거나 글자가 서브셋에 없을 때 브라우저가
+     굵게를 가짜로 만들어 낸다. 합성 방식이 기기마다 달라 두께·폭이 어긋난다.
+     진짜 굵기만 쓰게 막는다. */
+  font-synthesis-weight:none; font-synthesis-style:none; font-synthesis:none;
 }
-h1,h2,h3,h4{font-family:inherit;margin:0;text-wrap:balance;font-weight:800;letter-spacing:-.022em}
+/* text-wrap:balance 는 사파리 17.5 / 크롬 114 미만에서 무시돼 줄바꿈이 갈린다.
+   OS 버전 무관하게 같아야 하므로 뺀다. 제목은 <br> 로 직접 끊는다. */
+h1,h2,h3,h4{font-family:inherit;margin:0;font-weight:800;letter-spacing:-.022em}
 a{color:inherit;text-decoration:none}
 button{font-family:inherit}
 img,svg{max-width:100%}
@@ -392,7 +401,7 @@ body.navopen #r-main .wnav{background:var(--white)}
 .heroeye{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--dim);
   margin-bottom:14px}
 .heroh{font-size:clamp(28px,3.4vw,46px);font-weight:800;line-height:1.24;
-  letter-spacing:-.025em;color:var(--black);margin:0;text-wrap:balance}
+  letter-spacing:-.025em;color:var(--black);margin:0}
 .herosub{font-size:15px;color:var(--dim);margin:14px 0 0;max-width:34ch}
 .herocta{display:inline-flex;align-items:center;gap:8px;margin-top:26px;
   height:46px;padding:0 22px;border:1px solid var(--ink);border-radius:999px;
@@ -834,7 +843,7 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
   flex-direction:column;align-items:center;gap:7px;padding:0 20px;text-align:center}
 .thslide__cap em{font-style:normal;font-size:12.5px;font-weight:700;color:var(--dim)}
 .thslide__cap b{font-size:clamp(16px,1.5vw,21px);font-weight:800;
-  letter-spacing:-.02em;color:var(--black);text-wrap:balance}
+  letter-spacing:-.02em;color:var(--black)}
 /* 인디케이터 — 레퍼런스처럼 짧은 대시. fade 엔진이 만드는 .dots 를 쓰므로
    실제 슬라이드 위치에 맞춰 활성 표시가 움직인다 */
 .slider.thsl .dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
@@ -2505,7 +2514,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .mhero__k{font-size:12px;font-weight:800;letter-spacing:.16em;
   color:rgba(255,255,255,.84)}
 .mhero__t{font-size:34px;font-weight:800;line-height:1.2;
-  letter-spacing:-.025em;color:var(--white);text-wrap:balance}
+  letter-spacing:-.025em;color:var(--white)}
 .mhero__s{font-size:14px;line-height:1.5;color:rgba(255,255,255,.86)}
 
 /* MORE — 테두리만. 호버하면 왼쪽에서 오른쪽으로 흰색이 차오른다.
@@ -3877,9 +3886,16 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
    같은 특이성으로 맨 끝에 한 번 적으면 둘 다 덮인다.
    svh = 주소창이 접혔다 펴져도 안 흔들리는 높이 (dvh 는 출렁이고,
    vh 는 iOS 에서 주소창만큼 아래가 잘린다). */
-#r-main .hero .viewport{height:100svh;max-height:none;min-height:0}
+/* 기기 공통 렌더링 2026-11-20 */
+/* dvh = 지금 실제로 보이는 높이. svh 는 툴바가 펼쳐진 기준의 최소 높이라,
+   사파리 툴바가 접히면 그 차이만큼 아래 섹션이 삐져나온다.
+   --barh 는 고정 띠배너 자리다. .route 가 그만큼 padding-top 을 갖고 있어
+   히어로는 화면 맨 위가 아니라 띠 아래에서 시작한다. 안 빼면 그만큼 길어진다. */
+#r-main .hero .viewport{height:calc(100dvh - var(--barh));max-height:none;min-height:0}
+@supports not (height:100dvh){
+  #r-main .hero .viewport{height:calc(100svh - var(--barh))}}
 @supports not (height:100svh){
-  #r-main .hero .viewport{height:100vh}}
+  #r-main .hero .viewport{height:calc(100vh - var(--barh))}}
 @media(prefers-reduced-motion:reduce){
   html:has(#r-main:not([hidden])){scroll-snap-type:none}}
 
