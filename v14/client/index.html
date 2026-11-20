@@ -3929,6 +3929,29 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   max-height:none;min-height:0}
 @supports not (height:100lvh){
   #r-main .hero .viewport{height:calc(var(--winh, 100vh) - var(--barh))}}
+
+/* ios-hero-overscan-20261120 */
+/* 히어로만 일부러 64px 더 길게 — 사파리가 알려 준 값이 아니라 실측 보정이다.
+   아이폰 15/16 프로(iOS 26 사파리) 실기 스크린샷을 픽셀로 재 보니
+   lvh·vh·innerHeight 가 알려 주는 높이보다 사파리가 실제로 칠하는 세로가
+   30.7px 더 길었다. 그 틈으로 띠배너(.pbar)가 비쳤다.
+   표준 JS/CSS 로는 이 틈을 잴 방법이 없다(브라우저가 알려 주지 않는다).
+   그래서 재는 대신 덮는다 — 64px 는 관측된 30.7px 에 33.3px 여유를 둔 값이다.
+   · ≤900px 에서 카피는 위 기준 정렬이라 히어로가 길어져도 글자는 안 움직인다.
+     (≥901px 는 세로 중앙 정렬이라 적용하면 카피가 내려간다 → 제외)
+   · pointer:coarse 로 묶어 데스크탑에서 창을 좁혀 보는 화면은 그대로 둔다.
+   · --winh 자체는 건드리지 않는다. .vkbn__in 등 같은 값을 쓰는 곳에 영향 없음.
+   · 히어로가 화면보다 긴 것은 원래 설계가 허용한다("꽉 참" 의 정의).
+     짧아서 아래가 비치는 것만 버그다.
+   남은 확인: 실기에서 이미지 크롭(.heroimg object-fit:cover)이 어색하지 않은지. */
+@media (max-width:900px) and (pointer:coarse){
+  #r-main .hero .viewport{
+    height:calc(var(--winh, 100lvh) - var(--barh) + 64px)}
+  @supports not (height:100lvh){
+    #r-main .hero .viewport{
+      height:calc(var(--winh, 100vh) - var(--barh) + 64px)}}
+}
+
 @media(prefers-reduced-motion:reduce){
   html:has(#r-main:not([hidden])){scroll-snap-type:none}}
 
