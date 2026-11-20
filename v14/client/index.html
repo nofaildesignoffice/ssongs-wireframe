@@ -11,6 +11,7 @@
   <script>window.SmoothScrollOptions={animationTime:1000,stepSize:100,accelerationDelta:50,accelerationMax:3,keyboardSupport:true,arrowScroll:50,pulseAlgorithm:true,pulseScale:4,pulseNormalize:1,touchpadSupport:false,fixedBackground:true,excluded:''};</script>
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/smoothscroll/1.4.9/SmoothScroll.min.js"></script>
   <style>
+/* 접두사·폴백 보강 2026-11-20 */
 /* 쏭스스토어 와이어프레임 프로토타입 — 그레이스케일 전용 단일 테마 */
 :root{
   --white:#FFFFFF; --light:#F5F5F5; --dark:#2D2D2D; --black:#1A1A1A;
@@ -60,7 +61,7 @@ img,svg{max-width:100%}
 /* 아이콘 색은 메뉴 글자와 같게 */
 .wicons{margin-left:auto;display:flex;gap:16px;color:var(--dim);align-items:center}
 .wicons a:hover{color:var(--black)}
-.hamb{display:none;appearance:none;border:0;background:transparent;color:var(--dim);cursor:pointer;padding:6px}
+.hamb{display:none;-webkit-appearance:none;appearance:none;border:0;background:transparent;color:var(--dim);cursor:pointer;padding:6px}
 .shopwrap{position:relative;display:inline-flex}
 .wdrop{position:absolute;left:-14px;top:100%;background:var(--white);border:1px solid var(--border2);
   border-radius:var(--r1);padding:8px 0;min-width:230px;box-shadow:0 6px 18px rgba(0,0,0,.10);
@@ -155,12 +156,12 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   /* ── 접힘 상태: 아이콘 + 축별 알약 칩 (가로 스크롤) ── */
   .fbar{display:flex;align-items:center;gap:8px;
     margin:0 -15px;padding:0 15px}      /* 화면 끝까지 흘림 */
-  .ficon{flex:none;appearance:none;border:0;background:transparent;padding:2px 2px 2px 0;
+  .ficon{flex:none;-webkit-appearance:none;appearance:none;border:0;background:transparent;padding:2px 2px 2px 0;
     color:var(--ink);cursor:pointer;line-height:0}
   .fpills{display:flex;gap:7px;overflow-x:auto;padding:2px 15px 2px 0;
     scrollbar-width:none;-ms-overflow-style:none;
     -webkit-overflow-scrolling:touch;
-    mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}
   .fpills::-webkit-scrollbar{display:none}
   /* 데스크탑 필터 칩과 같은 규칙 — 배경 없이 테두리와 글자색으로만 구분.
      활성 테두리 굵기는 inset box-shadow 로 겹친다 (border-width 를 키우면
@@ -179,7 +180,9 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   /* ── 펼침 상태: 바텀시트 ──
      기본 .filterbar 규칙이 소스 뒤에 있으므로 .fwrap 으로 특이성을 올린다 */
   .fwrap .filterbar{position:fixed;left:0;right:0;bottom:0;z-index:120;
-    max-height:82svh;display:flex;flex-direction:column;
+    /* vh 받침 — 삼성인터넷 20 미만은 svh 를 못 알아들어 선언을 통째로
+       버린다. 그러면 높이 제한이 사라져 시트가 화면 밖으로 넘친다. */
+    max-height:82vh;max-height:82svh;display:flex;flex-direction:column;
     border:0;padding:0;
     border-top-left-radius:16px;border-top-right-radius:16px;
     border-bottom-left-radius:0;border-bottom-right-radius:0;
@@ -194,7 +197,7 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   .fsheet-head{display:flex;align-items:center;justify-content:space-between;
     padding:16px 18px 12px;border-bottom:1px solid var(--border)}
   .fsheet-head b{font-size:15px;font-weight:800}
-  .fclose{appearance:none;border:0;background:transparent;padding:4px;
+  .fclose{-webkit-appearance:none;appearance:none;border:0;background:transparent;padding:4px;
     color:var(--dim);cursor:pointer;line-height:0}
 
   .fsheet-body{display:block;overflow-y:auto;-webkit-overflow-scrolling:touch;
@@ -266,7 +269,7 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
   opacity:0;visibility:hidden;transform:translateY(-4px);
   transition:opacity .14s,transform .14s,visibility .14s}
 .sortwrap.open .sortmenu{opacity:1;visibility:visible;transform:none}
-.sortopt{display:block;width:100%;text-align:left;appearance:none;border:0;
+.sortopt{display:block;width:100%;text-align:left;-webkit-appearance:none;appearance:none;border:0;
   background:transparent;font-family:inherit;font-size:13px;color:var(--dim);
   padding:9px 15px;cursor:pointer;white-space:nowrap}
 .sortopt:hover{background:var(--light)}
@@ -278,7 +281,8 @@ h4.wh4{font-size:16px;font-weight:700;margin:0 0 5px}
 /* 모바일 — 정렬도 필터와 같은 바텀시트로 */
 @media(max-width:767px){
   .sortwrap .sortmenu{position:fixed;left:0;right:0;bottom:0;top:auto;
-    z-index:120;min-width:0;padding:8px 0 max(10px,env(safe-area-inset-bottom));
+    z-index:120;min-width:0;padding:8px 0 10px;
+    padding:8px 0 max(10px,env(safe-area-inset-bottom,10px));
     border:0;border-top-left-radius:16px;border-top-right-radius:16px;
     border-bottom-left-radius:0;border-bottom-right-radius:0;
     box-shadow:0 -8px 30px rgba(0,0,0,.16);
@@ -413,7 +417,7 @@ body.navopen #r-main .wnav{background:var(--white)}
 /* 우측 세로 도트 인디케이터 */
 .hero .dots{position:absolute;right:26px;top:50%;transform:translateY(-50%);
   display:flex;flex-direction:column;gap:11px;z-index:3}
-.hero .dots button{appearance:none;border:0;padding:0;cursor:pointer;
+.hero .dots button{-webkit-appearance:none;appearance:none;border:0;padding:0;cursor:pointer;
   width:7px;height:7px;border-radius:50%;background:var(--gray);opacity:.42;
   transition:opacity .18s,transform .18s}
 .hero .dots button[aria-current="true"]{opacity:1;transform:scale(1.5)}
@@ -503,7 +507,7 @@ body.navopen #r-main .wnav{background:var(--white)}
 .slider .viewport{cursor:grab}
 .hero .slider{cursor:grab}
 .hero .slider:active{cursor:grabbing}
-.slider .viewport.dragging{cursor:grabbing;scroll-behavior:auto;user-select:none}
+.slider .viewport.dragging{cursor:grabbing;scroll-behavior:auto;-webkit-user-select:none;user-select:none}
 .slider .viewport.dragging a{pointer-events:none}
 @media(hover:none){.slider .viewport{cursor:auto}}
 .slider:not(.mobsl) .track{display:flex;gap:16px}
@@ -671,13 +675,13 @@ table.wt td.au,table.wt td.dt{color:var(--gray);font-size:12.5px;
   scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;
   cursor:grab}
 .faqfilter .chips::-webkit-scrollbar{display:none}
-.faqfilter .chips.dragging{cursor:grabbing;user-select:none}
+.faqfilter .chips.dragging{cursor:grabbing;-webkit-user-select:none;user-select:none}
 .faqfilter .chip{flex:none}
 /* 오른쪽만 화면 끝까지 흘린다 — 왼쪽은 섹션 여백 유지 */
 /* 페이드는 실제로 넘칠 때만 — 칩이 다 들어가는 폭에서는 마지막 칩이 흐려진다 */
 @media(max-width:767px){
   .faqfilter .chips{margin:0 -15px 0 0;padding:0 15px 2px 0;
-    mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}}
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 26px),transparent)}}
 @media(hover:none){.faqfilter .chips{cursor:auto}}
 
 /* 1:1 문의 */
@@ -848,7 +852,7 @@ table.wt td.qty{text-align:center;font-variant-numeric:tabular-nums}
    실제 슬라이드 위치에 맞춰 활성 표시가 움직인다 */
 .slider.thsl .dots{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);
   display:flex;gap:6px;z-index:3}
-.slider.thsl .dots button{appearance:none;border:0;padding:0;cursor:pointer;
+.slider.thsl .dots button{-webkit-appearance:none;appearance:none;border:0;padding:0;cursor:pointer;
   width:22px;height:3px;border-radius:2px;background:var(--gray);opacity:.35;
   transition:opacity .18s}
 .slider.thsl .dots button[aria-current="true"]{opacity:.9}
@@ -931,7 +935,10 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
      서랍의 z-index 는 그 안에서만 통해서 띠배너(60) 아래로 깔린다.
      서랍이 열린 동안만 헤더 자체를 위로 올린다. */
   body.navopen #r-main .wnav,body.navopen .wnav{z-index:130}
-  .dbackdrop{position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.42);
+  /* cursor:pointer 가 꼭 필요하다. 사파리는 '눌릴 것처럼 생기지 않은'
+   요소의 클릭을 document 로 안 올려 보낸다. 그래서 아이폰에서만
+   서랍 바깥을 탭해도 안 닫혔다. 보이는 변화는 없다. */
+.dbackdrop{cursor:pointer;position:fixed;inset:0;z-index:110;background:rgba(0,0,0,.42);
     opacity:0;transition:opacity .28s ease}
   body.navopen .dbackdrop{display:block;opacity:1}
   body.navopen{overflow:hidden}
@@ -1010,7 +1017,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
   .wfoot .cols > .fcol:nth-child(2){border-top:0}
   /* 타이틀 줄 — 오른쪽에 + / − */
   .wfoot .fhead{display:flex;align-items:center;justify-content:space-between;
-    gap:10px;padding:15px 0;cursor:pointer;user-select:none}
+    gap:10px;padding:15px 0;cursor:pointer;-webkit-user-select:none;user-select:none}
   .wfoot .fhead b{margin-bottom:0}
   .wfoot .fhead::after{content:"+";font-size:18px;line-height:1;font-weight:400;
     color:rgba(255,255,255,.72)}
@@ -1156,7 +1163,7 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 /* 계좌 안내 */
 .wfoot .accrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .wfoot .accno{color:rgba(255,255,255,.86);font-variant-numeric:tabular-nums}
-.wfoot .acccopy{appearance:none;cursor:pointer;flex:none;
+.wfoot .acccopy{-webkit-appearance:none;appearance:none;cursor:pointer;flex:none;
   border:1px solid rgba(255,255,255,.28);background:transparent;border-radius:3px;
   padding:2px 8px;font-size:11px;font-weight:600;color:rgba(255,255,255,.72);
   font-family:inherit;transition:border-color .15s,color .15s}
@@ -1818,7 +1825,7 @@ html{overflow-x:hidden;overflow-x:clip}
    레퍼런스처럼 한 줄에 나란히. 색은 --heroink 를 따라간다. */
 .heroctl{display:flex;align-items:center;gap:16px;margin-top:26px}
 .hero .dots{margin-top:0}
-.heroplay{appearance:none;border:0;background:transparent;cursor:pointer;
+.heroplay{-webkit-appearance:none;appearance:none;border:0;background:transparent;cursor:pointer;
   padding:4px;line-height:0;color:var(--heroink,var(--ink));opacity:.5;
   transition:opacity .2s ease}
 .heroplay:hover{opacity:1}
@@ -2057,7 +2064,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
 
 /* 히어로 컨트롤 — 이전 · 일시정지 · 다음 묶음 */
 .heroctl .hgrp{display:flex;align-items:center;gap:2px}
-.heronav{appearance:none;border:0;background:transparent;cursor:pointer;
+.heronav{-webkit-appearance:none;appearance:none;border:0;background:transparent;cursor:pointer;
   padding:4px 3px;line-height:0;color:var(--heroink,var(--ink));opacity:.5;
   transition:opacity .2s ease}
 .heronav:hover{opacity:1}
@@ -2069,7 +2076,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
 .herocount{display:flex;align-items:center;gap:3px;
   font-size:15px;font-weight:500;letter-spacing:.01em;line-height:1;
   font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
-  color:var(--heroink,var(--ink));-webkit-user-select:none;user-select:none}
+  color:var(--heroink,var(--ink));-webkit-user-select:none;-webkit-user-select:none;user-select:none}
 .herocount .hcnow{opacity:1}
 .herocount .hcsep{opacity:.32}
 .herocount .hctot{opacity:.38}
@@ -2323,7 +2330,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
 /* 넘치지 않을 때는 오른쪽 끝에 붙는다 — 레퍼런스의 정렬이다 */
 .cstrip__in{justify-content:flex-end;gap:26px}
 .cstrip.hasmore .cstrip__in{justify-content:flex-start;
-  mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
+  -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 44px),transparent)}
 .cs__i{width:104px}
 .cs__ph{width:88px;height:88px}
 .cs__t{font-size:12.5px;margin-top:11px}
@@ -2610,7 +2617,7 @@ body.navopen #r-brand .wnav{background:var(--white)}
 @media(max-width:767px){
   /* 라벨이 아니라 원형 줄로 가린다 — 꼼지락·검색 결과에도
      「제품」 박스가 있고 그쪽은 안이 칩이다 */
-  body.fopen .fwrap.ctl.sheetopen .filterbar:has(.cstrip){min-height:52svh}
+  body.fopen .fwrap.ctl.sheetopen .filterbar:has(.cstrip){min-height:52vh;min-height:52svh}
   .fwrap.ctl .fsheet-body:has(.cstrip){padding-top:16px}
   .fwrap.ctl[data-label="제품"] .cstrip__in{gap:20px 16px}
   .fwrap.ctl[data-label="제품"] .cs__i{width:98px}
@@ -2776,7 +2783,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 /* 종류 전환 탭 — 특허 · 디자인 · 상표 */
 .ipgrps{position:relative}
 .iptabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px;padding-right:96px}
-.iptab{appearance:none;font-family:inherit;cursor:pointer;display:inline-flex;
+.iptab{-webkit-appearance:none;appearance:none;font-family:inherit;cursor:pointer;display:inline-flex;
   align-items:center;gap:7px;height:38px;padding:0 16px;border-radius:999px;
   border:1px solid var(--border2);background:var(--white);color:var(--dim);
   font-size:14px;font-weight:700;letter-spacing:-.01em}
@@ -3494,7 +3501,10 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
    생긴다. 화면 높이와 100퍼센트 맞추라는 지시라 dvh 가 맞다.
    앞줄 100vh 는 dvh 를 모르는 낡은 브라우저용 대비다. */
 @media(max-width:1024px){
-  .vkbn__in{height:100vh;height:100dvh}
+  /* dvh 는 주소창이 접힐 때마다 바뀐다. JS 가 이 높이를 재서 바깥 상자를
+     2.2배로 박기 때문에, 스크롤 도중 문서 전체 높이가 변해 본문이 튀었다.
+     히어로와 같은 --winh(한 번 정해지면 안 줄어드는 실측값) 를 쓴다. */
+  .vkbn__in{height:100vh;height:var(--winh,100dvh)}
 }
 
 /* 회사 3축 — 검은 알약, 모바일 원 키움 2026-11-08 */
@@ -3617,7 +3627,7 @@ body.rtleave .gotop{opacity:0;transform:translateY(8px)}
 .slider.mhsl .viewport{margin:0;padding:0}
 .mhsl .dots{display:flex;justify-content:center;align-items:center;
   gap:9px;margin-top:16px}
-.mhsl .dots button{appearance:none;border:0;padding:0;cursor:pointer;
+.mhsl .dots button{-webkit-appearance:none;appearance:none;border:0;padding:0;cursor:pointer;
   width:7px;height:7px;border-radius:999px;background:var(--gray);
   opacity:.3;transition:width .24s cubic-bezier(.4,0,.2,1),
     opacity .18s,background .18s}
@@ -4029,7 +4039,19 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     document.body.classList.remove("fopen");
       var hb=document.querySelectorAll(".hamb");
       for(var i=0;i<hb.length;i++) hb[i].setAttribute("aria-expanded","false");
-      window.scrollTo(0,0);
+      // 기기 편차 2차 2026-11-20
+      /* 맨 위로 '즉시' 보낸다. html{scroll-behavior:smooth} 가
+             걸려 있어 그냥 scrollTo 하면 애니메이션이 되고,
+             걸리는 시간이 브라우저마다 달라 어긋난다. */
+          document.documentElement.classList.add("gliding");
+          // 클래스를 붙인 '직후' 에는 브라우저가 아직 새 스타일을 반영하지
+          // 않았다. 그 상태로 scrollTo 를 부르면 여전히 '부드럽게' 로 동작해
+          // 엔진마다 다른 시간 동안 스르륵 올라간다. 높이를 한 번 읽어
+          // 스타일을 지금 당장 계산하게 만든 뒤에 옮긴다.
+          void document.documentElement.offsetHeight;
+          window.scrollTo(0,0);
+          requestAnimationFrame(function(){
+            document.documentElement.classList.remove("gliding"); });
   navScroll();
     navScroll();
     }
@@ -4101,7 +4123,10 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   // 문턱 4px: 손떨림으로 방향이 번갈아 뒤집히면 1행이 떨린다.
   var lastY = window.scrollY;
   function navDir(){
-    var y = window.scrollY, d = y - lastY;
+    // iOS 는 맨 위·맨 아래에서 고무줄처럼 늘어난다. 그 복귀가 scrollY
+    // 감소로 보여 GNB 1행이 혼자 튀어나왔다. 정상 범위로 자른 뒤 비교한다.
+    var mx = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    var y = Math.min(Math.max(window.scrollY, 0), mx), d = y - lastY;
     if(Math.abs(d) > 4){
       document.body.classList.toggle("navup", d < 0);
       lastY = y;
@@ -4548,7 +4573,20 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
         document.body.classList.remove("fopen");
         var hbs = document.querySelectorAll(".hamb");
         for(var k=0;k<hbs.length;k++) hbs[k].setAttribute("aria-expanded","false");
-        if(wasOpen) window.scrollTo(0,0);
+        if(wasOpen){
+          /* 맨 위로 '즉시' 보낸다. html{scroll-behavior:smooth} 가
+             걸려 있어 그냥 scrollTo 하면 애니메이션이 되고,
+             걸리는 시간이 브라우저마다 달라 어긋난다. */
+          document.documentElement.classList.add("gliding");
+          // 클래스를 붙인 '직후' 에는 브라우저가 아직 새 스타일을 반영하지
+          // 않았다. 그 상태로 scrollTo 를 부르면 여전히 '부드럽게' 로 동작해
+          // 엔진마다 다른 시간 동안 스르륵 올라간다. 높이를 한 번 읽어
+          // 스타일을 지금 당장 계산하게 만든 뒤에 옮긴다.
+          void document.documentElement.offsetHeight;
+          window.scrollTo(0,0);
+          requestAnimationFrame(function(){
+            document.documentElement.classList.remove("gliding"); });
+        }
         return;
       }
       if(rtStill()) return;
@@ -4952,10 +4990,15 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
           a.classList.toggle("onpill", a === el); });
       }
       function reset(anim){ moveTo(current(), anim); }
-      Array.prototype.forEach.call(items(), function(a){
-        a.addEventListener("mouseenter", function(){ moveTo(a, true); });
-      });
-      menu.addEventListener("mouseleave", function(){ reset(true); });
+      // 터치 기기도 탭하면 mouseenter 를 한 번 흘려 준다. 그러면 손가락을
+      // 뗀 자리에 알약이 남는다. 마우스가 있는 기기에서만 건다.
+      var hasHover = !window.matchMedia || window.matchMedia("(hover:hover)").matches;
+      if(hasHover){
+        Array.prototype.forEach.call(items(), function(a){
+          a.addEventListener("mouseenter", function(){ moveTo(a, true); });
+        });
+        menu.addEventListener("mouseleave", function(){ reset(true); });
+      }
       window.addEventListener("resize", function(){ reset(false); });
       // 라우트가 바뀌어 이 메뉴가 보이게 되면 그때 자리를 잡는다.
       // 라우터가 언제 숨김을 푸는지에 기대지 않도록 몇 번 더 시도한다.
