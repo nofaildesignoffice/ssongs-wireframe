@@ -3879,6 +3879,14 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
 #r-main > .hero{scroll-snap-align:start;scroll-margin-top:var(--barh)}
 #r-main > .pbar{scroll-snap-align:start;scroll-margin-top:var(--navh)}
 
+/* glide 가 매 프레임 scrollTo 로 직접 옮기는 동안은 두 가지를 꺼야 한다.
+   (1) html{scroll-behavior:smooth} — 숫자형 scrollTo 는 behavior:auto 이고
+       auto 는 이 CSS 값을 따른다. 그래서 매 프레임 '부드럽게 이동' 을 새로
+       걸어 덮어쓰며 제자리걸음한다.
+   (2) proximity 스냅 — 보간 중인 중간 위치를 스냅 지점으로 도로 끌어당긴다.
+   미는 동안만 걸고 끝나면 뗀다. */
+html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
+
 /* 히어로 세로 100% 2026-11-19 */
 /* 히어로 높이 = 브라우저 세로 100%.
    앞서 데스크탑은 calc(100vh + 50px), 900px 이하는 고정 900px 이었다.
@@ -4373,14 +4381,27 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
       sl.addEventListener("dragstart", function(e){ e.preventDefault(); });
 
       // 페이드는 스크롤이 없으므로 스와이프를 직접 받는다
-      var x0 = null;
+      // // 손짓 소유권 공유 2026-11-20
+      // 전에는 가로 이동(dx)만 봤다. 세로로 쭉 내리면서 손이 좌우로 41px만
+      // 흔들려도 슬라이드가 같이 넘어갔다. 축을 보고, 세로 스냅이 이미
+      // 가져간 손짓이면 아예 넘기지 않는다.
+      var x0 = null, y0 = null;
       sl.addEventListener("touchstart", function(e){
-        x0 = e.touches[0].clientX; stop(); }, {passive:true});
+        if(!e.touches || e.touches.length !== 1){ x0 = y0 = null; return; }
+        x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; stop(); }, {passive:true});
       sl.addEventListener("touchend", function(e){
-        if(x0 === null) return;
-        var dx = e.changedTouches[0].clientX - x0;
-        if(Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1));
-        x0 = null; idle(4000); }, {passive:true});
+        if(x0 === null){ idle(4000); return; }
+        var ct = e.changedTouches[0];
+        var dx = ct.clientX - x0, dy = ct.clientY - y0;
+        x0 = y0 = null;
+        idle(4000);
+        // 세로 스냅이 이 손짓의 주인이면 슬라이드는 가만히 있는다.
+        if(window.__gesture && window.__gesture.vertical) return;
+        // 가로가 세로보다 확실히(1.3배) 커야 넘긴다.
+        if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3)
+          show(cur + (dx < 0 ? 1 : -1)); }, {passive:true});
+      sl.addEventListener("touchcancel", function(){
+        x0 = y0 = null; idle(4000); }, {passive:true});
 
       start();
     });
@@ -5821,17 +5842,37 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
       if(!pb) return -1;
       return Math.round(pb.getBoundingClientRect().top + window.scrollY - navh());
     }
-    function glide(to){
+    // 미는 동안만 html.gliding 을 건다. 그래야
+    //  (1) html{scroll-behavior:smooth} 가 매 프레임 새 애니메이션을 걸어
+    //      제자리걸음시키는 일이 없고  (2) proximity 스냅이 중간 위치를
+    //      도로 끌어당기지 않는다. 둘 다 CSS 쪽에서 꺼진다.
+    var root = document.documentElement;
+    function settle(to){
+      var t = target();
+      if(t > 0) to = t;
+      window.scrollTo(0, to);
+      root.classList.remove("gliding");
+      lock = Date.now() + 140;
+    }
+    function glide(){
       cancelAnimationFrame(anim);
-      if(!soft()){ window.scrollTo(0, to); lock = Date.now() + 140; return; }
-      var from = window.scrollY, d = to - from, t0 = 0, D = 620;
+      var to0 = target();
+      if(to0 <= 0) return;
+      root.classList.add("gliding");
+      if(!soft()){ settle(to0); return; }
+      var from = window.scrollY, t0 = 0, D = 430;
       function step(ts){
         if(!t0) t0 = ts;
         var p = Math.min(1, (ts - t0) / D);
-        var e = p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;
-        window.scrollTo(0, from + d * e);
+        // 처음부터 치고 나가 부드럽게 멈추는 곡선.
+        // 전에 쓰던 ease-in-out 은 출발 속도가 0 이라 '탁' 이 안 산다.
+        var e = 1 - Math.pow(1 - p, 3);
+        // 주소창이 접히면 dvh 가 커져 pbar 가 내려간다. 매 프레임 다시 잰다.
+        // 출발할 때 잰 값만 믿으면 다 와서 어긋나고 그게 '덜컥' 으로 보인다.
+        var to = target(); if(to <= 0) to = to0;
+        window.scrollTo(0, from + (to - from) * e);
         if(p < 1) anim = requestAnimationFrame(step);
-        else lock = Date.now() + 140;
+        else settle(to);
       }
       anim = requestAnimationFrame(step);
     }
@@ -5840,13 +5881,13 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
       // 자기 애니메이션을 겹쳐 돌려 중간에 멈춘다.
       if(Date.now() < lock){ e.preventDefault(); e.stopPropagation(); return; }
       if(e.deltaY <= 0) return;
-      if(document.body.classList.contains("navopen")) return;
-      if(document.body.classList.contains("fopen")) return;
+      var b = document.body.classList;
+      if(b.contains("navopen") || b.contains("fopen") || b.contains("sopen")) return;
       var t = target();
       if(t <= 0 || window.scrollY >= t - 8) return;
       e.preventDefault(); e.stopPropagation();
       lock = Date.now() + 700;
-      glide(t);
+      glide();
     }, { capture: true, passive: false });
 
     // 모바일 손짓 가로채기 2026-11-20
@@ -5866,6 +5907,10 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
       tY = e.touches[0].clientY;
       tX = e.touches[0].clientX;
       tAct = 0;
+      // 소유권은 여기서만 초기화한다. touchend 에서 지우면 안 된다 —
+      // 이 창 캡처 리스너가 슬라이더의 touchend(버블)보다 먼저 돌아서,
+      // 지우면 슬라이더가 '세로가 가져갔다' 는 걸 못 읽는다.
+      (window.__gesture = window.__gesture || {}).vertical = false;
     }, { capture: true, passive: true });
 
     window.addEventListener("touchmove", function(e){
@@ -5884,8 +5929,9 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
       if(dx > Math.abs(dy)){ tAct = -1; return; }
       // 위로 쓸기는 그냥 둔다 (당겨서 새로고침 · iOS 바운스를 막으면 안 된다).
       if(dy <= 0){ tAct = -1; return; }
-      if(document.body.classList.contains("navopen")){ tAct = -1; return; }
-      if(document.body.classList.contains("fopen")){ tAct = -1; return; }
+      var b = document.body.classList;
+      if(b.contains("navopen") || b.contains("fopen") || b.contains("sopen")){
+        tAct = -1; return; }
 
       var t = target();
       if(t <= 0 || window.scrollY >= t - 8){ tAct = -1; return; }
@@ -5895,8 +5941,9 @@ html:has(#r-main:not([hidden])){scroll-snap-type:y proximity}
 
       e.preventDefault();
       tAct = 1;
+      window.__gesture.vertical = true;   // 슬라이더가 읽고 비켜선다
       lock = Date.now() + 900;
-      glide(t);
+      glide();
     }, { capture: true, passive: false });
 
     // 전화 수신 등으로 touchcancel 이 와도 상태를 반드시 푼다.
