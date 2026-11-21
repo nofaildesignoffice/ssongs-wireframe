@@ -1724,11 +1724,17 @@ body.navsolid .wnav,body.navsolid #r-main .wnav{top:0}
 }
 
 /* 로고 1.4배 */
-.wlogo.logoimg{width:190px;height:48px}
-@media(max-width:900px){.wlogo.logoimg{width:157px;height:39px}}
-@media(max-width:560px){.wlogo.logoimg{width:134px;height:34px}}
+/* logo-110-20261121 — 여기서 다시 1.1배 (갑 요청 2026-11-21). 합계 1.54배.
+   캔버스 560x140(비율 4.0) + background-size:contain 이라 가로·세로
+   배율 중 작은 쪽이 실제 크기를 정한다. 제한하는 축이 구간마다 달라서
+   (데스크탑 세로 · <=900 세로 · <=560 가로) 양쪽을 같이 올려야 한다.
+   한쪽만 올리면 그 구간은 하나도 안 커진다.
+   푸터(.wfoot .logoimg)와 드로어(.dwlogo)는 별개 요소라 그대로 둔다. */
+.wlogo.logoimg{width:209px;height:52.8px}
+@media(max-width:900px){.wlogo.logoimg{width:172.7px;height:42.9px}}
+@media(max-width:560px){.wlogo.logoimg{width:147.4px;height:37.4px}}
 /* 메뉴 가운데 정렬에 쓰는 좌측 칸도 같이 넓힌다 — 좁으면 로고가 잘린다 */
-@media(min-width:901px){.wnav > .wlogo{min-width:190px}}
+@media(min-width:901px){.wnav > .wlogo{min-width:209px}}
 
 
 /* ── 히어로 카피·버튼 — 배너 밝기에 따라 자동 반전 ─────────────────
