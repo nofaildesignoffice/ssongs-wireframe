@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>
+/* 아티팩트 스켈레톤과 동일한 최소 리셋 */
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px system-ui,-apple-system,sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>쏭스 리뉴얼 전환 계획</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gothic+A1:wght@500;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* 레이아웃: 단일 컬럼 문서. 좌측 고정 목차(데스크탑) + 위험도 칩 + 게이트 타임라인 + 역할 필터 표 */
+:root{
+  --paper:#ffffff;
+  --ground:#eef1f4;
+  --ink:#171c21;
+  --ink-soft:#5b666f;
+  --rule:#d6dce2;
+  --accent:#0e5f62;
+  --accent-soft:#e2eeee;
+  --safe:#1d6b45;
+  --safe-bg:#e4f1ea;
+  --warn:#8a5a09;
+  --warn-bg:#faeedb;
+  --stop:#a32a24;
+  --stop-bg:#fae6e4;
+  --font-d:"Gothic A1","Noto Sans KR",system-ui,sans-serif;
+  --font-b:"Noto Sans KR",system-ui,-apple-system,sans-serif;
+  --font-m:ui-monospace,SFMono-Regular,"SF Mono",Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#161b20; --ground:#0e1216; --ink:#e7ecf0; --ink-soft:#9aa6b0; --rule:#2b333a;
+  --accent:#5fc9c9; --accent-soft:#17302f;
+  --safe:#6bd09b; --safe-bg:#14271d; --warn:#e5b45f; --warn-bg:#2b2112; --stop:#f08d85; --stop-bg:#2d1615;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --paper:#161b20; --ground:#0e1216; --ink:#e7ecf0; --ink-soft:#9aa6b0; --rule:#2b333a;
+  --accent:#5fc9c9; --accent-soft:#17302f;
+  --safe:#6bd09b; --safe-bg:#14271d; --warn:#e5b45f; --warn-bg:#2b2112; --stop:#f08d85; --stop-bg:#2d1615;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--font-b);line-height:1.75;font-size:15.5px;-webkit-text-size-adjust:100%}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+.cols{display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;align-items:start}
+@media(max-width:960px){.cols{grid-template-columns:minmax(0,1fr);gap:0}}
+
+/* 헤더 */
+.hero{margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:calc(env(safe-area-inset-top,0px) + 44px);padding-bottom:34px;background:var(--accent);color:#fff}
+:root[data-theme="dark"] .hero,:root:not([data-theme="light"]) .hero{color:#04100f}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .hero{color:#fff}}
+.hero .wrap{padding-block:0}
+.eyebrow{font-family:var(--font-d);font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;opacity:.75;margin:0 0 10px}
+h1{font-family:var(--font-d);font-weight:800;font-size:clamp(28px,5.2vw,44px);line-height:1.18;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance}
+.hero p{margin:0;max-width:62ch;font-size:16px;opacity:.92}
+.hero .meta{margin-top:20px;font-size:12.5px;opacity:.8;font-family:var(--font-m)}
+
+/* 목차 */
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 20px);font-size:13px;padding-top:40px}
+@media(max-width:960px){nav.toc{position:static;padding:22px 0 0}}
+nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+nav.toc a{display:block;color:var(--ink-soft);text-decoration:none;padding:5px 9px;border-radius:5px;border-left:2px solid transparent;line-height:1.45}
+nav.toc a:hover{color:var(--accent);background:var(--accent-soft)}
+nav.toc .n{font-family:var(--font-m);font-size:11px;opacity:.6;margin-right:6px}
+
+main{padding-block:40px 80px;min-width:0}
+section{background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:26px 28px;margin-bottom:22px}
+@media(max-width:560px){section{padding:20px 17px;border-radius:8px}}
+section>:first-child{margin-top:0}
+section>:last-child{margin-bottom:0}
+h2{font-family:var(--font-d);font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance;display:flex;gap:11px;align-items:baseline;flex-wrap:wrap}
+h2 .num{font-family:var(--font-m);font-size:13px;font-weight:500;color:var(--accent);flex:0 0 auto}
+h3{font-family:var(--font-d);font-weight:700;font-size:16.5px;margin:30px 0 9px;text-wrap:balance}
+h4{font-family:var(--font-d);font-weight:700;font-size:14.5px;margin:22px 0 7px;color:var(--ink-soft)}
+p{margin:0 0 13px;max-width:72ch}
+.lede{font-size:16px;color:var(--ink-soft);margin-bottom:22px;max-width:70ch}
+ul,ol{margin:0 0 14px;padding-left:1.35em;max-width:72ch}
+li{margin-bottom:7px}
+li>ul,li>ol{margin-top:7px;margin-bottom:4px}
+strong{font-weight:700}
+code{font-family:var(--font-m);font-size:.875em;background:var(--ground);padding:1.5px 5px;border-radius:4px;border:1px solid var(--rule);word-break:break-all}
+a{color:var(--accent)}
+hr{border:0;border-top:1px solid var(--rule);margin:26px 0}
+
+/* 칩 */
+.chip{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-d);font-size:11.5px;font-weight:700;padding:2.5px 9px;border-radius:99px;letter-spacing:.01em;white-space:nowrap;line-height:1.5}
+.c-safe{background:var(--safe-bg);color:var(--safe)}
+.c-warn{background:var(--warn-bg);color:var(--warn)}
+.c-stop{background:var(--stop-bg);color:var(--stop)}
+.c-flat{background:var(--accent-soft);color:var(--accent)}
+.chiprow{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 18px}
+
+/* 콜아웃 */
+.call{border-radius:9px;padding:17px 19px;margin:0 0 18px;border:1px solid}
+.call>:first-child{margin-top:0}.call>:last-child{margin-bottom:0}
+.call h4{margin-top:0;color:inherit;font-size:15px}
+.k-stop{background:var(--stop-bg);border-color:color-mix(in srgb,var(--stop) 32%,transparent);color:var(--ink)}
+.k-warn{background:var(--warn-bg);border-color:color-mix(in srgb,var(--warn) 32%,transparent);color:var(--ink)}
+.k-safe{background:var(--safe-bg);border-color:color-mix(in srgb,var(--safe) 32%,transparent);color:var(--ink)}
+.k-flat{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 28%,transparent);color:var(--ink)}
+.k-stop h4{color:var(--stop)}.k-warn h4{color:var(--warn)}.k-safe h4{color:var(--safe)}.k-flat h4{color:var(--accent)}
+
+/* 표 */
+.scroll{overflow-x:auto;margin:0 0 18px;border:1px solid var(--rule);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.6}
+th{font-family:var(--font-d);font-weight:700;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--ground);white-space:nowrap}
+tbody tr:last-child td{border-bottom:0}
+td.num,th.num{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--accent);font-weight:500}
+.t-tight td,.t-tight th{padding:7px 11px}
+
+/* 수치 타일 */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:11px;margin:0 0 20px}
+.tile{border:1px solid var(--rule);border-radius:8px;padding:13px 15px;background:var(--ground)}
+.tile .v{font-family:var(--font-d);font-weight:800;font-size:25px;line-height:1.15;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tile .l{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.5}
+.tile.hl{background:var(--stop-bg);border-color:color-mix(in srgb,var(--stop) 30%,transparent)}
+.tile.hl .v{color:var(--stop)}
+.tile.ok{background:var(--safe-bg);border-color:color-mix(in srgb,var(--safe) 30%,transparent)}
+.tile.ok .v{color:var(--safe)}
+
+/* 게이트 타임라인 */
+.gates{list-style:none;margin:0 0 18px;padding:0;position:relative}
+.gates::before{content:"";position:absolute;left:19px;top:14px;bottom:14px;width:2px;background:var(--rule)}
+.gates li{position:relative;padding:0 0 18px 52px;min-width:0}
+.gates li:last-child{padding-bottom:0}
+.gates .dot{position:absolute;left:0;top:0;width:40px;height:40px;border-radius:99px;background:var(--paper);border:2px solid var(--accent);color:var(--accent);display:flex;align-items:center;justify-content:center;font-family:var(--font-d);font-weight:800;font-size:13px}
+.gates .dot.human{background:var(--accent);color:var(--paper)}
+.gates .gt{font-family:var(--font-d);font-weight:700;font-size:15.5px;margin:7px 0 4px;display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.gates p{font-size:14px;margin:0 0 7px}
+
+/* 역할 필터 */
+.filters{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 15px}
+.fbtn{font-family:var(--font-d);font-size:12.5px;font-weight:700;padding:6px 13px;border-radius:99px;border:1px solid var(--rule);background:var(--paper);color:var(--ink-soft);cursor:pointer;line-height:1.5}
+.fbtn:hover{border-color:var(--accent);color:var(--accent)}
+.fbtn[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+.fbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+#hcount{font-size:12.5px;color:var(--ink-soft);margin:0 0 13px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+.foot{font-size:12.5px;color:var(--ink-soft);max-width:72ch}
+.foot code{font-size:11.5px}
+</style>
+
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">ssongsstore.com · 카페24 스마트디자인</p>
+    <h1>쏭스 리뉴얼 전환 계획</h1>
+    <p>지금 광고가 돌고 주문이 들어오는 쇼핑몰을 멈추지 않고, 새로 만든 디자인과 상품 구조를 검증한 뒤 전환하는 전체 절차. 사람이 직접 해야 하는 일 40건을 따로 정리했습니다.</p>
+    <p class="meta">2026-11-22 작성 · 실행 Claude Fable 5.2 / 검수 Codex Astra / 종합·재측정 메인 세션</p>
+  </div>
+</header>
+
+<div class="wrap">
+<div class="cols">
+
+<nav class="toc" aria-label="목차">
+  <ol>
+    <li><a href="#s0"><span class="n">0</span>3분 요약</a></li>
+    <li><a href="#s1"><span class="n">1</span>지금 당장 할 일</a></li>
+    <li><a href="#s2"><span class="n">2</span>먼저 알아야 할 3가지</a></li>
+    <li><a href="#s3"><span class="n">3</span>어디까지 테스트되나</a></li>
+    <li><a href="#s4"><span class="n">4</span>전체 순서</a></li>
+    <li><a href="#s5"><span class="n">5</span>분류·필터 해법</a></li>
+    <li><a href="#s6"><span class="n">6</span>전환 당일</a></li>
+    <li><a href="#s7"><span class="n">7</span>합격 판정</a></li>
+    <li><a href="#s8"><span class="n">8</span>되돌리기</a></li>
+    <li><a href="#s9"><span class="n">9</span>사람이 할 일 40건</a></li>
+    <li><a href="#s10"><span class="n">10</span>아직 모르는 것</a></li>
+    <li><a href="#s11"><span class="n">11</span>근거</a></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ───────── 0 ───────── -->
+<section id="s0">
+  <h2><span class="num">0</span>3분 요약</h2>
+  <p class="lede">질문은 「운영을 안 건드리고 테스트까지 하고 바로 배포해서 쓸 수 있나」였습니다. 답은 <strong>대부분 가능하고, 한 군데는 불가능</strong>합니다. 불가능한 한 군데가 어디인지가 이 문서의 핵심입니다.</p>
+
+  <div class="tiles">
+    <div class="tile ok"><div class="v">가능</div><div class="l">35개 화면·필터·광고 랜딩 6개를 운영 화면 그대로 두고 사전 검증</div></div>
+    <div class="tile hl"><div class="v">불가능</div><div class="l">결제 승인·주문 완료까지를 <em>운영 데이터에 아무 흔적 없이</em> 같은 몰에서 검증</div></div>
+    <div class="tile ok"><div class="v">0건</div><div class="l">광고 URL 수정. 주소는 전환해도 그대로입니다</div></div>
+    <div class="tile"><div class="v">40건</div><div class="l">사람이 직접 해야 하는 일 (9절)</div></div>
+  </div>
+
+  <h3>결론 5줄</h3>
+  <ol>
+    <li><strong>디자인 스킨은 격리됩니다.</strong> 새 디자인은 작업용 사본에서 만들고, 「대표 디자인」으로 지정하는 순간만 고객에게 보입니다. 지정 전까지 고객 화면은 1픽셀도 바뀌지 않습니다.</li>
+    <li><strong>상품·분류는 격리되지 않습니다.</strong> 스킨이 몇 개든 상품 데이터는 하나뿐입니다. 그래서 위험은 디자인이 아니라 <em>상품에 분류를 붙이는 작업</em>에 있습니다.</li>
+    <li><strong>그 위험을 피하는 길을 찾았습니다.</strong> 필터에 필요한 값은 이미 있는 데이터(상품 옵션·기존 분류·동의어)에서 전부 뽑힙니다. 상품에 새 분류를 붙이지 않고도 필터가 돕니다. → <a href="#s5">5절</a></li>
+    <li><strong>광고 URL은 손대지 않습니다.</strong> <code>/product/list.html?cate_no=177</code> 같은 주소는 카페24 플랫폼이 고정한 경로입니다. 디자인을 바꿔도 주소는 그대로이고, 오히려 주소를 바꾸면 메타의 학습 이력이 초기화됩니다.</li>
+    <li><strong>결제 완주 검증만 남습니다.</strong> 미리보기에서 주문서·결제창 진입까지는 봅니다. 실제 카드 승인부터는 (a) 대표가 승인한 통제된 실거래 1~2건으로 미리 하거나, (b) 전환 직후 통제 검증으로 남기거나 — 둘 중 하나를 고르셔야 합니다. 「흔적 없이 미리 전부」는 방법이 없습니다.</li>
+  </ol>
+
+  <div class="call k-stop">
+    <h4>그리고 리뉴얼과 별개로, 지금 돈이 새고 있을 가능성이 있습니다</h4>
+    <p>판매 중인 상품 1,852개 중 <strong>681개(36.8%)</strong>가 「표시안함」 분류에 속해 있습니다. 광고 랜딩 2개(<code>cate_no=177</code> 42개 · <code>cate_no=202</code> 66개)는 <strong>해당 상품 전부</strong>가 그렇습니다. 카페24 공식 문서대로라면 이 상품들은 <strong>지금도 네이버페이 구매 버튼 없이</strong> 팔리고 있다는 뜻입니다. 확인은 10분이고 아무것도 바꾸지 않습니다. → <a href="#s1">1절</a></p>
+  </div>
+</section>
+
+<!-- ───────── 1 ───────── -->
+<section id="s1">
+  <h2><span class="num">1</span>지금 당장 할 일 — 10분, 아무것도 안 바꿈</h2>
+  <div class="chiprow">
+    <span class="chip c-safe">쓰기 0건</span>
+    <span class="chip c-safe">설정 변경 0건</span>
+    <span class="chip c-flat">담당자 10분</span>
+    <span class="chip c-warn">리뉴얼 전체가 여기에 걸려 있음</span>
+  </div>
+
+  <p class="lede">카페24 공식 FAQ(문서번호 17413531508505)는 네이버페이 구매 버튼이 안 나오는 경우로 이것을 적어 놓았습니다 — <strong>「상품의 분류 중 하나라도 표시상태를 표시안함으로 설정한 경우」</strong>. 이 조건이 이 몰에서 실제로 작동하는지 아직 아무도 확인하지 않았습니다. 작동하면 리뉴얼 계획의 4단계를 영구히 바꿔야 하고, 동시에 지금 매출에 구멍이 있다는 뜻입니다.</p>
+
+  <h3>0단계 — 네이버페이 「종류」부터 읽습니다 (가장 먼저)</h3>
+  <p>관리자 &gt; 판매채널 &gt; 네이버 &gt; 네이버페이 설정을 <strong>열어서 읽기만</strong> 합니다.</p>
+  <ul>
+    <li><strong>주문형</strong>인가 <strong>결제형</strong>인가. 주문형은 상품 상세·장바구니에 네이버페이 구매 버튼이 붙는 방식이고, 결제형은 주문서 안의 결제수단 하나입니다.</li>
+    <li>결제형만 쓰는 몰이면 <strong>「구매 버튼」이라는 게 애초에 없습니다.</strong> 그러면 이 FAQ 조건이 이 몰에 해당하지 않고, 아래 1~3단계도 성립하지 않습니다. 이 경우 카페24에 다시 물어야 합니다.</li>
+    <li>주문형이면 「네이버페이 구매 버튼 노출」이 노출함인지도 읽습니다.</li>
+  </ul>
+
+  <h3>1단계 — 비교할 상품 2종을 고릅니다 (관리자에서 읽기만)</h3>
+  <p>새 테스트 상품을 만들면 안 됩니다. 「판매안함」 상품은 품절로 취급돼 버튼이 원래 안 나오기 때문에, 원인이 섞여서 판정이 안 됩니다. <strong>이미 팔리고 있는 상품끼리 비교합니다.</strong></p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>구분</th><th>조건</th><th>어디서 찾나</th></tr></thead>
+      <tbody>
+        <tr><td><strong>갑 상품</strong></td><td>표시안함 분류에 속하고 <strong>판매 중</strong>인 상품</td><td>표시안함 분류는 17개: <code>47 56 86 92 96 98 114 115 121 124 146 171 191 217 220 235 240</code></td></tr>
+        <tr><td><strong>을 상품</strong></td><td>표시안함 분류가 하나도 없고 <strong>판매 중</strong>인 상품</td><td>같은 분류 안에서 짝을 뽑으면 다른 원인이 줄어듭니다 (아래 표)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>한 분류 안에 갑·을이 둘 다 충분히 있는 곳을 8월 상품 파일에서 직접 세어 봤습니다. 아래 어디서든 짝이 나옵니다.</p>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>분류</th><th>이름</th><th class="num">갑 (표시안함 소속)</th><th class="num">을 (비소속)</th></tr></thead>
+      <tbody>
+        <tr><td class="id">117</td><td>맥세이프 체인지톡</td><td class="num">208</td><td class="num">139</td></tr>
+        <tr><td class="id">200</td><td>맥_아크릴톡</td><td class="num">208</td><td class="num">136</td></tr>
+        <tr><td class="id">120</td><td>케이스</td><td class="num">114</td><td class="num">242</td></tr>
+        <tr><td class="id">60</td><td>투명 케이스</td><td class="num">46</td><td class="num">104</td></tr>
+        <tr><td class="id">49</td><td>포켓카드 케이스</td><td class="num">43</td><td class="num">72</td></tr>
+        <tr><td class="id">106</td><td>아크릴체인지톡</td><td class="num">29</td><td class="num">414</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>두 상품의 <strong>다른 조건은 같아야</strong> 합니다 — 진열함 · 판매함 · 품절 아님 · 판매가 0원 아님 · 판매가 대체문구 없음 · 상품의 「네이버페이 서비스」 사용함 · 국내배송 · 세트/1+N 아님 · 속한 분류(상위 포함)의 「네이버페이 서비스」 전부 사용함.</p>
+
+  <h3>2단계 — 봅니다</h3>
+  <ul>
+    <li><strong>로그아웃 상태 · 시크릿 창</strong>으로 엽니다. 로그인하면 버튼이 원래 안 보입니다(네이버페이는 비회원 구매 기능).</li>
+    <li>PC와 모바일 각각, <strong>상품 상세</strong>와 <strong>그 상품 하나만 담은 장바구니</strong>를 봅니다.</li>
+    <li><strong>버튼을 누르지 않습니다. 주문하지 않습니다.</strong> 화면만 캡처합니다.</li>
+    <li>갑·을 한 쌍으로 끝내지 말고 갑 상품을 2~3개 더 봅니다.</li>
+  </ul>
+
+  <h3>3단계 — 판정</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>갑</th><th>을</th><th>뜻</th><th>다음</th></tr></thead>
+      <tbody>
+        <tr><td><span class="chip c-safe">보임</span></td><td><span class="chip c-safe">보임</span></td><td>조건이 이 몰에서 지금은 <strong>작동하지 않는다</strong></td><td>4단계 차단 해제의 강한 근거. 단 카페24 서면 답과 맞춰 본 뒤 소량(10개)부터</td></tr>
+        <tr><td><span class="chip c-stop">안 보임</span></td><td><span class="chip c-safe">보임</span></td><td>조건이 <strong>작동한다</strong>. 그리고 지금 이미 판매 중 수백 개가 버튼 없이 팔리고 있다</td><td><strong>리뉴얼과 별개의 긴급 건으로 대표 보고.</strong> 5절 경로 A의 「작동」 갈래로</td></tr>
+        <tr><td><span class="chip c-stop">안 보임</span></td><td><span class="chip c-stop">안 보임</span></td><td>버튼이 원래 없거나(결제형·스킨에 버튼 코드 없음·승인 문제) 다른 원인</td><td>판정 불가. 0단계로 돌아갑니다</td></tr>
+        <tr><td><span class="chip c-safe">보임</span></td><td><span class="chip c-stop">안 보임</span></td><td>을 상품에 다른 원인이 있다</td><td>을 상품을 바꿔 다시</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call k-flat">
+    <h4>동시에 — 카페24에 서면으로 물을 것 (답변이 근거로 남습니다)</h4>
+    <ul>
+      <li>「상품의 분류 중 하나라도」가 <strong>직접 속한 분류만</strong> 보는지, <strong>상위 분류까지</strong> 보는지.</li>
+      <li>기존 분류를 그대로 둔 채 <strong>추가분류</strong>로만 붙인 분류도 이 조건에 포함되는지.</li>
+      <li>이 조건이 <strong>주문형·결제형</strong> 중 무엇에 적용되는지.</li>
+      <li><strong>새로 만든 분류의 「네이버페이 서비스」 기본값</strong>이 사용함인지 사용안함인지.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ───────── 2 ───────── -->
+<section id="s2">
+  <h2><span class="num">2</span>먼저 알아야 할 3가지</h2>
+
+  <h3>① 디자인은 격리되고, 상품은 격리되지 않습니다</h3>
+  <p>카페24는 디자인 스킨을 여러 개 보관할 수 있고, 그중 <strong>「대표 디자인」 1개만</strong> 고객에게 보여 줍니다. 나머지는 미리보기 주소로만 열립니다. 그래서 새 디자인을 만드는 작업은 고객 화면에 아무 영향이 없습니다.</p>
+  <p>하지만 <strong>상품·분류·옵션·재고·주문은 스킨과 무관하게 하나뿐</strong>입니다. 분류를 새로 만들거나 상품에 붙이는 일은 디자인 작업이 아니라 공통 데이터 작업이고, 미리보기로 격리되지 않습니다. <strong>이 리뉴얼의 유일한 실질 위험이 여기입니다.</strong></p>
+
+  <h3>② 광고 URL은 전환해도 안 바뀝니다 — 손대지 마십시오</h3>
+  <p>지금 메타광고 6개가 쓰는 주소는 모두 카페24가 정한 고정 경로입니다. 스킨은 「그 자리에 어떤 화면을 그릴지」만 정합니다. 대표 디자인을 바꿔도 주소는 그대로입니다.</p>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>광고</th><th>주소가 의존하는 것</th><th>새 디자인에서 그릴 화면</th></tr></thead>
+      <tbody>
+        <tr><td>체인지톡</td><td class="id">cate_no=67</td><td>목록 (r-list-grip)</td></tr>
+        <tr><td>맥 도어범퍼 케이스</td><td class="id">cate_no=177</td><td>목록 (r-list-case)</td></tr>
+        <tr><td>맥 에폭시 케이스</td><td class="id">cate_no=236</td><td>목록 (r-list-case) · <strong>www</strong> 주소</td></tr>
+        <tr><td>스탠딩 카드지갑</td><td class="id">product_no=2155</td><td>상세 (r-detail-card)</td></tr>
+        <tr><td>꼼지락 스탠딩</td><td>검색어 <code>꼼지락 스탠딩</code></td><td>검색 (r-search)</td></tr>
+        <tr><td>폴드 톡</td><td>검색어 <code>폴드 톡</code> (띄어쓰기 있음)</td><td>검색 (r-search)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>주소가 죽는 건 디자인이 아니라 <strong>데이터</strong> 때문입니다. 분류를 지우고 다시 만들면 새 번호가 붙고 그 순간 광고가 빈 페이지가 됩니다. 상품명을 바꾸면 검색 랜딩 2개가 깨집니다. 그래서 <strong>분류 삭제·번호 변경·상품명 변경·검색어 설정 변경이 전부 금지</strong>입니다.</p>
+
+  <div class="call k-warn">
+    <h4>진짜 쟁점은 「좁은 분류로 들어왔을 때 화면을 어떻게 그리나」입니다</h4>
+    <p>광고는 좁은 분류로 떨어집니다(177은 42개, 236은 84개). 그런데 새로 만든 목록 화면은 <strong>대분류 기준</strong>으로 설계돼 있습니다(원형 줄 9칸·큰 제목·아무것도 안 눌린 필터). 주소의 <code>cate_no</code>는 그대로 전달되니 <strong>상품 목록 자체는 맞게 나옵니다.</strong> 고쳐야 하는 건 주소가 아니라 그 주변 3곳입니다 — <strong>제목</strong>(그 분류명이 나와야 함) · <strong>위쪽 원형 줄</strong>(현재 위치 표시 또는 숨김) · <strong>필터 박스</strong>(해당 축이 이미 눌린 상태).</p>
+  </div>
+
+  <h3>③ 미리보기로 되는 것과 안 되는 것</h3>
+  <p>미리보기는 <strong>디자인 선택만</strong> 격리합니다. 주문·상품·재고·회원·게시판을 별도 데이터베이스로 복제하지 않습니다. 그래서 미리보기에서 회원가입을 하면 실제 회원이 생기고, 게시판에 글을 쓰면 실제 글이 생기고, 주문을 완료하면 실제 주문이 생깁니다.</p>
+  <p>장바구니에 담는 것만으로는 재고가 줄지 않습니다(공식 문서 「안전 재고 관리」). 하지만 <strong>주문 기준으로 설정된 몰이면 미입금 주문에도 재고가 차감</strong>됩니다. 「결제까지 안 했으니 데이터에 영향 없다」는 틀립니다.</p>
+</section>
+
+<!-- ───────── 3 ───────── -->
+<section id="s3">
+  <h2><span class="num">3</span>운영을 안 건드리고 어디까지 테스트되나</h2>
+  <p class="lede">세 층으로 나눕니다. 대표 요구사항 중 어디까지가 사전에 닫히고 무엇이 남는지를 항목별로 적었습니다.</p>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>환경</th><th>할 수 있는 일</th><th>한계</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>로컬 / 별도 시험 몰</strong></td>
+          <td>토큰·자산·반응형·JS·필터·오류 처리. 합성 상품과 시험 계정의 주문/취소 흐름</td>
+          <td>로컬은 카페24 템플릿·PG를 실행하지 못합니다. 별도 몰은 이 몰의 데이터·도메인·캐시·앱·PG 계약과 같다는 보장이 없습니다. 멀티쇼핑몰 1개 추가를 완전 독립 환경으로 단정할 수 없습니다 — 일부 설정은 모든 몰 공통입니다</td>
+        </tr>
+        <tr>
+          <td><strong>현재 몰의 skin17 미리보기</strong></td>
+          <td>실제 데이터 읽기, 서버 템플릿·가격/옵션 렌더링, 광고 랜딩 6개, 앱 삽입, 필터 — 사전 검증의 대부분</td>
+          <td>고객이 보는 대표 주소와는 다른 문맥입니다. 외부 로그인·결제 반환에서 작업 스킨을 벗어날 수 있어 단계마다 최종 주소를 확인해야 합니다</td>
+        </tr>
+        <tr>
+          <td><strong>전환 뒤 실제 주소</strong></td>
+          <td>대표 지정·캐시 경로·www/비www·기존 세션·실제 광고/결제/추적 통합</td>
+          <td>여기서만 닫히는 항목이 남습니다. 이걸 「사전에 완료했다」고 말할 수 없습니다</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>항목별 — 미리보기에서 닫히나</h3>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>항목</th><th>미리보기</th><th>전환 후에만 닫히는 부분</th></tr></thead>
+      <tbody>
+        <tr><td>35개 화면 · 375/390폭 · 이미지/글꼴</td><td><span class="chip c-safe">가능</span></td><td>실제 호스트에서 승인한 파일이 배달되는지 재확인</td></tr>
+        <tr><td>메인 7줄 · 제목 · 빈 상태</td><td><span class="chip c-safe">가능</span></td><td>대표 경로에서 같은 버전이 나오는지</td></tr>
+        <tr><td>광고 분류·검색·2155 상세·필터·페이징</td><td><span class="chip c-safe">가능</span></td><td>원문 호스트·쿼리·리다이렉트와 현재 데이터의 결합</td></tr>
+        <tr><td>옵션 선택 · 장바구니 담기</td><td><span class="chip c-warn">조건부</span></td><td>전환 전에 담은 장바구니가 기존 세션에서 유지되는지</td></tr>
+        <tr><td>주문서 · 결제창 진입</td><td><span class="chip c-warn">조건부</span></td><td>실제 운영 도메인에서 주문서·결제창까지 연결되는지</td></tr>
+        <tr><td><strong>결제 승인 · 완료 · 취소</strong></td><td><span class="chip c-stop">확인 불가</span></td><td>무과금 전용 테스트 모드의 존재·격리 범위를 공식 문서로 확인할 수 없었습니다. 통제된 실거래로만 검토 가능</td></tr>
+        <tr><td>네이버페이</td><td><span class="chip c-warn">조건부</span></td><td>실제 판매 경로의 네이버 주문 → 카페24 수집 연결. 일반 카드 1건으로 대신할 수 없습니다</td></tr>
+        <tr><td>회원가입 · 로그인 · SNS 로그인</td><td><span class="chip c-warn">실제 쓰기 발생</span></td><td>실제 도메인 쿠키·외부 인증 반환·전환 전 로그인 지속</td></tr>
+        <tr><td>게시판 글 · 리뷰 · 협업문의</td><td><span class="chip c-warn">실제 쓰기 발생</span></td><td>실제 운영 링크·권한·접수 경로</td></tr>
+        <tr><td>광고 추적 (메타 픽셀 등)</td><td><span class="chip c-warn">조건부</span></td><td>운영 도메인·실제 주문번호·금액·중복 방지·구매 이벤트 수신</td></tr>
+        <tr><td>대표 지정 · 되돌리기</td><td><span class="chip c-stop">증명 불가</span></td><td>미리보기로는 증명할 수 없습니다. <strong>탁상 연습만</strong> 가능</td></tr>
+        <tr><td>사이트맵 · RSS · 외부 피드</td><td><span class="chip c-warn">출력 검토만</span></td><td>라이브 경로의 실제 출력, 다음 실제 생성·수집 결과</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call k-warn">
+    <h4>그래서 대표가 고르셔야 하는 것 한 가지</h4>
+    <p><strong>(a) 통제된 실거래를 미리 한다</strong> — 별도 테스트 상품·계정으로 금액·수량·결제수단·중단 지점을 정해 1~2건. 주문번호·PG 거래번호·추적 이벤트를 연결해 확인하고 <strong>출고 전에</strong> 취소·환불합니다. 단 최근 3개월 주문은 삭제할 수 없으므로 기록은 남습니다(공식 FAQ). 그리고 판매 중 상품으로는 시험하지 않습니다.</p>
+    <p><strong>(b) 전환 후 통제 검증으로 남긴다</strong> — 전환 직후 승인된 시험 주문으로 닫습니다. 사전 검증 범위가 그만큼 좁아집니다.</p>
+    <p>「운영 데이터에 전혀 쓰지 않으면서 결제 완주까지 사전 검증 완료」로 보고할 방법은 <strong>확인된 바가 없습니다.</strong></p>
+  </div>
+</section>
+
+<!-- ───────── 4 ───────── -->
+<section id="s4">
+  <h2><span class="num">4</span>전체 순서</h2>
+  <p class="lede">준비 1~8단계는 에이전트가 하고 서로 검수합니다. 9·10단계(되돌리기 연습·전환)는 <strong>사람이 실행</strong>하고 에이전트는 입회·검수만 합니다.</p>
+
+  <div class="scroll">
+    <table>
+      <thead><tr><th>단계</th><th>무엇을</th><th>라이브 접촉</th><th>실행 / 검수</th></tr></thead>
+      <tbody>
+        <tr><td class="id">1</td><td>작업용 스킨 격리 · 백업 확보</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
+        <tr><td class="id">2</td><td>현재 상태 기준선 측정 (상품·분류·설정 스냅샷)</td><td><span class="chip c-safe">읽기만</span></td><td>Fable / Codex</td></tr>
+        <tr><td class="id">3</td><td>분류 신설 — <strong>상품은 안 붙임</strong></td><td><span class="chip c-warn">분류만 생성</span></td><td>Fable / Codex</td></tr>
+        <tr><td class="id">4</td><td>상품에 추가분류 부착</td><td><span class="chip c-stop">차단 중</span></td><td>1절 확인 후 재개</td></tr>
+        <tr><td class="id">5</td><td>필터 값 확정 · 인덱스 생성기 제작</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
+        <tr><td class="id">6</td><td>스킨 이식 — 35개 화면을 skin17에</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
+        <tr><td class="id">7</td><td>앱·추적 코드 재삽입</td><td><span class="chip c-warn">일부 공통</span></td><td>Fable / Codex + 담당자</td></tr>
+        <tr><td class="id">8</td><td>미리보기 전수 시험 (35개 화면 · 광고 6개 · 구매 경로)</td><td><span class="chip c-warn">일부 쓰기</span></td><td>Fable / Codex + 담당자</td></tr>
+        <tr><td class="id">9</td><td>되돌리기 <strong>탁상</strong> 연습 — 버튼은 누르지 않음</td><td><span class="chip c-safe">없음</span></td><td><strong>사람</strong> / 두 에이전트 입회</td></tr>
+        <tr><td class="id">10</td><td>전환 (대표 디자인 지정) · 검증 · 인계</td><td><span class="chip c-stop">전면</span></td><td><strong>사람</strong> / 두 에이전트 입회</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call k-flat">
+    <h4>9단계는 「연습」이 아니라 탁상 점검입니다</h4>
+    <p>대표 디자인을 한 번 바꿔 보고 되돌리는 「리허설」은 <strong>이름만 연습이고 실제 전환</strong>입니다. 고객이 그 사이에 구 화면·신 화면을 섞어 보게 됩니다. 그래서 9단계에서는 버튼 위치·권한·연락망·판정표·증거 수집 절차만 확인하고 <strong>대표 지정 버튼은 누르지 않습니다.</strong> 대신 「실제 복귀에 걸리는 시간은 실측하지 못했다」는 공백이 남고, 그 공백을 받아들이겠다는 대표의 서면 결정이 필요합니다.</p>
+  </div>
+</section>
+
+<!-- ───────── 5 ───────── -->
+<section id="s5">
+  <h2><span class="num">5</span>분류·필터 — 네이버페이를 안 깨는 길</h2>
+  <p class="lede">원래 계획은 「표시안함 분류를 새로 만들고 상품에 추가로 붙인다」였습니다. 네이버페이 조건을 발견하면서 그 길이 막혔습니다. 대안을 찾았습니다.</p>
+
+  <h3>왜 막혔나</h3>
+  <p>공식 FAQ는 <strong>「상품의 분류 중 하나라도 표시상태를 표시안함으로 설정한 경우」</strong> 네이버페이 구매 버튼이 안 나온다고 적어 놓았습니다. 그러면 판매 중 상품에 표시안함 신규 분류를 붙이는 순간 그 상품의 구매 버튼이 사라질 수 있습니다. 설계의 4단계가 바로 그 작업입니다.</p>
+
+  <h3>경로 A — 「인덱스 먼저, 부착은 확인 뒤」 <span class="chip c-safe">채택</span></h3>
+  <p><strong>핵심 발견:</strong> 필터에 필요한 값은 <strong>상품에 새 분류를 붙이지 않아도</strong> 지금 데이터에서 전부 뽑힙니다. 설계 트리 227줄의 「값 출처」를 직접 세어 확인했습니다.</p>
+  <div class="tiles">
+    <div class="tile"><div class="v">70</div><div class="l">상품 옵션에서 나오는 값<br>(기종 56 + 기타 14)</div></div>
+    <div class="tile"><div class="v">24</div><div class="l"><strong>기존</strong> 분류에서 나오는 값<br>(제품 종류 18 + 기종 6)</div></div>
+    <div class="tile"><div class="v">45</div><div class="l">동의어 매핑<br>(담당자 승인 필요)</div></div>
+    <div class="tile"><div class="v">34</div><div class="l">「데이터 없음」<br>— 담당자 입력이 선행돼야 함</div></div>
+  </div>
+
+  <h4>순서</h4>
+  <ol>
+    <li><strong>확인</strong> — 1절 관측 + 카페24 서면 질의.</li>
+    <li><strong>분류 신설은 계속합니다. 상품은 안 붙입니다.</strong> 상품이 없는 분류에는 네이버페이 조건이 해당하지 않습니다(조건이 「상품의 분류」에 대한 것이므로). 만들 때마다 표시상태·메인분류 표시·표시설정·네이버페이 서비스 값을 읽어 기준표에 적습니다.</li>
+    <li><strong>인덱스 생성기를 「두 군데서 읽게」 만듭니다.</strong> 1순위는 상품에 신규 분류가 붙어 있으면 그 값, 2순위는 없으면 규칙표(옵션 70 · 기존 분류 24 · 승인된 동의어 45). 이렇게 해 두면 <strong>나중에 분류를 붙여도 생성기를 안 고칩니다.</strong></li>
+    <li><strong>전환은 4단계 없이 갑니다.</strong> 필터는 2순위 규칙표로 돕니다.</li>
+    <li><strong>부착은 1번 결과에 따라</strong> — 조건이 작동하지 않으면 원안대로 10개 먼저. 작동하면 붙이는 분류를 전부 「표시함 + 네이버페이 사용함」으로 만들고, 메뉴 노출을 우리가 직접 통제하는 <strong>전환 이후</strong>에 붙입니다. 판정 불가면 차단 유지 — 2·3·4번은 영향받지 않습니다.</li>
+  </ol>
+
+  <h4>되돌리는 방법</h4>
+  <p>인덱스 파일을 내리면 끝입니다. 상품이 안 붙은 신규 분류는 지워도 광고 주소와 무관합니다(새 번호라 광고에 쓰인 적이 없습니다). 5번에서 부착한 것은 그 분류만 <strong>「삭제」 방식</strong>으로 떼어 냅니다(「변경」 방식은 기존 귀속을 날립니다 — 금지).</p>
+
+  <div class="call k-warn">
+    <h4>681개에 대한 논증 — 맞지만, 차단을 풀지는 못합니다</h4>
+    <p>조건 ①은 <strong>「하나라도」</strong>입니다. 이미 표시안함 분류를 1개 이상 가진 상품에 표시안함 분류를 하나 더 붙이면 <strong>조건 ①의 참·거짓은 바뀔 수 없습니다</strong> — 이미 참이기 때문입니다. 판매 중 681개와 <strong>광고 랜딩 177의 42개 전부 · 202의 66개 전부</strong>가 여기 해당합니다. 이 논리는 교차검수에서 확인됐습니다.</p>
+    <p><strong>그런데 이것만으로 4단계를 재개할 수는 없습니다.</strong> 검수에서 세 가지 구멍이 지적됐고, 재확인했습니다.</p>
+    <ul>
+      <li><strong>「조건 ①이 안 바뀐다」 ≠ 「영향이 없다」.</strong> 조건 ②, 피드·사이트맵, 메뉴 노출, 색인은 별개 경로입니다. 조건 하나가 고정된다는 증명을 운영 전체의 무영향으로 확대할 수 없습니다.</li>
+      <li><strong>조건 ①이 상위 분류까지 보는지 모릅니다.</strong> 본다면 모집단이 681이 아니라 <strong>1,035개</strong>입니다(직접 측정). 어느 쪽이든 논증은 성립하지만 「누가 안전한가」의 명단이 달라집니다.</li>
+      <li><strong>681은 「8월 상품 귀속 × 11월 분류 표시상태」를 결합한 값</strong>입니다. 현재 값이 아닙니다. 부착 대상 명단으로 쓰려면 최신 상품 엑셀을 다시 받아야 합니다(H05).</li>
+    </ul>
+    <p>조건 ②(「네이버페이 사용안함으로 설정된 분류가 포함된 경우」)에 대해 — <strong>분류 단위 네이버페이 사용 설정은 실제로 있는 공식 기능임이 확인됐습니다.</strong> 다만 신규 생성 시 기본값은 아직 모르고, 새 분류 하나를 사용함으로 설정했다고 ② 전체가 해소되는 것도 아닙니다(상품이 이미 가진 다른 분류들이 남아 있습니다).</p>
+  </div>
+
+  <div class="call k-flat">
+    <h4>덤으로 — 광고 랜딩 236의 공백이 절반 메워졌습니다</h4>
+    <p>8월 상품 파일에 <code>cate_no=236</code>이 없어 「236의 84개가 이미 표시안함 분류를 가졌는지」를 측정할 수 없었습니다. 그런데 분류 트리를 따라가 보니 <strong><code>236 → 149 → 56</code>이고 56이 표시안함</strong>입니다. 즉 조건 ①이 상위 분류까지 보는 방식이면 236의 상품들도 이미 조건에 걸려 있습니다. 상위를 안 보는 방식이면 여전히 미확인이고 최신 엑셀이 필요합니다.</p>
+    <p>참고로 광고 랜딩 67 · 177 · 202 · 237의 조상 사슬에는 표시안함이 없습니다 — 177과 202가 조건에 걸리는 건 <strong>상품이 직접 가진 다른 분류</strong> 때문입니다.</p>
+  </div>
+
+  <h4>남는 불확실성</h4>
+  <ul>
+    <li>부착 전까지는 <strong>관리자가 드롭다운으로 뎁스4를 직접 선택하는 요구사항이 미충족</strong>입니다. 그 기간 신상품은 기존 분류만 지정하고 규칙표가 값을 뽑습니다. 이 임시 상태를 대표가 알고 계셔야 합니다.</li>
+    <li>조건이 작동한다면 「뎁스4 175개는 전부 공개 대상이 아니다」라는 기존 전제가 <strong>성립하지 않습니다</strong> — 상품이 붙는 분류는 표시함이어야 합니다. 후속 계획 개정이 필요합니다.</li>
+    <li>표시함으로 바꿨을 때 새 스킨의 하위 분류 목록·검색·색인에 무엇이 나오는지는 그때 미리보기로 재야 합니다.</li>
+  </ul>
+</section>
+
+<!-- ───────── 6 ───────── -->
+<section id="s6">
+  <h2><span class="num">6</span>전환 당일 — 시계가 아니라 증거로 닫습니다</h2>
+
+  <div class="call k-stop">
+    <h4>「몇 분 기다리면 전부 반영된다」는 근거가 없습니다</h4>
+    <p>카페24 FAQ에 나오는 「약 5분」·「이벤트 시 약 15분」·「정적 콘텐츠 2시간」은 <strong>설명값이고 보장값이 아닙니다.</strong> 모든 고객·모든 캐시 서버에 반영이 끝나는 시각을 보장하는 공식 자료는 찾지 못했습니다. 그리고 기본제공 도메인(<code>몰아이디.cafe24.com</code>)도 웹가속기 적용 대상입니다(2021-10-06 공지, 전체몰) — <strong>캐시를 우회하는 주소가 아닙니다.</strong></p>
+    <p>그래서 성공 기준을 경과시간에서 <strong>증거</strong>로 바꿉니다. 「삭제하고 새 화면 나올 때까지 반복」도 하지 않습니다 — 미확인 주소에 대한 캐시 삭제·재수집은 <strong>1회</strong>로 제한하고, 그 뒤에도 남으면 배포 미통과로 되돌립니다.</p>
+  </div>
+
+  <h3>게이트 — 이 순서로만 닫힙니다</h3>
+  <ol class="gates">
+    <li><span class="dot">P</span>
+      <div class="gt">사전 준비</div>
+      <p>4단계 차단 해제 근거(또는 승인된 범위 재설계), 최종 릴리스와 전체 자산, 미리보기 전수 시험, 구매·추적·복구 계획. <strong>하나라도 미완료면 대표 지정 금지.</strong></p>
+    </li>
+    <li><span class="dot human">G0</span>
+      <div class="gt">출발 검증 <span class="chip c-flat">사람</span></div>
+      <p>출발 기준선, 실행·복귀 권한자 지정과 연락망, 광고 원문 6개 주소 확보, 변경 대장 3종, 백업 실물 확인, 현재 주문·세션 상태, 관측 도구 사전 시험. <strong>전부 독립 검수 통과 + 대표 승인</strong>이어야 출발. 기존 광고 랜딩이 이미 불량이거나 기준선 대조가 안 끝났으면 이번 시도 취소.</p>
+    </li>
+    <li><span class="dot human">G1</span>
+      <div class="gt">사람의 지정 <span class="chip c-stop">라이브 전환</span></div>
+      <p>디자인 보관함에서 승인한 skin17을 대표 디자인으로 <strong>1회</strong> 지정. 상태가 불분명할 때 중복 클릭·왕복 금지 — 사람이 관리 상태를 먼저 확인합니다.</p>
+    </li>
+    <li><span class="dot">G2·G3</span>
+      <div class="gt">주소별 버전 · 광고 내용 · 자산</div>
+      <p>광고 6개의 첫 응답을 모으고, <strong>새 버전이 확인된 주소부터 즉시</strong> 내용·구매 검사를 시작합니다. 홈페이지 반영을 기다리지 않습니다. 미확인 주소만 정확한 주소로 캐시 삭제 후 새 세션에서 재수집 <strong>1회</strong>.</p>
+    </li>
+    <li><span class="dot human">G4</span>
+      <div class="gt">실제 경로 통합 검증 <span class="chip c-flat">사람</span></div>
+      <p>PC·모바일·인앱·로그인 조건, 사용 중 결제수단, 승인된 시험 주문의 PG 승인 → 주문 생성 → 금액 → 추적 수신까지 연결 확인.</p>
+    </li>
+    <li><span class="dot">G5</span>
+      <div class="gt">조작 후 재확인</div>
+      <p>시험 정리 후 기존·새 세션 조건에서 광고 6개와 주요 페이지를 <strong>한 묶음 더</strong> 검사. 전부 통과면 관측 범위 한정으로 배포 승인.</p>
+    </li>
+    <li><span class="dot human">G6</span>
+      <div class="gt">운영 인계 <span class="chip c-flat">사람</span></div>
+      <p>담당자에게 릴리스·증빙·복구 절차 전달. 광고를 중지했다면 G2~G5와 추적 통과 후 <strong>사람이</strong> 재개.</p>
+    </li>
+    <li><span class="dot">G7</span>
+      <div class="gt">후속 관찰</div>
+      <p>다음 실제 피드·사이트맵 생성과 채널 수집 완료 시 대조. 주문·전환 지표는 합의한 비교 기준으로 별도 관찰 — <strong>판매량만으로 즉시 합격·불합격을 정하지 않습니다.</strong></p>
+    </li>
+  </ol>
+
+  <h3>전환 당일 문구는 이렇게 씁니다</h3>
+  <div class="call k-safe">
+    <p><strong>쓸 수 있는 말</strong> — 「○시, 지정한 주소·기기·세션 조건에서 승인 릴리스와 필수 동작을 확인했다.」</p>
+    <p><strong>쓰면 안 되는 말</strong> — 「모든 고객이 새 화면을 본다」 · 「원본 서버를 확인했다」 · 「2시간이면 모든 캐시가 끝난다」.</p>
+  </div>
+</section>
+
+<!-- ───────── 7 ───────── -->
+<section id="s7">
+  <h2><span class="num">7</span>광고 6개 합격 판정</h2>
+
+  <div class="call k-stop">
+    <h4>고정 숫자(472 · 42 · 84)를 합격 기준으로 쓰면 안 됩니다</h4>
+    <p>그 숫자는 <strong>2026-11-17 관리자 화면의 역사값</strong>입니다. 상품은 매일 바뀝니다. 직접 재어 봤습니다 — <code>cate_no=67</code> 체인지톡은 <strong>8월 20일 462개 → 11월 17일 472개</strong>로 3개월에 10개 늘었습니다. 이 숫자를 합격선으로 쓰면 건강한 사이트가 불합격으로 나옵니다.</p>
+    <p>대신 <strong>전환 당일 같은 조건에서 기준선을 새로 재고</strong>, 그 기준선과 비교합니다. 과거 숫자를 맞추려고 상품을 수정하는 일은 절대 하지 않습니다. (※ 프로젝트 규칙 §8의 검수 기준표에 이 고정 숫자가 남아 있어 개정이 필요합니다 — 10절)</p>
+  </div>
+
+  <h3>기준선을 3개 둡니다</h3>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>이름</th><th>언제</th><th>무엇</th></tr></thead>
+      <tbody>
+        <tr><td class="id">B-pre</td><td>8단계 전수 시험 직전</td><td>담당자가 운영 주소에서 확보한 실제 결과. 새 스킨이 기존 상품 범위를 보존하는지 이 기준으로 시험</td></tr>
+        <tr><td class="id">B0</td><td>G0에서</td><td>모든 사전 변경·시험 주문 정리 후 새로 확보하는 출발 기준선</td></tr>
+        <tr><td class="id">B-rollback</td><td>되돌릴 때</td><td>구버전 기대값 + B0 이후의 정당한 운영 변화까지 반영한 복귀 검사 기준</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>각 기준선은 <strong>같은 조건으로 2회 완전 수집</strong>합니다. 1회는 전체 상품번호·페이지·값을 얻고, 2회는 별도 새 세션에서 같은 결과가 나오는지 봅니다. 두 결과가 다르면 평균·최댓값을 자동 채택하지 않고 상품별로 원인을 맞춰 봅니다. <strong>한 번의 대조·재수집으로 안 끝나면 그 배포 시도는 취소</strong>합니다 — 반복하면 정확해질 것이라는 가정을 하지 않습니다.</p>
+  <p>수집은 <strong>실제 페이지 링크를 끝까지 따라가며</strong> 전체 상품번호를 얻습니다. 첫 페이지 12개나 대표상품 3개만 보고 합격을 내지 않습니다. 추천·신상품 줄은 일반 목록에 합치지 않습니다.</p>
+
+  <h3>판정 — 3단계, 순서가 있습니다</h3>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>순위</th><th>판정</th><th>조건</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td><span class="chip c-stop">불합격</span></td><td>아래 확정 위반 중 하나가 확인됨. <strong>다른 미확인 항목이 있어도 불합격이 우선</strong></td></tr>
+        <tr><td class="num">2</td><td><span class="chip c-safe">합격</span></td><td>불합격이 없고 <strong>필수 증거 전부 완결</strong>. 버전·주소·상품·제목·가격·옵션·필터 범위·자산·기능이 모두 일치하고, 상품 집합이 기대값과 <strong>완전히 같음</strong></td></tr>
+        <tr><td class="num">3</td><td><span class="chip c-warn">보류</span></td><td>위 둘에 해당하지 않는 모든 경우 — 버전 미확인, 기준선 없음, 불완전 수집, 원인 불명 차이, 도구 오류, 진행 중 결제/추적</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>「불합격 항목이 없으니 합격」은 금지입니다.</strong> 광고 6개 묶음은 하나라도 불합격이면 불합격, 전부 합격이면 합격, 그 밖은 전부 보류입니다.</p>
+
+  <h4>확정 위반 (= 즉시 불합격)</h4>
+  <ol>
+    <li>고객 경로에서 <strong>빈 결과·오류 페이지·다른 분류/상품 도착</strong>이 확인됨. 광고가 켜져 있는데 결과 0이면 데이터 사유가 밝혀져도 <strong>광고 랜딩으로서는 불합격</strong>입니다(스킨 장애라는 원인 판정과는 구분).</li>
+    <li>기대 상품 집합을 정할 증거가 충분한데 <strong>있어야 할 상품이 없거나 없어야 할 상품이 나옴</strong>. <strong>개수가 같아도 상품이 바뀌면 불합격</strong>입니다. 분류의 기존 귀속·이름·번호가 바뀐 것도 불합격.</li>
+    <li>가격·옵션·장바구니·주문/결제 결과 불일치, 작동하지 않는 구매 버튼, 필터가 원 분류 밖 상품을 보여 주거나 해제 후 범위를 복구하지 못함.</li>
+    <li>승인 릴리스는 맞는데 필수 자산이 잘못됐거나 핵심 스크립트 실패·구매 영역 가림·미리보기 주소로 잘못 이동.</li>
+    <li>추적의 잘못된 계정·금액/통화·중복 구매 이벤트, 또는 수신처에서 확인된 실패. <strong>아직 도착 여부를 모르는 것은 보류</strong>이며 누락 확정으로 바꾸지 않습니다.</li>
+  </ol>
+
+  <h4>판정 예시</h4>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>상황 (가상값)</th><th>판정</th></tr></thead>
+      <tbody>
+        <tr><td>옛 기록 472, 당일 기준선 470, 현재 470이고 전체 상품번호·증거 일치</td><td><span class="chip c-safe">합격</span> — 옛 숫자는 영향 없음</td></tr>
+        <tr><td>기준선 470 → 현재 469. 관리자도 469인데 어느 상품이 바뀐 건지 모름</td><td><span class="chip c-warn">보류</span> — 같은 증감으로 자동 재기준화 안 함</td></tr>
+        <tr><td>기준선 470 → 현재 470이지만 기대 상품 A 대신 무관한 B가 들어옴</td><td><span class="chip c-stop">불합격</span></td></tr>
+        <tr><td>검색 100 → 99. 상품 A의 정상 품절과 노출 제외 규칙이 입증되고 나머지 전부 일치</td><td><span class="chip c-safe">합격</span> — 기대값을 99로 계산</td></tr>
+        <tr><td>검색 100 → 99. 품절일 것으로 <strong>추정만</strong> 함</td><td><span class="chip c-warn">보류</span> → 검사 종료 시 배포 미통과</td></tr>
+        <tr><td>응답 200이고 버전 표식도 맞는데 필수 스크립트가 오류 응답</td><td><span class="chip c-stop">불합격</span></td></tr>
+        <tr><td>버전 표식 없음. 상품은 보이는데 어느 버전인지 확인 불가</td><td><span class="chip c-warn">보류</span> — 정상 구버전으로 자동 판정 안 함</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p><strong>「변동을 감지했지만 설명할 수 없다」를 허용오차로 합격에 넣지 않는 것이 이 판정의 핵심입니다.</strong> 1건 허용도 없습니다.</p>
+</section>
+
+<!-- ───────── 8 ───────── -->
+<section id="s8">
+  <h2><span class="num">8</span>되돌리기</h2>
+
+  <h3>언제 되돌리나</h3>
+  <p>확정된 화면·구매·추적 결함, 승인 범위 밖 공통 변경, 승인한 파일과 실제 파일이 다름, 담당자·관측 수단 상실, 또는 <strong>최종 검사 묶음이 끝났는데 필수 보류가 남음</strong> — 이 중 하나면 신규 배포를 승인하지 않고 사람이 복귀합니다. <strong>「몇 분 지났으니 장애」라고 판정하지 않습니다.</strong></p>
+  <p>보류로 되돌린 경우 기록은 <strong>「원인 미확정, 성공을 입증하지 못해 배포 취소」</strong>입니다 — 「장애였다」가 아닙니다.</p>
+
+  <div class="call k-warn">
+    <h4>디자인 복귀가 모든 문제의 복구 수단은 아닙니다</h4>
+    <p>원인이 <strong>스킨과 무관한 정상 품절·공통 데이터·PG 외부 장애</strong>임이 입증된 경우, 디자인을 되돌려도 그 문제는 그대로입니다. 광고 랜딩 불합격은 해당 광고 중지·상품 운영 대응을 사람이 하고, 공통 설정·데이터는 승인된 항목별 복구로 분리합니다. <strong>원인 불명인데 「아마 품절」로 복귀를 면제하지 않습니다.</strong></p>
+  </div>
+
+  <h3>복귀 절차</h3>
+  <ol>
+    <li>권한 있는 사람이 디자인 보관함 목록에서 <strong>이전 대표 skin16을 재지정</strong>합니다. 소스·미리보기는 열지 않습니다(유료·저작권). 지정 결과를 확인한 뒤 같은 값을 반복 저장하지 않습니다.</li>
+    <li>영향 주소의 캐시를 삭제하고, 담당자가 기대 구버전·광고·구매 경로·자산을 <code>B-rollback</code>으로 확인합니다. <strong>새 버전 표식이 없다는 것만으로 성공이라고 하지 않습니다.</strong> 복귀에서도 최초 검사 + 보정 1회이고, 그래도 남으면 <strong>복구 확인 불가</strong>로 지원 요청합니다. <strong>재전환 루프 금지.</strong></li>
+    <li>공통 변경이 있었다면 사전 대장과 승인된 순서에 따라 <strong>해당 항목만</strong> 복구합니다. <strong>현재 주문·재고를 옛 엑셀 전체 업로드로 덮지 않습니다.</strong></li>
+    <li>시험 주문은 별도로 취소·환불·재고·외부 주문수집·추적 기록을 맞춥니다. <strong>「대표 재지정 완료」와 「복구 검증 완료」는 다른 칸입니다.</strong></li>
+  </ol>
+</section>
+
+<!-- ───────── 9 ───────── -->
+<section id="s9">
+  <h2><span class="num">9</span>사람이 직접 해야 하는 일 40건</h2>
+  <p class="lede">에이전트가 대신할 수 없는 일만 모았습니다 — 계약·위험 결정, 관리자 권한이 필요한 작업, 외부 계정, 실제 결제·개인정보, 라이브 전환. 역할을 눌러 걸러 보실 수 있습니다.</p>
+
+  <div class="filters" role="group" aria-label="역할 필터">
+    <button class="fbtn" type="button" data-f="all" aria-pressed="true">전체 40</button>
+    <button class="fbtn" type="button" data-f="ceo" aria-pressed="false">대표</button>
+    <button class="fbtn" type="button" data-f="ops" aria-pressed="false">운영 담당자</button>
+    <button class="fbtn" type="button" data-f="ad" aria-pressed="false">광고·채널</button>
+    <button class="fbtn" type="button" data-f="sw" aria-pressed="false">전환·복귀</button>
+    <button class="fbtn" type="button" data-f="ext" aria-pressed="false">외부 (카페24·PG·제작사)</button>
+  </div>
+  <p id="hcount">40건 표시 중</p>
+
+  <div class="scroll">
+    <table id="htable">
+      <thead><tr><th>ID</th><th>누가</th><th>무엇을</th><th>언제 / 안 하면</th></tr></thead>
+      <tbody>
+        <tr data-r="ceo"><td class="id">H01</td><td>대표</td><td>35개 화면과 조건부 기능의 출시·제외·대체 결정, 보류 종료·복귀·미실측 위험 승인 (서면)</td><td>구현 범위 확정 전 / 미검증 기능을 통과로 오인</td></tr>
+        <tr data-r="ceo sw"><td class="id">H02</td><td>대표 · 전환 책임자</td><td>전환 날짜·저유입 시간 지정. 실행/복귀/중단/대체 담당자와 연락망, 관측 만료·종료 정책</td><td>G0 전 / 담당 부재·무한 대기</td></tr>
+        <tr data-r="ops"><td class="id">H03</td><td>운영 담당자</td><td>대표 skin16 보존·작업 skin17·모바일 사용 상태·예약 디자인 충돌 여부 확인</td><td>1단계 및 G0 / 다른 스킨이 지정돼 있거나 자동 변경이 예약돼 있음</td></tr>
+        <tr data-r="ops"><td class="id">H04</td><td>운영 담당자</td><td>skin17 원본·릴리스 전체 자산 백업. 관리자 HTML 백업만으로는 CSS·JS가 복구되지 않음을 확인하고 파일 크기까지 점검</td><td>편집·배포·일괄 작업 전 / HTML만 남아 복구 불가</td></tr>
+        <tr data-r="ops"><td class="id">H05</td><td>운영 담당자</td><td>최신 상품 전체 엑셀 재추출 (현재 자료는 8월 20일자 — <strong>분류 236 등 19개가 아예 없음</strong>)</td><td>2단계 및 업로드 직전 / 낡은 자료로 덮어쓰기·상품 누락</td></tr>
+        <tr data-r="ops"><td class="id">H06</td><td>운영 담당자</td><td>분류·상품별 귀속, 옵션/품목, 재고 설정, 메인 진열 스냅샷 확보 (기존 옵션은 읽기만)</td><td>2단계 / 귀속·가격·재고·진열 대조 불가</td></tr>
+        <tr data-r="ops"><td class="id">H07</td><td>운영 책임자 · 관련 담당자 전원</td><td>수동 데이터·설정 동결 확인. 예약·자동진열·연동 작업 목록과 자연 주문 변화 기록</td><td>기준선 확보 전~검증 종료 / 기준선 무효·동시 수정</td></tr>
+        <tr data-r="ops"><td class="id">H08</td><td>운영 담당자</td><td>허용된 skin17 서버 파일·주문서 공급 구조·FTP 접근 대상 확인. 삭제 동기화 방지</td><td>6·8단계 전 / 주문서 파일 누락·서버 파일 삭제</td></tr>
+        <tr data-r="ceo ops"><td class="id">H09</td><td>대표 · 운영 담당자</td><td>변경 대장 3종(사전 공통 데이터 / 전환 지정 / 검증 중 조치)과 이전값·항목별 복구 범위 승인</td><td>각 조치 전 / 디자인 복귀만으로 복구됐다고 오인</td></tr>
+        <tr data-r="ops ext"><td class="id">H10</td><td>운영 담당자 · 카페24</td><td><strong>네이버페이 숨김 분류 조건의 실제 적용 서면 답변 확보.</strong> 기존 표시안함 분류 판매상품의 버튼 상태 확인 (→ 1절)</td><td><strong>3-2·4단계 전</strong> / 전환 전에 구매 버튼 소실</td></tr>
+        <tr data-r="ceo ops"><td class="id">H11</td><td>대표 · 운영 담당자</td><td>필요 시 <strong>비판매</strong> 테스트 상품·테스트 분류로 통제 시험 승인·수행·정리. 판매 중 상품으로는 시험 금지</td><td>H10 미해결 상태의 별도 승인 시험 전 / 고객 상품·재고 영향</td></tr>
+        <tr data-r="ops ext ceo"><td class="id">H12</td><td>운영 담당자 · 카페24 · 대표</td><td>분류 총수·상품당 귀속 한도·성능, 필요한 메인 슬롯 수량·한도를 서면 확인하고 파일럿 수용 판단</td><td>대량 생성·슬롯 추가 전 / 중간 실패·성능 저하</td></tr>
+        <tr data-r="ops"><td class="id">H13</td><td>운영 담당자</td><td>신규 분류 생성 뒤 운영 메뉴·채널에 뜻하지 않은 변화가 없는지 증빙</td><td>파일럿 후·대량 생성 전 / 새 메뉴·피드 노출 누락</td></tr>
+        <tr data-r="ceo ops"><td class="id">H14</td><td>대표 · 운영 담당자</td><td>신규 분류별 링크·표시상태·접근권한·검색/canonical·피드·결제 정책 승인</td><td>스킨 링크 작성 전 / 빈 메뉴·색인·결제 영향</td></tr>
+        <tr data-r="ceo ops"><td class="id">H15</td><td>운영 담당자 · 대표</td><td>4단계 차단 해제 뒤 엑셀 양식·빈칸·상품코드 영향의 <strong>소량</strong> 시험. 전후 가격·재고·노출·기존 귀속 확인 후 대량 작업 승인</td><td>각 업로드 전후 / 기존값 초기화·신규상품 오등록</td></tr>
+        <tr data-r="ceo"><td class="id">H16</td><td>대표 · 상품 담당자</td><td>의미 불명 필터값 확정, 「데이터 없음」 34개 입력 일정, 정규화 규칙·트리 밖 기종(S8·A55·LG 등) 처리와 누락 명단 승인</td><td>5단계·인덱스 생성 전 / 추정 분류·누락</td></tr>
+        <tr data-r="ops"><td class="id">H17</td><td>운영 담당자</td><td>선택한 필터 저장 필드의 한도·다중값·기존값·채널 영향 시험 및 값 입력 (검색어·옵션은 후보 제외)</td><td>5단계 일괄 입력 전 / 검색 광고·재고·피드 손상</td></tr>
+        <tr data-r="ceo"><td class="id">H18</td><td>대표</td><td>가격 4구간안 서면 합의. 추가 월 과금이 필요하면 사전 서면 결정</td><td>해당 구현 전 / 무단 범위·비용 변경</td></tr>
+        <tr data-r="ceo ops"><td class="id">H19</td><td>대표 · 운영 담당자</td><td>필터 인덱스 갱신 담당·주기·상품 추가 시 절차 확정. 교육 후 직접 생성·업로드·실패복귀 인수 시험</td><td>필터 출시 전 / 새 상품·가격·품절 값이 정체</td></tr>
+        <tr data-r="ops ext"><td class="id">H20</td><td>운영 담당자 · 제작사</td><td>메인 슬롯 43·44의 현재 사용 여부·실제 상품군·피드 영향 확인. <strong>빈 슬롯이 비사용 증거는 아님</strong></td><td>슬롯 채우기 전 / 라이브 메인·피드 변경</td></tr>
+        <tr data-r="ceo ops"><td class="id">H21</td><td>대표 · 운영 담당자</td><td>메인 7줄 최종 배정·각 줄 상품·순서·수량·더보기·「신상품」 의미·빈 상태 승인</td><td>6·8단계 전 / 잘못된 상품군·거짓 수량·모듈 삭제</td></tr>
+        <tr data-r="ceo ops"><td class="id">H22</td><td>대표 · 게시판 담당자</td><td>협업문의 전용 게시판 결정, 7필드·권한·개인정보·알림·실접수 방식과 FAQ/리뷰 범위 확인</td><td>관련 구현·시험 전 / 공개 글·누락 접수·권한 오류</td></tr>
+        <tr data-r="ceo ad ext"><td class="id">H23</td><td>대표 · 광고 담당자 · 제작사</td><td><strong>skin16을 보지 않는 경로로</strong> 추적 설치 ID·위치·배포 기록 확보. 불가하면 권리자 허용 경로를 별도 결정</td><td>7단계·G0 전 / 구매 추적 소실·중복</td></tr>
+        <tr data-r="ops ext"><td class="id">H24</td><td>앱 · 운영 담당자</td><td>리뷰에이드·배너/팝업·인스타그램·네이버 로그인 등 설치 앱의 스킨/몰/외부 적용 범위·복구 확인</td><td>재삽입·설정 저장 전 / 라이브 변경·중복 로더</td></tr>
+        <tr data-r="ops ad"><td class="id">H25</td><td>운영 · 광고 담당자</td><td>SEO 코드 4칸 유지와 실제 발송·수신·계정 ID·이벤트 중복/금액·통화 검증</td><td>7·8단계 및 G4·G6 / <strong>태그 존재만으로 정상 오판</strong></td></tr>
+        <tr data-r="ops ad"><td class="id">H26</td><td>운영 · 채널 담당자</td><td>sitemap/RSS 그룹·상품·주소·생성시각. 네이버 DBURL·메타·Google·틱톡·카카오·지그재그·사방넷 등 실제 사용 채널 영향 확인</td><td>신규 귀속·진열 변경 전 및 다음 수집 후 / 피드 누락·잘못된 가격</td></tr>
+        <tr data-r="ad ops"><td class="id">H27</td><td>광고 담당자 · 운영 담당자</td><td>광고 원문 6개의 <strong>전체 주소·인코딩·fbclid·최종 이동</strong> 확보. m.·메시지·인앱 진입 경로 포함</td><td>기준선·G0 전 / 다른 주소만 테스트</td></tr>
+        <tr data-r="ops"><td class="id">H28</td><td>운영 담당자 · 검수 책임자</td><td>기준선 3종의 전체 상품번호·총수·제목·가격·옵션을 수집하고 차이 대조·승인</td><td>각 기준선·G0 전 / 옛 자료·표본으로 누락 통과</td></tr>
+        <tr data-r="ceo ad"><td class="id">H29</td><td>대표 · 광고 담당자</td><td>광고 중지·유지 결정. 실패 시 중지·재개 조건과 재개 권한 승인 및 실제 조작</td><td>G0 및 사고·G6 / 미검증 랜딩에 유입 계속</td></tr>
+        <tr data-r="ceo ext"><td class="id">H30</td><td>대표 · 주문 담당자 · PG/카페24</td><td>사용 결제수단·현재 PG 계약, 미리보기 완주 가능 여부와 테스트 모드 격리 범위, 진행 중 결제·세션 정책 <strong>서면</strong> 확인</td><td>8단계 거래 시험·G0 전 / 테스트 모드 추정·고객 결제 영향</td></tr>
+        <tr data-r="ceo"><td class="id">H31</td><td>대표 · 주문 담당자</td><td>테스트 상품·계정·금액·수량·수단·알림/배송·중단점 승인 및 준비</td><td>장바구니·가입·글쓰기·주문 시험 전 / 고객상품 재고·노출·출고 영향</td></tr>
+        <tr data-r="ops"><td class="id">H32</td><td>시험 담당자</td><td>승인된 실제 기기에서 회원/비회원·SNS 인증, 게시판·리뷰·문의 제출, 옵션→장바구니→주문서→각 결제·취소/반환 시험. <strong>화면이 운영으로 벗어나면 사람만 진행</strong></td><td>8단계 및 G4 / 외형만 통과한 구매·접수 장애</td></tr>
+        <tr data-r="ops ad"><td class="id">H33</td><td>주문·재고·광고 담당자</td><td>시험 주문번호·PG·네이버 수집·추적 매칭 후 <strong>출고 전</strong> 취소·환불·재고·쿠폰·알림 정리. <strong>취소와 삭제는 다름</strong> (최근 3개월 주문은 삭제 불가)</td><td>각 거래 시험 후 / 매출·재고·출고·지표 오염</td></tr>
+        <tr data-r="ops ext"><td class="id">H34</td><td>운영 담당자 · 카페24</td><td>전환 전 테스트 로그인·장바구니·<strong>진행 중 결제</strong>의 상태와 연속 주문 대응·실패 처리 확인</td><td>G0·G4 / 「주문 0건」만 기다려 세션 위험 누락</td></tr>
+        <tr data-r="sw ceo"><td class="id">H35</td><td>전환·복귀 담당자 · 대표</td><td><strong>버튼을 누르지 않는 탁상 연습.</strong> 연락·증빙·판정표·복구 자료 확인, 실제 복귀 시간 미실측 공백의 수용 여부 결정</td><td>G0 전 / 연습 명목의 무단 실전 전환</td></tr>
+        <tr data-r="sw"><td class="id">H36</td><td>전환 담당자</td><td><strong>승인한 skin17을 대표 디자인으로 지정</strong> (라이브 전환 — 사람만)</td><td>G1 / 다른 스킨 지정·무승인 변경</td></tr>
+        <tr data-r="ops"><td class="id">H37</td><td>운영 담당자</td><td>정확한 주소별 캐시 삭제, 새/기존 세션 관측, 광고 6개·구매·자산 증빙 전달</td><td>G2~G5 및 복귀 / 홈만 확인·쿼리·호스트 누락</td></tr>
+        <tr data-r="sw ext"><td class="id">H38</td><td>중단 권한자 · 복귀 담당자</td><td>불합격·보류 종료 시 복귀 실행, 또는 입증된 외부·데이터 사고 분기 실행. 구버전·구매 복구 확인, 실패 시 지원 요청</td><td>사고 즉시 / 버튼만 눌러 복구 완료 오판</td></tr>
+        <tr data-r="ceo ad"><td class="id">H39</td><td>대표 · 운영/광고 담당자</td><td>인계 수락. 주문·전환율의 비교 기간·분모·광고 중지·시험건 영향 정의. 피드 다음 생성 결과·고객 제보 확인</td><td>G6 이후 / 저표본 감소를 장애로 오인하거나 실제 장애 방치</td></tr>
+        <tr data-r="ceo ops"><td class="id">H40</td><td>대표 · 운영 담당자</td><td>후속 분류 공개·동적 메뉴·기존 진열 재구성의 명단·날짜·중간화면·복구 승인 (<strong>이번 전환에 묶지 않음</strong>)</td><td>각각 후속 작업 전 / 구·신 메뉴 혼재·롤백 실패</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="call k-warn">
+    <h4>「질문을 보냈다」로 닫히지 않습니다</h4>
+    <p>카페24·PG에 보낸 공식 질의는 <strong>답변이 이 몰·현재 적용본·설정·시험 범위를 특정</strong>해야 하고, 필요한 시험 결과와 함께 독립 검수를 받아야 해당 게이트가 닫힙니다. 지금까지 업체에 질문을 보내거나 광고 계정을 조작한 일은 없습니다.</p>
+  </div>
+</section>
+
+<!-- ───────── 10 ───────── -->
+<section id="s10">
+  <h2><span class="num">10</span>아직 모르는 것 · 대표 결정이 필요한 것</h2>
+
+  <h3>이번 조사로 깨진 전제 5개</h3>
+  <p>4번의 교차검수에서 당초 계획의 전제 5개가 사실이 아니었음이 밝혀졌습니다. 기록으로 남깁니다.</p>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>당초 전제</th><th>실제</th></tr></thead>
+      <tbody>
+        <tr><td>표시안함 분류에 상품을 붙여도 라이브 영향 0</td><td>네이버페이 구매 버튼이 사라질 수 있음 (공식 FAQ 17413531508505)</td></tr>
+        <tr><td>기본제공 도메인은 캐시 우회 주소</td><td><strong>전체몰 웹가속기 적용 대상</strong> (2021-10-06 공지)</td></tr>
+        <tr><td>전역 메뉴 모듈은 <code>product_headcategory</code></td><td><code>Layout_category</code>. <code>product_headcategory</code>는 현재 위치·제목용</td></tr>
+        <tr><td>분류 매핑표 101개가 현재 분류 전체</td><td>실제 <strong>122개</strong>. 21개 누락 — 그중 <code>cate_no=236</code>이 광고 랜딩</td></tr>
+        <tr><td>메인 슬롯 <code>_5</code>·<code>_6</code>·<code>_7</code> 사용 가능</td><td>죽은 코드</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>대표 결정이 필요한 것</h3>
+  <ol>
+    <li><strong>결제 완주 검증 방식</strong> — 3절의 (a) 통제된 실거래 사전 시험 / (b) 전환 후 통제 검증. 「흔적 없이 사전 완료」는 선택지가 아닙니다.</li>
+    <li><strong>실제 복귀 시간을 실측하지 않는 것</strong> — 리허설은 실제 전환이라 하지 않습니다. 그 공백을 받아들이는 서면 결정이 필요합니다.</li>
+    <li><strong>필터 드롭다운 요구사항의 임시 미충족</strong> — 분류 부착 전까지 관리자가 뎁스4를 직접 선택할 수 없습니다 (5절).</li>
+    <li><strong>프로젝트 규칙 §8 개정</strong> — 검수 기준표의 고정 숫자(67=472 · 177=42 · 236=84)를 「당일 기준선 대비」로 바꿔야 합니다. 직접 재어 보니 체인지톡이 8월 462 → 11월 472로 이미 10개 움직였습니다.</li>
+    <li><strong>와이어프레임 저장소가 공개(public)</strong>라는 점 — 계약 제12조 비밀유지와의 관계가 아직 정리되지 않았습니다.</li>
+  </ol>
+
+  <h3>확인 불가로 남은 것</h3>
+  <ul>
+    <li>모든 고객에게 반영이 완료되는 시각, 캐시 삭제의 전체 전파 완료.</li>
+    <li>이 몰에서 쓸 수 있는 <strong>스킨 한정 무과금 결제 모드</strong>의 존재·경로·격리 범위. (「없다」가 아니라 「확인 못 했다」입니다)</li>
+    <li>전환 전후 세션·진행 중 결제의 동일성.</li>
+    <li><code>Layout_category</code>가 어떤 조건으로 분류를 가져오는지.</li>
+    <li><strong>조건 ①이 상위 분류까지 보는지</strong> — 직접 소속만 보면 모집단이 681개, 상위까지 보면 1,035개입니다.</li>
+    <li><strong>신규 분류 생성 시 네이버페이 기본값.</strong> (분류 단위 설정 자체는 실존 확인됨)</li>
+    <li><code>cate_no=236</code> 상품들의 <strong>현재 직접 귀속</strong> — 8월 자료에 236이 없습니다. 조상 사슬은 <code>236→149→56(F)</code>로 확인됐으나, 직접 귀속은 <strong>최신 상품 엑셀 재추출(H05)</strong> 또는 담당자 조회·승인된 읽기 API가 필요합니다.</li>
+    <li>광고 상품 2155가 202의 66개 안에 있는지 — 상품 파일에 상품번호 열이 없습니다.</li>
+  </ul>
+</section>
+
+<!-- ───────── 11 ───────── -->
+<section id="s11">
+  <h2><span class="num">11</span>근거</h2>
+  <p class="lede">이 문서의 숫자는 전부 원본 파일에서 직접 센 값입니다. 손으로 적은 숫자는 없습니다. 에이전트 보고도 그대로 받지 않고 원본으로 재확인했습니다.</p>
+
+  <h3>직접 측정한 값</h3>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>값</th><th>출처 파일</th></tr></thead>
+      <tbody>
+        <tr><td>분류 122개 · 표시안함 17개</td><td><code>_docs/현재분류트리-2026-11-17.tsv</code></td></tr>
+        <tr><td>판매중+진열 1,852개 · 그중 표시안함 <strong>직접</strong> 소속 681개 (36.8%) · <strong>상위까지 포함</strong>하면 1,035개</td><td><code>ssongsstore_20260820_454_532c.csv</code> (2,146 레코드 · 92열 · 고유 상품코드 2,146)</td></tr>
+        <tr><td>광고 랜딩 177 = 42/42 · 202 = 66/66 · 67 = 0/462</td><td>위 두 파일 대조</td></tr>
+        <tr><td>조상 사슬 — <code>236→149→56(F)</code>. 67 · 177 · 202 · 237은 표시안함 조상 없음</td><td><code>_docs/현재분류트리-2026-11-17.tsv</code></td></tr>
+        <tr><td>8월 파일은 <code>cate_no</code> 46~231만 포함 — 19개 누락 (236 포함)</td><td>위 두 파일 대조</td></tr>
+        <tr><td>체인지톡 8월 462 → 11월 472</td><td>위 두 파일 대조</td></tr>
+        <tr><td>필터 값 출처: 옵션 70 · 분류 24 · 동의어 45 · 데이터 없음 34 · 축 미정 3 = 227</td><td><code>_docs/분류트리-설계.csv</code></td></tr>
+        <tr><td>갑·을 짝 추출 가능 분류 13개 (117: 208/139 등)</td><td>상품 CSV + TSV 교차 집계</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>공식 문서 (2026-11-22 원문 확인)</h3>
+  <ul>
+    <li><strong>네이버페이 구매 버튼 노출 FAQ</strong> — 문서번호 17413531508505. 숨김 분류·네이버페이 미사용 분류 포함 시 버튼 제외 조건. 비회원 구매 기능이므로 로그인 시험으로는 판정 불가.</li>
+    <li><strong>기본도메인 웹가속기 적용 공지</strong> — <code>shopnotice.cafe24.com</code> 공지 345923 (2021-10-06). 전체몰 대상, 관리자 영역만 제외.</li>
+    <li><strong>웹가속기 FAQ</strong> — 8462377151897. 약 5분·이벤트 시 약 15분·정적 2시간은 <strong>설명값</strong>.</li>
+    <li><strong>화면 URL별 사이트 캐시 삭제</strong> — 8461669094809. 정확히 맞는 주소여야 하고 브라우저 캐시는 별도. 전체 삭제는 부하 위험.</li>
+    <li><strong>안전 재고 관리</strong> — 7739147052953. 장바구니 담기는 재고 차감이 아니지만, 주문 기준이면 미입금 주문에도 차감됨.</li>
+    <li><strong>테스트 주문 삭제 FAQ</strong> — 8466031566361. <strong>최근 3개월 주문은 삭제 불가.</strong></li>
+    <li><strong>취소 시 재고 복구</strong> — 8466118605209 / 17305391142425. 자동 수량 복구 설정은 <strong>모든 쇼핑몰 공통</strong> — 시험 때문에 바꾸지 않습니다.</li>
+    <li><strong>네이버 채널 설정</strong> — 7750649054105. 네이버페이 주문 수집 주기는 가변이고 수집 전 상태 변경 시 누락 가능.</li>
+  </ul>
+  <p class="foot"><code>support.cafe24.com</code>은 일반 조회를 403으로 막습니다. 크롬에서 헬프센터를 열고 Zendesk 공개 API(<code>/api/v2/help_center/ko/articles/{id}.json</code>)로 원문을 읽었습니다.</p>
+
+  <h3>검수 체제</h3>
+  <p>이 문서의 숫자는 <strong>메인 세션과 Codex Astra가 각자 따로 계산해 일치한 값</strong>입니다. 1,852 / 681 / 1,971 / 683 / 177=42 / 202=66 전부 두 번 독립 재현됐습니다. Fable의 분류 전략은 Codex가 교차검수해 6개 항목 중 2개를 기각했고(「681만으로 4단계 차단 해제」· 「접근권한 제한 시 피드 일률 누락」), 그 기각을 이 문서에 반영했습니다.</p>
+  <p>플랜 확정은 메인 세션이 실행하고 <strong>Codex Astra</strong>가 검수합니다. 카페24 적용 1~8단계는 <strong>Claude Fable 5.2</strong>가 실행하고 Codex Astra가 검수합니다. 9·10단계는 <strong>사람이 실행</strong>하고 두 에이전트가 입회·검수합니다. 자기가 한 작업을 자기가 검수하지 않고, 검수 없이 다음 단계에 착수하지 않습니다.</p>
+  <p class="foot">작성 중 카페24 관리자 · <code>ssongsstore.com</code> · <code>www.ssongsstore.com</code> · skin16(운영 스킨, 디자인플로어 유료·저작권)은 열지 않았습니다. 업체에 질의를 보내거나 광고 계정을 조작한 일도 없습니다. 지금 이 문서는 <strong>설계안</strong>이며 배포 승인·검증 완료가 아닙니다.</p>
+</section>
+
+</main>
+</div>
+</div>
+
+<script>
+(function(){
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.fbtn'));
+  var rows = Array.prototype.slice.call(document.querySelectorAll('#htable tbody tr'));
+  var count = document.getElementById('hcount');
+  function apply(f){
+    var n = 0;
+    rows.forEach(function(tr){
+      var show = (f === 'all') || (' ' + (tr.getAttribute('data-r') || '') + ' ').indexOf(' ' + f + ' ') > -1;
+      tr.hidden = !show;
+      if (show) n++;
+    });
+    count.textContent = n + '건 표시 중';
+    btns.forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-f') === f)); });
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ apply(b.getAttribute('data-f')); });
+  });
+})();
+</script>
+
+</body>
+</html>
