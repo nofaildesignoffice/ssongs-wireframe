@@ -189,7 +189,7 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     <div class="tile ok"><div class="v">가능</div><div class="l">35개 화면·필터·광고 랜딩 6개를 운영 화면 그대로 두고 사전 검증</div></div>
     <div class="tile hl"><div class="v">불가능</div><div class="l">결제 승인·주문 완료까지를 <em>운영 데이터에 아무 흔적 없이</em> 같은 몰에서 검증</div></div>
     <div class="tile ok"><div class="v">0건</div><div class="l">광고 URL 수정. 주소는 전환해도 그대로입니다</div></div>
-    <div class="tile"><div class="v">2건</div><div class="l">지금 막혀 있는 일. 나머지는 결정 13 · 읽기 12 · 작업 12 (<a href="#s9">9절</a>)</div></div>
+    <div class="tile ok"><div class="v">1건</div><div class="l">지금 막혀 있는 일 (최신 상품 엑셀). 나머지는 결정 13 · 읽기 12 · 작업 12 (<a href="#s9">9절</a>)</div></div>
   </div>
 
   <h3>결론 5줄</h3>
@@ -201,15 +201,16 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     <li><strong>결제 완주 검증만 남습니다.</strong> 미리보기에서 주문서·결제창 진입까지는 봅니다. 실제 카드 승인부터는 (a) 대표가 승인한 통제된 실거래 1~2건으로 미리 하거나, (b) 전환 직후 통제 검증으로 남기거나 — 둘 중 하나를 고르셔야 합니다. 「흔적 없이 미리 전부」는 방법이 없습니다.</li>
   </ol>
 
-  <div class="call k-stop">
-    <h4>그리고 리뉴얼과 별개로, 지금 돈이 새고 있을 수 있습니다 — 관리자에서 확인했습니다</h4>
-    <p>2026-11-22 카페24 관리자를 직접 읽었습니다. 사실관계는 이렇습니다.</p>
+  <div class="call k-safe">
+    <h4>최대 블로커가 해소됐습니다 — 돈은 새고 있지 않습니다 <span class="chip c-safe">2026-11-22 실측</span></h4>
+    <p>「표시안함 분류가 하나라도 있으면 네이버페이 구매 버튼이 사라진다」는 공식 FAQ 조건이 <strong>이 몰에서는 실제로 작동하지 않습니다.</strong> 관리자와 실제 화면을 둘 다 직접 확인했습니다.</p>
     <ul>
-      <li>이 몰은 네이버페이 <strong>주문형</strong>이고, <strong>구매 버튼 노출 = 사용함</strong>입니다. PC·모바일 둘 다, 상품상세와 장바구니 양쪽에 버튼이 붙게 설정돼 있습니다(연동버전 2.1).</li>
-      <li>따라서 공식 FAQ의 「분류 중 하나라도 표시안함이면 버튼 제외」 조건이 <strong>이 몰에 적용되는 조건이 맞습니다.</strong> 가정이 아닙니다.</li>
-      <li>광고가 돈을 태워 보내는 상품 <code>product_no=2155</code>(쏭스 맥세이프 스탠딩 3카드팩+톡 일체형 컬러라벨 시리즈 · 31,900원)는 분류 9개에 속하고 그중 <strong><code>56</code>과 <code>146</code>이 표시안함</strong>입니다.</li>
+      <li>이 몰은 네이버페이 <strong>주문형</strong> · 구매 버튼 노출 <strong>사용함</strong> · PC·모바일 둘 다 상품상세+장바구니 (연동버전 2.1). <strong>조건의 대상이 되는 몰이 맞습니다.</strong></li>
+      <li>그런데 표시안함 분류를 가진 판매 중 상품 <strong>4개를 비로그인·시크릿 조건에서 직접 열어 보니 전부 버튼이 정상 렌더링</strong>됐습니다 (285×88, 「네이버페이 구매하기」 링크 111×37 살아 있음).</li>
+      <li>그중 하나가 <strong>광고 랜딩 상품 <code>2155</code></strong>입니다 — 분류 9개 중 <code>56</code>·<code>146</code>이 표시안함인데도 버튼이 있습니다.</li>
+      <li>표시안함 분류가 <strong>없는</strong> 대조군 2개도 버튼 보임 → 조건과 무관하게 버튼은 정상 동작.</li>
     </ul>
-    <p>즉 조건이 문서대로 동작한다면 <strong>이 광고의 랜딩 상품에는 지금 네이버페이 구매 버튼이 없습니다.</strong> 남은 확인은 화면을 한 번 보는 것뿐입니다(1분). → <a href="#s1">1절</a></p>
+    <p>그래서 <strong>4단계(상품에 추가분류 부착) 차단을 해제합니다.</strong> 원안대로 갈 수 있습니다. 단 소량부터 시작하고 붙인 직후 버튼을 다시 확인합니다 → <a href="#s5">5절</a></p>
   </div>
 </section>
 
@@ -242,18 +243,31 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
   </div>
   <p>그래서 「결제형이라 버튼이 없다」 · 「분류가 네이버페이 미사용이다」 · 「권한 때문이다」 · 「품절이다」는 <strong>전부 배제됐습니다.</strong> 남은 가능성은 조건 ① 하나입니다.</p>
 
-  <h3>남은 1건 — 화면을 한 번 봅니다 (1분)</h3>
-  <p>운영 스킨 화면 열람은 프로젝트 규칙 §6에서 금지돼 있어(디자인플로어 유료·저작권) <strong>제가 열지 않았습니다.</strong> 이건 대표님이나 담당자가 직접 보셔야 합니다.</p>
-  <p>비교군은 이미 정해졌습니다.</p>
+  <h3>실제 화면 관측 결과 <span class="chip c-safe">완료 · 대표 승인하에 열람</span></h3>
+  <p>대표님이 §6 열람 제한을 이 건에 한해 풀어 주셔서 직접 확인했습니다. <strong>비로그인(회원 쿠키 없음) · 쿠키 없는 세션 · PC</strong> 조건이고, 버튼을 누르거나 장바구니에 담거나 주문한 것은 없습니다.</p>
   <div class="scroll">
-    <table class="t-tight">
-      <thead><tr><th>구분</th><th>무엇을 열까</th></tr></thead>
+    <table>
+      <thead><tr><th>구분</th><th>상품</th><th>표시안함 분류</th><th>네이버페이 버튼</th></tr></thead>
       <tbody>
-        <tr><td><strong>갑</strong> (표시안함 소속)</td><td><strong><code>product_no=2155</code></strong> — 광고 랜딩 상품 그 자체. 56·146이 표시안함</td></tr>
-        <tr><td><strong>을</strong> (비소속)</td><td>표시안함 분류가 없는 판매 중 상품 1개. 같은 분류에서 뽑으면 다른 원인이 줄어듭니다 (아래 표)</td></tr>
+        <tr><td><strong>갑</strong></td><td class="id">2155</td><td>56 · 146</td><td><span class="chip c-safe">보임</span> 285×88 · 구매링크 111×37</td></tr>
+        <tr><td><strong>갑</strong></td><td class="id">1952</td><td>보유 (cate_no=177 소속)</td><td><span class="chip c-safe">보임</span> 285×88 · 111×37</td></tr>
+        <tr><td><strong>갑</strong></td><td class="id">1953</td><td>보유 (cate_no=177 소속)</td><td><span class="chip c-safe">보임</span> 285×88 · 111×37</td></tr>
+        <tr><td><strong>갑</strong></td><td class="id">1960</td><td>보유 (cate_no=177 소속)</td><td><span class="chip c-safe">보임</span> 285×88 · 111×37</td></tr>
+        <tr><td><strong>을</strong></td><td class="id">510</td><td>없음 (cate_no=67 소속)</td><td><span class="chip c-safe">보임</span> 285×88 · 111×37</td></tr>
+        <tr><td><strong>을</strong></td><td class="id">517</td><td>없음 (cate_no=67 소속)</td><td><span class="chip c-safe">보임</span> 285×88 · 111×37</td></tr>
       </tbody>
     </table>
   </div>
+  <p>6개 모두 품절 표기 없음, 비로그인 상태. 페이지에 <code>&lt;div id="NaverChk_Button"&gt;</code>와 <code>checkout.naver.com</code> 스크립트가 로드되고 <code>buttonTypeCode=A_1_2_Y</code>가 관리자 설정 <code>product=A|1|2</code>와 일치합니다.</p>
+
+  <div class="call k-safe">
+    <h4>판정 — 갑 보임 / 을 보임</h4>
+    <p>판정표의 첫 줄에 해당합니다: <strong>조건이 이 몰에서 작동하지 않는다.</strong> 표시안함 분류를 가진 상품에도 버튼이 정상으로 나옵니다. 따라서 ① 지금 매출에 구멍은 없고 ② <strong>4단계 차단을 해제합니다.</strong></p>
+    <p>한계는 적어 둡니다 — 이것은 <strong>PC · 비로그인 · 한 시점 · 상품 6개</strong>의 관측입니다. 모바일 화면과 장바구니 화면, 그리고 <strong>새로 붙인 직후</strong>의 동작은 아직 보지 않았습니다. 그래서 부착은 소량부터 하고 붙인 직후 같은 방식으로 다시 봅니다.</p>
+  </div>
+
+  <h3>이전 관측 절차 (참고용으로 남김)</h3>
+  <p>아래는 위 관측을 설계할 때 쓴 비교군 선정 기준입니다. 재확인이 필요할 때 같은 방식으로 반복하면 됩니다.</p>
   <p>한 분류 안에 갑·을이 둘 다 충분히 있는 곳을 8월 상품 파일에서 직접 세어 봤습니다. 아래 어디서든 짝이 나옵니다.</p>
   <div class="scroll">
     <table class="t-tight">
@@ -407,7 +421,7 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
         <tr><td class="id">1</td><td>작업용 스킨 격리 · 백업 확보</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
         <tr><td class="id">2</td><td>현재 상태 기준선 측정 (상품·분류·설정 스냅샷)</td><td><span class="chip c-safe">읽기만</span></td><td>Fable / Codex</td></tr>
         <tr><td class="id">3</td><td>분류 신설 — <strong>상품은 안 붙임</strong></td><td><span class="chip c-warn">분류만 생성</span></td><td>Fable / Codex</td></tr>
-        <tr><td class="id">4</td><td>상품에 추가분류 부착</td><td><span class="chip c-stop">차단 중</span></td><td>1절 확인 후 재개</td></tr>
+        <tr><td class="id">4</td><td>상품에 추가분류 부착 — <strong>10개 → 확인 → 전체</strong></td><td><span class="chip c-warn">조건부 재개</span></td><td>Fable / Codex + 담당자</td></tr>
         <tr><td class="id">5</td><td>필터 값 확정 · 인덱스 생성기 제작</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
         <tr><td class="id">6</td><td>스킨 이식 — 35개 화면을 skin17에</td><td><span class="chip c-safe">없음</span></td><td>Fable / Codex</td></tr>
         <tr><td class="id">7</td><td>앱·추적 코드 재삽입</td><td><span class="chip c-warn">일부 공통</span></td><td>Fable / Codex + 담당자</td></tr>
@@ -453,15 +467,11 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
   <h4>되돌리는 방법</h4>
   <p>인덱스 파일을 내리면 끝입니다. 상품이 안 붙은 신규 분류는 지워도 광고 주소와 무관합니다(새 번호라 광고에 쓰인 적이 없습니다). 5번에서 부착한 것은 그 분류만 <strong>「삭제」 방식</strong>으로 떼어 냅니다(「변경」 방식은 기존 귀속을 날립니다 — 금지).</p>
 
-  <div class="call k-warn">
-    <h4>681개에 대한 논증 — 맞지만, 차단을 풀지는 못합니다</h4>
-    <p>조건 ①은 <strong>「하나라도」</strong>입니다. 이미 표시안함 분류를 1개 이상 가진 상품에 표시안함 분류를 하나 더 붙이면 <strong>조건 ①의 참·거짓은 바뀔 수 없습니다</strong> — 이미 참이기 때문입니다. 판매 중 681개와 <strong>광고 랜딩 177의 42개 전부 · 202의 66개 전부</strong>가 여기 해당합니다. 이 논리는 교차검수에서 확인됐습니다.</p>
-    <p><strong>그런데 이것만으로 4단계를 재개할 수는 없습니다.</strong> 검수에서 세 가지 구멍이 지적됐고, 재확인했습니다.</p>
-    <ul>
-      <li><strong>「조건 ①이 안 바뀐다」 ≠ 「영향이 없다」.</strong> 조건 ②, 피드·사이트맵, 메뉴 노출, 색인은 별개 경로입니다. 조건 하나가 고정된다는 증명을 운영 전체의 무영향으로 확대할 수 없습니다.</li>
-      <li><strong>조건 ①이 상위 분류까지 보는지 모릅니다.</strong> 본다면 모집단이 681이 아니라 <strong>1,035개</strong>입니다(직접 측정). 어느 쪽이든 논증은 성립하지만 「누가 안전한가」의 명단이 달라집니다.</li>
-      <li><strong>681은 「8월 상품 귀속 × 11월 분류 표시상태」를 결합한 값</strong>입니다. 현재 값이 아닙니다. 부착 대상 명단으로 쓰려면 최신 상품 엑셀을 다시 받아야 합니다(H05).</li>
-    </ul>
+  <div class="call k-safe">
+    <h4>해소됐습니다 — 두 갈래로 확인했습니다</h4>
+    <p><strong>실측</strong> — 표시안함 분류를 가진 판매 중 상품 4개를 비로그인으로 열어 보니 전부 네이버페이 버튼이 정상입니다(<a href="#s1">1절</a>). 조건 ①이 이 몰에서 작동하지 않습니다.</p>
+    <p><strong>논리</strong> — 설령 작동한다 해도, 조건 ①은 <strong>「하나라도」</strong>이므로 이미 표시안함 분류를 1개 이상 가진 상품에 하나 더 붙이면 참·거짓이 바뀔 수 없습니다. 판매 중 681개(상위 포함 시 1,035개)와 <strong>광고 랜딩 177의 42개 전부 · 202의 66개 전부</strong>가 여기 해당합니다. 이 논리는 교차검수에서 확인됐습니다.</p>
+    <p>그래도 <strong>부착은 단계적으로</strong> 합니다. 아직 안 본 것이 남아 있기 때문입니다 — 모바일·장바구니 화면, 그리고 <strong>새로 붙인 직후</strong>의 동작. 681은 「8월 상품 귀속 × 11월 분류 표시상태」 결합값이라 부착 대상 명단으로 쓰려면 최신 상품 엑셀이 필요합니다(H05).</p>
   </div>
 
   <div class="call k-safe">
@@ -640,12 +650,15 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     <div class="tile"><div class="v">3</div><div class="l"><strong>외부 문의</strong> — 카페24·PG에 메일</div></div>
   </div>
   <div class="call k-safe">
-    <h4>지금 막혀 있는 건 2건입니다</h4>
+    <h4>지금 막혀 있는 건 1건입니다</h4>
     <ol>
-      <li><strong>네이버페이 버튼 한 번 보기</strong> (1분) — <code>product_no=2155</code>와 비교 상품 1개. 1절에 절차가 있습니다.</li>
-      <li><strong>최신 상품 엑셀 내려받기</strong> — 상품별 분류 귀속이 필요합니다. 분류 트리와 총계는 제가 관리자에서 이미 받았습니다.</li>
+      <li><strong>최신 상품 엑셀 내려받기</strong> — 상품별 분류 귀속이 필요합니다 (상품 &gt; 상품 엑셀 관리). 분류 트리·네이버페이 설정·상품 총계는 제가 관리자에서 이미 받았습니다.</li>
     </ol>
-    <p>원래 3건이었는데 <strong>「광고 6개 원문 주소 조사」는 지웠습니다</strong> — 주소는 이미 주셨고, 각 주소가 무엇을 보여 주는지는 관리자에서 확인해 <a href="#s2">2절 표</a>에 정리했습니다.</p>
+    <p>원래 3건이었습니다.</p>
+    <ul>
+      <li><strong>네이버페이 버튼 확인</strong> → 완료. 조건이 작동하지 않음을 실측으로 확인했습니다 (<a href="#s1">1절</a>).</li>
+      <li><strong>광고 6개 원문 주소 조사</strong> → 삭제. 주소는 이미 주셨고, 각 주소가 무엇을 보여 주는지 관리자와 실제 화면에서 확인해 <a href="#s2">2절 표</a>에 정리했습니다.</li>
+    </ul>
   </div>
   <p>아래는 전체 목록입니다. 역할을 눌러 걸러 보실 수 있습니다.</p>
 
@@ -723,7 +736,7 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     <table class="t-tight">
       <thead><tr><th>당초 전제</th><th>실제</th></tr></thead>
       <tbody>
-        <tr><td>표시안함 분류에 상품을 붙여도 라이브 영향 0</td><td>네이버페이 구매 버튼이 사라질 수 있음 (공식 FAQ 17413531508505)</td></tr>
+        <tr><td>표시안함 분류에 상품을 붙여도 라이브 영향 0</td><td>공식 FAQ상 위험이 있었으나 <strong>실측 결과 이 몰에서는 조건이 작동하지 않음</strong> — 원안으로 복귀 (단 단계적 부착)</td></tr>
         <tr><td>기본제공 도메인은 캐시 우회 주소</td><td><strong>전체몰 웹가속기 적용 대상</strong> (2021-10-06 공지)</td></tr>
         <tr><td>전역 메뉴 모듈은 <code>product_headcategory</code></td><td><code>Layout_category</code>. <code>product_headcategory</code>는 현재 위치·제목용</td></tr>
         <tr><td>분류 매핑표 101개가 현재 분류 전체</td><td>실제 <strong>122개</strong>. 21개 누락 — 그중 <code>cate_no=236</code>이 광고 랜딩</td></tr>
@@ -758,10 +771,21 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     </table>
   </div>
 
+  <h3>실제 화면을 봐서 닫은 것 <span class="chip c-safe">대표 승인하에 열람</span></h3>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>이전</th><th>지금</th></tr></thead>
+      <tbody>
+        <tr><td>조건 ①이 실제로 버튼을 숨기는가 — 최대 블로커</td><td><strong>숨기지 않는다.</strong> 표시안함 분류 보유 상품 4개(2155·1952·1953·1960) 전부 버튼 정상. 대조군 2개도 정상</td></tr>
+        <tr><td>조건 ①이 상위 분류까지 보는지</td><td><strong>무의미해졌다</strong> — 직접 소속조차 버튼을 숨기지 않으므로 상위 판정 범위를 물을 필요가 없다 (참고: 직접 681개 / 상위 포함 1,035개)</td></tr>
+        <tr><td>광고 랜딩 6개가 지금 정상인가</td><td><strong>6개 전부 정상.</strong> 67=48/페이지 · 177=42(전부 1페이지, 관리자 수치와 일치) · 236=48/페이지(www 유지) · 2155 상세 정상 · 검색 2건 각 12/페이지. 빈 결과·오류 없음</td></tr>
+      </tbody>
+    </table>
+  </div>
+
   <h3>확인 불가로 남은 것</h3>
   <ul>
-    <li><strong>조건 ①이 실제로 버튼을 숨기는가</strong> — 이것만 남았습니다. 운영 화면을 한 번 봐야 하고, 규칙 §6상 대표님·담당자의 몫입니다 (1절).</li>
-    <li><strong>조건 ①이 상위 분류까지 보는지</strong> — 직접 소속만 보면 대상이 681개, 상위까지 보면 1,035개입니다(직접 측정). 어느 쪽이든 2155는 대상입니다.</li>
+    <li><strong>모바일 화면과 장바구니 화면의 버튼</strong>, 그리고 <strong>분류를 새로 붙인 직후</strong>의 버튼. (위 관측은 PC·상품상세·한 시점·6개 표본)</li>
     <li>모든 고객에게 반영이 완료되는 시각, 캐시 삭제의 전체 전파 완료.</li>
     <li>이 몰에서 쓸 수 있는 <strong>스킨 한정 무과금 결제 모드</strong>의 존재·경로·격리 범위. (「없다」가 아니라 「확인 못 했다」입니다)</li>
     <li>전환 전후 세션·진행 중 결제의 동일성.</li>
@@ -806,6 +830,25 @@ td.id{font-family:var(--font-m);font-size:12px;white-space:nowrap;color:var(--ac
     </table>
   </div>
   <p class="foot">산출 파일 — <code>_docs/현재분류트리-2026-11-22.tsv</code> (122행 10열) · <code>_docs/분류-네이버페이설정-2026-11-22.json</code> (122개). 분류명 자가검증 121/122 통과 (112 SET SALE 은 분류명에 HTML 태그가 들어 있어 문자열 비교만 불일치 — 값은 다른 121개와 동일하게 T·F·T).</p>
+
+  <h3>실제 화면 관측 (2026-11-22 · 대표 승인하에 열람)</h3>
+  <p>§6의 운영 스킨 열람 제한을 대표님이 이 건에 한해 풀어 주셔서 확인했습니다. <strong>비로그인(회원 쿠키 없음) 세션으로 페이지를 열어 읽기만 했고, 버튼을 누르거나 장바구니에 담거나 주문한 것은 없습니다.</strong> skin16의 디자인 소스를 열거나 복사하지 않았습니다.</p>
+  <div class="scroll">
+    <table class="t-tight">
+      <thead><tr><th>열어 본 주소</th><th>관측값</th></tr></thead>
+      <tbody>
+        <tr><td>상세 <code>2155</code> (광고 주소 원문 그대로)</td><td>제목·31,900원 일치 · <code>#NaverChk_Button</code> 285×88 · 구매링크 111×37 · <code>buttonTypeCode=A_1_2_Y</code></td></tr>
+        <tr><td>상세 <code>1952</code> · <code>1953</code> · <code>1960</code></td><td>셋 다 버튼 285×88 · 111×37 · 품절 표기 없음</td></tr>
+        <tr><td>상세 <code>510</code> · <code>517</code> (대조군)</td><td>둘 다 버튼 285×88 · 111×37</td></tr>
+        <tr><td><code>list.html?cate_no=67</code></td><td>제목 체인지톡 · 1페이지 상품번호 48개 · 빈 결과 아님</td></tr>
+        <tr><td><code>list.html?cate_no=177</code></td><td>제목 맥_도어범퍼 카드케이스 · <strong>상품번호 42개 (관리자 수치와 일치)</strong></td></tr>
+        <tr><td><code>www.ssongsstore.com/...cate_no=236</code></td><td>제목 맥_에폭시 케이스 · 1페이지 48개 · <strong>www 유지됨</strong></td></tr>
+        <tr><td><code>search.html?keyword=꼼지락 스탠딩</code></td><td>1페이지 12개 · 「검색결과 없음」 아님</td></tr>
+        <tr><td><code>search.html?keyword=폴드 톡</code></td><td>1페이지 12개 · 「검색결과 없음」 아님</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="foot">광고 랜딩 6개 전부 현재 정상입니다. 이 값은 <strong>관측 시점의 기준선</strong>이며, 전환 당일 같은 방식으로 다시 재서 비교합니다(7절).</p>
 
   <h3>공식 문서 (2026-11-22 원문 확인)</h3>
   <ul>
