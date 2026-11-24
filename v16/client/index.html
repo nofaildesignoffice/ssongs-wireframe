@@ -4225,6 +4225,43 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
      전에는 위 여백 0 + margin-top 46 이었다. */
   #r-main > .wsec.npsec{margin-top:0;margin-bottom:0;padding-top:60px;padding-bottom:60px}
 }
+
+/* circtabs-desk-v16-20261124 */
+/* 데스크탑에도 「내 제품 찾기」 제품별 / 기종별 탭을 켠다 (모바일과 같은 알약 · 같은 전환).
+   기종 줄은 데스크탑 원형 줄(.circwrap 가로 한 줄)과 같은 모양으로 그린다. */
+@media(min-width:901px){
+  .circhead{margin-bottom:22px}
+  .circtabs{display:flex;position:relative;isolation:isolate;gap:0;width:100%;
+    max-width:320px;margin:0 auto 32px;padding:4px;border-radius:999px;background:#F2F2F2}
+  .circtabs::before{content:"";position:absolute;z-index:0;top:4px;bottom:4px;left:4px;
+    width:calc(50% - 4px);border-radius:999px;background:var(--black);
+    box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:none;
+    transition:transform .34s cubic-bezier(.22,.61,.36,1)}
+  .wsec.circ[data-pill="dev"] .circtabs::before{transform:translateX(100%)}
+  .circtabs button{position:relative;z-index:1;flex:1 1 0;min-width:0;height:44px;border:0;
+    border-radius:999px;background:transparent;color:var(--gray);font:inherit;font-size:15px;
+    font-weight:700;letter-spacing:-.01em;cursor:pointer;box-shadow:none;
+    transition:color .34s cubic-bezier(.22,.61,.36,1)}
+  .circtabs button.on{background:transparent;color:var(--white);box-shadow:none}
+  .wsec.circ[data-ct="dev"] .circwrap:not(.circdev){display:none}
+  .wsec.circ[data-ct="dev"] .circwrap.circdev{display:flex}
+  .circdev .circ__ph > img[src*="iphone-duo"]{mix-blend-mode:multiply}
+  .wsec.circ .circwrap{transition:opacity .16s ease,transform .16s ease}
+  .wsec.circ.ctout .circwrap{opacity:0;transform:translateY(6px)}
+  .wsec.circ.ctin .circwrap .circ__i{animation:circIn .46s cubic-bezier(.22,.61,.36,1) both}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(2){animation-delay:.03s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(3){animation-delay:.06s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(4){animation-delay:.09s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(5){animation-delay:.12s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(6){animation-delay:.15s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(7){animation-delay:.18s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(8){animation-delay:.21s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(9){animation-delay:.24s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(10){animation-delay:.27s}
+}
+@media(min-width:901px) and (prefers-reduced-motion:reduce){
+  .circtabs::before,.circtabs button,.wsec.circ .circwrap{transition:none}
+  .wsec.circ.ctin .circwrap .circ__i{animation:none}}
 </style>
 </head>
 <body>
