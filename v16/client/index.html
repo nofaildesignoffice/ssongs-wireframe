@@ -4142,13 +4142,39 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     width:calc(50% - 4px);border-radius:999px;background:var(--black);
     box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:none;
     transition:transform .34s cubic-bezier(.22,.61,.36,1)}
-  .wsec.circ[data-ct="dev"] .circtabs::before{transform:translateX(100%)}
+  .wsec.circ[data-pill="dev"] .circtabs::before{transform:translateX(100%)}
   .circtabs button,.circtabs button.on{position:relative;z-index:1;
     background:transparent;box-shadow:none;transition:color .34s cubic-bezier(.22,.61,.36,1)}
   .circtabs button.on{color:var(--white)}
 }
 @media(prefers-reduced-motion:reduce){
   .circtabs::before,.circtabs button,.circtabs button.on{transition:none}}
+
+
+/* circtabs-fade-v16-20261124 */
+/* 제품별 ↔ 기종별 전환을 부드럽게. 나가는 줄은 160ms 동안 흐려지며 살짝 내려가고,
+   들어오는 줄은 원이 하나씩 차례로(30ms 간격) 떠오른다. 곡선은 알약과 같다. */
+@media(max-width:900px){
+  .wsec.circ .circwrap{transition:opacity .16s ease,transform .16s ease}
+  .wsec.circ.ctout .circwrap{opacity:0;transform:translateY(6px)}
+  .wsec.circ.ctin .circwrap .circ__i{
+    animation:circIn .46s cubic-bezier(.22,.61,.36,1) both}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(2){animation-delay:.03s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(3){animation-delay:.06s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(4){animation-delay:.09s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(5){animation-delay:.12s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(6){animation-delay:.15s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(7){animation-delay:.18s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(8){animation-delay:.21s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(9){animation-delay:.24s}
+  .wsec.circ.ctin .circwrap .circ__i:nth-child(10){animation-delay:.27s}
+}
+@keyframes circIn{
+  from{opacity:0;transform:translateY(10px) scale(.94)}
+  to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){
+  .wsec.circ .circwrap{transition:none}
+  .wsec.circ.ctin .circwrap .circ__i{animation:none}}
 </style>
 </head>
 <body>
@@ -6283,16 +6309,34 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 
   // ── v16 「내 제품 찾기」 제품별 / 기종별 탭 ──────────────────────────
   (function(){
+    // 바뀔 때 탁 끊기지 않게 — 지금 줄을 짧게 흐리게 빼고(.ctout, 160ms),
+    // 그다음 새 줄을 원 하나씩 차례로 띄운다(CSS 애니메이션 · .ctin).
+    // 알약은 버튼을 누르는 즉시 출발한다. 움직임 줄이기 설정이면 바로 바꾼다.
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     document.addEventListener("click", function(ev){
       var btn = ev.target.closest && ev.target.closest(".circtabs button");
       if(!btn) return;
       var sec = btn.closest(".wsec.circ"); if(!sec) return;
-      sec.setAttribute("data-ct", btn.getAttribute("data-ct"));
+      var to = btn.getAttribute("data-ct");
+      var cur = sec.getAttribute("data-ct") || "kind";
       btn.parentNode.querySelectorAll("button").forEach(function(x){
         var on = x === btn;
         x.classList.toggle("on", on);
         x.setAttribute("aria-selected", on ? "true" : "false");
       });
+      if(to === cur && !sec.__ctT) return;
+      sec.setAttribute("data-pill", to);
+      if(reduce){ sec.setAttribute("data-ct", to); return; }
+      clearTimeout(sec.__ctT);
+      sec.classList.remove("ctin");
+      sec.classList.add("ctout");
+      sec.__ctT = setTimeout(function(){
+        sec.__ctT = 0;
+        sec.classList.remove("ctout");
+        sec.setAttribute("data-ct", to);
+        void sec.offsetWidth;          // 애니메이션을 처음부터 다시 돌린다
+        sec.classList.add("ctin");
+      }, 160);
     });
   })();
 
