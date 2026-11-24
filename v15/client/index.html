@@ -4075,13 +4075,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   .cbhead .wsub{font-size:13px}
 }
 /* (2) 회색 띠 — 메인 바탕을 연회색으로 깔고 섹션은 흰 카드로 세운다.
-   .gband(기종 선택 ~ 신제품 마지막 줄) 사이와 앞뒤에만 20px 틈을 둬서 바탕이 보이게 한다.
+   .gband(기종 선택 ~ 신제품 마지막 줄) 사이와 앞뒤에만 10px 틈 (2026-11-24 20→10)을 둬서 바탕이 보이게 한다.
    틈은 margin 이어야 바탕색이 보인다 — 기존 npsec 의 margin-top 32 는 안쪽 padding 으로 옮긴다. */
 @media(max-width:900px){
   #r-main:not([hidden]){background:#F2F2F2}
   #r-main > .wsec:not(.hero){background:var(--white)}
-  #r-main > .wsec.gband{margin-top:20px;margin-bottom:0;padding-top:32px;padding-bottom:32px}
-  #r-main > .wsec.gband + .wsec:not(.gband){margin-top:20px}
+  #r-main > .wsec.gband{margin-top:10px;margin-bottom:0;padding-top:32px;padding-bottom:32px}
+  #r-main > .wsec.gband + .wsec:not(.gband){margin-top:10px}
 }
 @media(max-width:560px){
   #r-main > .wsec.gband{padding-top:30px;padding-bottom:30px}
