@@ -4262,6 +4262,12 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(min-width:901px) and (prefers-reduced-motion:reduce){
   .circtabs::before,.circtabs button,.wsec.circ .circwrap{transition:none}
   .wsec.circ.ctin .circwrap .circ__i{animation:none}}
+
+/* devsec-desk-hide-v16-20261124 */
+/* 데스크탑도 「기종 선택」 슬라이더를 뺀다 — 「내 제품 찾기」 기종별 탭이 같은 일을 한다. */
+@media(min-width:901px){
+  #r-main > .wsec.devsec{display:none}
+}
 </style>
 </head>
 <body>
