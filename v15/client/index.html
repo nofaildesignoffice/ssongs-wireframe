@@ -4086,6 +4086,25 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(max-width:560px){
   #r-main > .wsec.gband{padding-top:30px;padding-bottom:30px}
 }
+
+
+/* csgrid4-v15-20261124 */
+/* 필터 바텀시트 「제품」 원형 줄 — 한 줄 4개 그리드 (메인 「내 제품 찾기」와 같은 배치).
+   기존 <=767 규칙은 98px 칸 flex-wrap 이라 폭에 따라 3개씩 끊겼다. */
+@media(max-width:767px){
+  .fwrap.ctl[data-label="제품"] .cstrip__in{display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 10px;
+    justify-content:stretch;mask-image:none;-webkit-mask-image:none}
+  .fwrap.ctl[data-label="제품"] .cs__i{width:auto;min-width:0;flex:none}
+  .fwrap.ctl[data-label="제품"] .cs__ph{width:100%;max-width:84px;height:auto;
+    aspect-ratio:1/1;margin:0 auto}
+  .fwrap.ctl[data-label="제품"] .cs__t{font-size:12.5px;margin-top:9px;word-break:keep-all}
+  .fwrap.ctl[data-label="제품"] .cs__next{display:none !important}
+}
+@media(max-width:560px){
+  .fwrap.ctl[data-label="제품"] .cstrip__in{gap:18px 8px}
+  .fwrap.ctl[data-label="제품"] .cs__t{font-size:12px}
+}
 </style>
 </head>
 <body>
