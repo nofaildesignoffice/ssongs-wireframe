@@ -5485,6 +5485,11 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     window.addEventListener("hashchange", function(){ closeCtl(); setTimeout(syncAll, 0); });
     initKind();
     syncAll();
+    // 박스 문구는 종속 엔진(아래 __deps)이 행을 숨긴 뒤에 다시 쓴다 (v15).
+    // 종속 엔진은 이 블록보다 뒤에서 초기화되므로, 바로 위 syncAll 은 아직
+    // 숨겨지기 전의 행 이름(타입 · 종류 · 바디 · 형태 · 세대)을 전부 읽는다.
+    // 주소로 바로 들어오거나 새로고침할 때만 생기던 현상이다.
+    setTimeout(syncAll, 0);
   })();
 
   // ── v5 원형 줄 넘침 ───────────────────────────────────────────────
