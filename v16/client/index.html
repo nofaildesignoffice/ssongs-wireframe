@@ -4130,6 +4130,25 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   .circtabs button{height:40px;font-size:14px}
 }
 @media(prefers-reduced-motion:reduce){.circtabs button{transition:none}}
+
+
+/* circtabs-slide-v16-20261124 */
+/* 제품별 / 기종별 — 검정 알약이 버튼 사이를 미끄러져 옮겨 간다 (GNB .wpill 과 같은 곡선·시간).
+   버튼 자체 배경은 비우고, 탭 상자의 ::before 하나를 알약으로 쓴다. 두 칸이 같은 폭이라
+   기종별일 때 자기 폭(100%)만큼 옮기면 된다. 글자는 알약 위(z-index 1). */
+@media(max-width:900px){
+  .circtabs{position:relative;isolation:isolate}
+  .circtabs::before{content:"";position:absolute;z-index:0;top:4px;bottom:4px;left:4px;
+    width:calc(50% - 4px);border-radius:999px;background:var(--black);
+    box-shadow:0 2px 8px rgba(0,0,0,.12);pointer-events:none;
+    transition:transform .34s cubic-bezier(.22,.61,.36,1)}
+  .wsec.circ[data-ct="dev"] .circtabs::before{transform:translateX(100%)}
+  .circtabs button,.circtabs button.on{position:relative;z-index:1;
+    background:transparent;box-shadow:none;transition:color .34s cubic-bezier(.22,.61,.36,1)}
+  .circtabs button.on{color:var(--white)}
+}
+@media(prefers-reduced-motion:reduce){
+  .circtabs::before,.circtabs button,.circtabs button.on{transition:none}}
 </style>
 </head>
 <body>
