@@ -5182,7 +5182,32 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     // 이 줄만 손가락을 직접 따라가고, 놓으면 한 장씩 부드럽게 감속해 붙는다.
     // 되감기는 움직임이 완전히 끝난 뒤에만 한다 — 복제 세트라 화면은 그대로다.
     if (sl.classList.contains("mhsl")) (function(){
-      var raf = 0, tgt = null;            // tgt = 진행 중인 애니메이션이 향하는 칸
+      var raf = 0, tgt = null, cur = null; // tgt = 진행 중인 애니메이션이 향하는 칸, cur = 멈춰 있는 칸
+      // 화면 폭이 바뀌면(가로·세로 회전, 폴더블 펼침, 주소창 접힘 등) 칸 폭도 바뀐다.
+      // px 위치를 그대로 두면 카드 중간에 걸리므로 보던 칸에 다시 맞춘다.
+      var knownW = 0;                     // 마지막으로 맞춰 둔 칸 폭 (폭이 바뀌기 전 값)
+      function realign(){
+        if (raf || ax === 1) return;
+        var w = stepW(); if (!w) return;
+        // 보던 칸 — 멈춘 칸을 기억하고 있으면 그것, 없으면 바뀌기 전 폭으로 환산한다
+        var i = cur !== null ? cur : Math.round(vp.scrollLeft / (knownW || w));
+        if (i < n || i >= 2 * n) i = n + (((i - n) % n) + n) % n;
+        sl.__hold = true; vp.scrollLeft = i * w; cur = i; knownW = w; sl.__hold = false;
+      }
+      var rzT = 0;
+      function onRz(){ clearTimeout(rzT); rzT = setTimeout(realign, 120); }
+      window.addEventListener("resize", onRz);
+      window.addEventListener("orientationchange", onRz);
+      // 칸 폭이 바뀌는 순간 바로(그리기 전에) 맞춘다 — 회전할 때 카드가 어긋나 보이는 틈이 없다.
+      // ResizeObserver 가 없는 옛 브라우저는 위 resize 로 맞춘다.
+      if (window.ResizeObserver){
+        new ResizeObserver(function(){
+          var w = stepW();
+          if (!w) return;
+          if (!knownW){ knownW = w; return; }
+          if (Math.abs(w - knownW) > 0.5) realign();
+        }).observe(vp);
+      }
       function shiftSet(){                 // 가운데 세트 [n, 2n) 로 옮긴다 (보이는 변화 없음)
         var w = stepW(); if (!w) return;
         var i = vp.scrollLeft / w;
@@ -5199,6 +5224,7 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
           vp.scrollLeft = x0 + (x - x0) * e;
           if (p < 1){ raf = requestAnimationFrame(f); return; }
           raf = 0; tgt = null; vp.scrollLeft = x; shiftSet(); sl.__hold = false;
+          var w1 = stepW(); if (w1){ cur = Math.round(vp.scrollLeft / w1); knownW = w1; }
         })(t0);
       }
       function go(i, dur){ var w = stepW(); if (w){ animTo(i * w, dur || 520); tgt = i; } }
