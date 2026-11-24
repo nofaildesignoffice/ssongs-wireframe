@@ -5230,10 +5230,14 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
         var x = e.touches[0].clientX, y = e.touches[0].clientY;
         var dx = x - tx, dy = y - ty;
         if (ax === 0){
+          // 방향이 정해지기 전이라도 가로 쪽이 크면 세로 스크롤을 미리 막는다 —
+          // 브라우저가 세로 스크롤을 한 번 시작하면 그 뒤로는 못 막는다.
+          if (Math.abs(dx) >= Math.abs(dy) && e.cancelable) e.preventDefault();
           if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-          ax = Math.abs(dx) > Math.abs(dy) ? 1 : -1;
+          ax = Math.abs(dx) > Math.abs(dy) * 0.8 ? 1 : -1;   // 비스듬한 손짓은 가로로 본다
           if (ax === -1) return;
         }
+        if (e.cancelable) e.preventDefault();   // 가로로 넘기는 동안 페이지는 위아래로 안 움직인다
         var now = performance.now(), dt = now - lt;
         if (dt > 0) vel = vel * 0.6 + ((x - lx) / dt) * 0.4;
         lx = x; lt = now; dxAll = dx;
@@ -5242,7 +5246,7 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
         if (dx > lim) dx = lim + (dx - lim) * 0.3;
         if (dx < -lim) dx = -lim + (dx + lim) * 0.3;
         vp.scrollLeft = sx0 - dx;
-      }, { passive: true });
+      }, { passive: false });
       function release(){
         if (ax !== 1){
           if (!raf){ var w0 = stepW(); if (w0) go(pend !== null ? pend : Math.round(vp.scrollLeft / w0), 260); else sl.__hold = false; }
