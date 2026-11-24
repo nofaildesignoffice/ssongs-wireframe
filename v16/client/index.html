@@ -4175,6 +4175,18 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(prefers-reduced-motion:reduce){
   .wsec.circ .circwrap{transition:none}
   .wsec.circ.ctin .circwrap .circ__i{animation:none}}
+
+
+/* pbar-below-circ-v16-20261124 */
+/* 모바일: 띠배너(.pbar)를 「내 제품 찾기」 아래로. 히어로에서 한 번에 넘기면
+   「내 제품 찾기」 맨 위가 GNB 바로 밑에 선다 (스크립트 target() 와 같은 지점).
+   DOM 순서는 그대로라 데스크탑(히어로 → 띠배너 → 원형 알약)은 바뀌지 않는다. */
+@media(max-width:900px){
+  #r-main > .circ{order:3}
+  #r-main > .pbar{order:4}
+  #r-main > .pbar{scroll-snap-align:none}
+  #r-main > .wsec.circ{scroll-snap-align:start;scroll-margin-top:var(--navh)}
+}
 </style>
 </head>
 <body>
@@ -6176,9 +6188,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
       return parseFloat(getComputedStyle(document.documentElement)
                         .getPropertyValue("--navh")) || 72;
     }
+    // 착지 지점 — 데스크탑은 띠배너, 모바일(<=900)은 「내 제품 찾기」 섹션 맨 위 (v16).
+    // 모바일은 띠배너를 그 섹션 아래로 내렸다 (CSS order).
+    var MOB = window.matchMedia("(max-width:900px)");
     function target(){
       if(main.hasAttribute("hidden")) return -1;
-      var pb = main.querySelector(".pbar");
+      var pb = MOB.matches ? main.querySelector(":scope > .wsec.circ")
+                           : main.querySelector(".pbar");
       if(!pb) return -1;
       return Math.round(pb.getBoundingClientRect().top + window.scrollY - navh());
     }
