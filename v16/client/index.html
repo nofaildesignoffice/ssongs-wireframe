@@ -4268,6 +4268,15 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(min-width:901px){
   #r-main > .wsec.devsec{display:none}
 }
+
+/* circsize-mhcenter-v16-20261124 */
+/* 모바일 「내 제품 찾기」 원 크기를 필터 바텀시트 「제품」 원과 같게 — 시트 원 = 시트 안쪽 폭(화면 - 96)을
+   4칸(간격 8 x 3)으로 나눈 값, 최대 84px. 칸 배치·간격·글자는 그대로, 원만 줄여 칸 가운데 둔다.
+   「추천 세트 & 번들」 제목은 모바일에서 가운데 정렬. */
+@media(max-width:900px){
+  .wsec.circ .circ__ph{width:min(84px, calc((100vw - 120px) / 4));max-width:none;margin:0 auto}
+  .mhhead .wh{text-align:center}
+}
 </style>
 </head>
 <body>
