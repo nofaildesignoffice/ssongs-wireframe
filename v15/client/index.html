@@ -4128,6 +4128,21 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
      전에는 위 여백 0 + margin-top 46 이었다. */
   #r-main > .wsec.npsec{margin-top:0;margin-bottom:0;padding-top:60px;padding-bottom:60px}
 }
+
+/* v16mob-sync-20261124 */
+/* 모바일: v16 과 동일 — 띠배너(.pbar)를 「내 제품 찾기」 아래로, 히어로 스냅은 그 섹션 맨 위.
+   추천 세트 & 번들 위 여백 · SSONGS PRODUCTS 아래 여백 0. 데스크탑은 그대로. */
+@media(max-width:900px){
+  #r-main > .circ{order:3}
+  #r-main > .pbar{order:4}
+  #r-main > .pbar{scroll-snap-align:none}
+  #r-main > .wsec.circ{scroll-snap-align:start;scroll-margin-top:var(--navh)}
+  #r-main > .wsec:has(> .mhsl){padding-top:32px}
+  #r-main > .wsec:has(> .catban){padding-bottom:0}
+}
+@media(max-width:560px){
+  #r-main > .wsec:has(> .mhsl){padding-top:28px}
+}
 </style>
 </head>
 <body>
@@ -6129,9 +6144,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
       return parseFloat(getComputedStyle(document.documentElement)
                         .getPropertyValue("--navh")) || 72;
     }
+    // 착지 지점 — 데스크탑은 띠배너, 모바일(<=900)은 「내 제품 찾기」 섹션 맨 위 (v16).
+    // 모바일은 띠배너를 그 섹션 아래로 내렸다 (CSS order).
+    var MOB = window.matchMedia("(max-width:900px)");
     function target(){
       if(main.hasAttribute("hidden")) return -1;
-      var pb = main.querySelector(".pbar");
+      var pb = MOB.matches ? main.querySelector(":scope > .wsec.circ")
+                           : main.querySelector(".pbar");
       if(!pb) return -1;
       return Math.round(pb.getBoundingClientRect().top + window.scrollY - navh());
     }
