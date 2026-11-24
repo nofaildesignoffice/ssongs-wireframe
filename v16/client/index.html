@@ -4301,6 +4301,11 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(max-width:560px){
   #r-main > .wsec.circ.tight{padding-top:32px}
 }
+
+/* mhsl-swipe-v16-20261124 */
+/* 신상품 배너 — 가로 이동은 스크립트가 직접 한다(손가락 추적 + 감속). 네이티브 가로 스크롤·스냅을 끈다.
+   세로 스크롤은 브라우저에 그대로 맡긴다(pan-y). */
+.slider.mhsl .viewport{overflow-x:hidden;scroll-snap-type:none;touch-action:pan-y;scroll-behavior:auto}
 </style>
 </head>
 <body>
@@ -5039,7 +5044,7 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     // 가운데 세트 [b, 2b) 안에 머물게 한다. 옮기는 폭이 정확히 세트 하나라
     // 화면에 보이는 카드는 그대로다 — 되감기가 눈에 띄지 않는다.
     function wrap(){
-    if (dragging || !scrollable()) return;
+    if (dragging || sl.__hold || !scrollable()) return;
     var b = baseW(); if (!b) return;
     if (vp.scrollLeft >= 2 * b) vp.scrollLeft -= b;
     else if (vp.scrollLeft < b * 0.75) vp.scrollLeft += b;
@@ -5052,7 +5057,7 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
     if (vp.scrollLeft > 0) homed = true;
     }
     function onScroll(){
-    if (dragging) return;
+    if (dragging || sl.__hold) return;
     // 스크롤 도중이라도 물리적 끝에 카드 한 장 반 이내로 다가가면 즉시
     // 되감는다. 관성이 되감기보다 빨라도 벽에 닿지 않는다.
     if (scrollable()){
@@ -5170,6 +5175,113 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
       vp.addEventListener("pointercancel", end);
       // 이미지·링크의 기본 드래그가 스와이프를 가로채지 않도록
       vp.addEventListener("dragstart", function(e){ e.preventDefault(); });
+    })();
+    // ── v16 신상품 배너(.mhsl) 손가락 스와이프 2026-11-24 ──────────────────
+    // 네이티브 스크롤(관성 + 스냅)에 맡기면 무한루프 되감기(scrollLeft -= 세트폭)가
+    // 관성·스냅 도중에 끼어들어 덜컥거리고 가끔 엉뚱한 칸에 멈췄다.
+    // 이 줄만 손가락을 직접 따라가고, 놓으면 한 장씩 부드럽게 감속해 붙는다.
+    // 되감기는 움직임이 완전히 끝난 뒤에만 한다 — 복제 세트라 화면은 그대로다.
+    if (sl.classList.contains("mhsl")) (function(){
+      var raf = 0, tgt = null;            // tgt = 진행 중인 애니메이션이 향하는 칸
+      function shiftSet(){                 // 가운데 세트 [n, 2n) 로 옮긴다 (보이는 변화 없음)
+        var w = stepW(); if (!w) return;
+        var i = vp.scrollLeft / w;
+        if (i < n - 0.5){ vp.scrollLeft += w * n; if (tgt !== null) tgt += n; }
+        else if (i > 2 * n - 0.5){ vp.scrollLeft -= w * n; if (tgt !== null) tgt -= n; }
+      }
+      function cancel(){ if (raf){ cancelAnimationFrame(raf); raf = 0; } }
+      function animTo(x, dur){
+        cancel(); sl.__hold = true;
+        var x0 = vp.scrollLeft, t0 = performance.now();
+        (function f(now){
+          var p = Math.min(1, (now - t0) / dur);
+          var e = 1 - Math.pow(1 - p, 3);
+          vp.scrollLeft = x0 + (x - x0) * e;
+          if (p < 1){ raf = requestAnimationFrame(f); return; }
+          raf = 0; tgt = null; vp.scrollLeft = x; shiftSet(); sl.__hold = false;
+        })(t0);
+      }
+      function go(i, dur){ var w = stepW(); if (w){ animTo(i * w, dur || 520); tgt = i; } }
+      slide = function(dir){
+        if (!sl.offsetParent) return;
+        shiftSet();
+        var w = stepW(); if (!w) return;
+        go((tgt !== null ? tgt : Math.round(vp.scrollLeft / w)) + dir);
+      };
+      var dw = sl.querySelector(".dots");
+      if (dw) dw.addEventListener("click", function(e){
+        var b = e.target.closest("button"); if (!b) return;
+        e.stopPropagation();
+        var idx = Array.prototype.indexOf.call(dw.children, b);
+        go(n + idx); idle(4500);
+      }, true);
+      // 손가락
+      var tx = 0, ty = 0, sx0 = 0, ax = 0, lx = 0, lt = 0, vel = 0, dxAll = 0, pend = null;
+      vp.addEventListener("touchstart", function(e){
+        if (!e.touches || e.touches.length !== 1){ ax = -1; return; }
+        cancel(); sl.__hold = true; shiftSet();
+        pend = tgt;                         // 앞 동작이 아직 가는 중이면 그 칸을 기준으로
+        tx = lx = e.touches[0].clientX; ty = e.touches[0].clientY;
+        lt = performance.now(); vel = 0; dxAll = 0; ax = 0;
+        sx0 = vp.scrollLeft;
+      }, { passive: true });
+      vp.addEventListener("touchmove", function(e){
+        if (ax === -1 || !e.touches || e.touches.length !== 1) return;
+        var x = e.touches[0].clientX, y = e.touches[0].clientY;
+        var dx = x - tx, dy = y - ty;
+        if (ax === 0){
+          if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+          ax = Math.abs(dx) > Math.abs(dy) ? 1 : -1;
+          if (ax === -1) return;
+        }
+        var now = performance.now(), dt = now - lt;
+        if (dt > 0) vel = vel * 0.6 + ((x - lx) / dt) * 0.4;
+        lx = x; lt = now; dxAll = dx;
+        var w = stepW();
+        var lim = w * 1.2;                  // 한 번에 한 장 반 이상은 못 끌게
+        if (dx > lim) dx = lim + (dx - lim) * 0.3;
+        if (dx < -lim) dx = -lim + (dx + lim) * 0.3;
+        vp.scrollLeft = sx0 - dx;
+      }, { passive: true });
+      function release(){
+        if (ax !== 1){
+          if (!raf){ var w0 = stepW(); if (w0) go(pend !== null ? pend : Math.round(vp.scrollLeft / w0), 260); else sl.__hold = false; }
+          ax = 0; return;
+        }
+        ax = 0;
+        var w = stepW(); if (!w){ sl.__hold = false; return; }
+        if (performance.now() - lt > 120) vel = 0;   // 멈췄다 뗀 손가락은 속도 없음
+        var base = pend !== null ? pend : Math.round(sx0 / w), dir = 0;
+        if (dxAll < -w * 0.15 || vel < -0.3) dir = 1;
+        else if (dxAll > w * 0.15 || vel > 0.3) dir = -1;
+        var to = (base + dir) * w;
+        var dur = Math.max(260, Math.min(480, Math.abs(to - vp.scrollLeft) / w * 520));
+        go(base + dir, dur);
+        if (Math.abs(dxAll) > 8){
+          var sw = function(ev){
+            ev.preventDefault(); ev.stopPropagation();
+            vp.removeEventListener("click", sw, true);
+          };
+          vp.addEventListener("click", sw, true);
+          setTimeout(function(){ vp.removeEventListener("click", sw, true); }, 400);
+        }
+      }
+      vp.addEventListener("touchend", release, { passive: true });
+      vp.addEventListener("touchcancel", release, { passive: true });
+      // 데스크탑 마우스 드래그 — 놓으면 가까운 카드(밀던 방향)로 붙인다
+      var mx0 = null;
+      vp.addEventListener("pointerdown", function(e){
+        if (e.pointerType === "mouse" && e.button === 0){ cancel(); mx0 = vp.scrollLeft; }
+      });
+      function mup(e){
+        if (mx0 === null || e.pointerType !== "mouse") return;
+        var w = stepW(), d = vp.scrollLeft - mx0; mx0 = null; if (!w) return;
+        var base = Math.round((vp.scrollLeft - d) / w), dir = 0;
+        if (d > w * 0.12) dir = 1; else if (d < -w * 0.12) dir = -1;
+        setTimeout(function(){ go(base + dir, 360); }, 0);
+      }
+      vp.addEventListener("pointerup", mup);
+      vp.addEventListener("pointercancel", mup);
     })();
     start();
     })(list[s]);
