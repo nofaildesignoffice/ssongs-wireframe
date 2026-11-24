@@ -4285,6 +4285,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   .circhead .wh{line-height:1.3}
   .circhead .wsub{margin-top:5.3px}
 }
+
+/* catban-best-nogap-v16-20261124 */
+/* 모바일: SSONGS PRODUCTS ↔ 지금 뜨는 베스트 상품 사이 회색 틈 없앤다.
+   (기종 선택 섹션이 모바일에서 숨겨져, 그 다음 gband 인 베스트의 위 틈이 카테고리 바로 밑에 생겼다) */
+@media(max-width:900px){
+  #r-main > .wsec.devsec + .wsec.gband{margin-top:0}
+}
 </style>
 </head>
 <body>
