@@ -4581,6 +4581,22 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   #r-main > .wsec:nth-child(21){padding-top:16px !important;padding-bottom:16px !important;margin-top:0px !important}
   .cbhead{margin-top:10px !important}
 }
+
+/* cbtabs-mobile-v16-20261126 */
+/* 모바일 카테고리 탭 — 4개가 한 줄에 다 보이게 (가로 스크롤 없음). 긴 이름은 두 줄로 접는다.
+   카드 줄 스와이프는 신제품·베스트 줄과 같은 자유 스크롤 (스냅 없이 민 만큼 간다). */
+@media(max-width:900px){
+  .cbtabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;
+    margin:0 0 16px;padding:0;overflow:visible}
+  .cbtabs button{height:46px;padding:0 4px;border-radius:8px;font-size:11.5px;font-weight:700;
+    line-height:1.2;letter-spacing:0;white-space:normal;word-break:keep-all;text-align:center}
+  .slider.cbsl .viewport{scroll-snap-type:none}
+  .slider.cbsl .track > *{scroll-snap-stop:normal}
+}
+@media(max-width:360px){
+  .cbtabs{gap:5px}
+  .cbtabs button{font-size:10.5px;padding:0 3px}
+}
 </style>
 </head>
 <body>
