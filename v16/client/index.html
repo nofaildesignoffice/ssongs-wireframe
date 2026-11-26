@@ -4607,6 +4607,40 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(max-width:560px){
   #r-main > .wsec.gband:has(> .bestwrap){padding-top:40px !important;padding-bottom:40px !important}
 }
+
+/* mhsl-align-arrows-v16-20261126 */
+/* 데스크탑 (갑 지시 2026-11-26)
+   ① 추천 세트 & 번들 — 화면 끝까지 흘리던 줄을 다른 섹션과 같은 본문 폭(좌우 여백 동일) 안에 넣는다.
+      다음 카드는 본문 폭 안 오른쪽에 살짝 보인다. 100vw 가 스크롤바를 포함해 왼쪽이 7px 어긋나던 것도 같이 풀린다.
+   ② 좌우 버튼 — 추천 세트 · 카테고리 탭 · 내 제품 찾기 세 곳을 같은 모양으로, 마우스를 올렸을 때만 보이게. */
+@media(min-width:901px){
+  .slider.mhsl{--cw:82%}
+  .slider.mhsl .viewport{width:auto;margin:0}
+  .slider.mhsl .track{padding:0}
+  .slider.mhsl .track > *{flex:0 0 82%}
+
+  .slider.mhsl .sbtn,.slider.cbsl .sbtn,.circnav{width:56px;height:56px;padding:0;border-radius:50%;
+    border:1px solid var(--ink);background:var(--white);color:var(--black);
+    box-shadow:0 3px 14px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .2s,background .16s,color .16s}
+  .slider.mhsl .sbtn.prev,.slider.cbsl .sbtn.prev{left:-28px}
+  .slider.mhsl .sbtn.next,.slider.cbsl .sbtn.next{right:-28px}
+  .slider.mhsl:hover .sbtn,.slider.mhsl:focus-within .sbtn,
+  .slider.cbsl:hover .sbtn,.slider.cbsl:focus-within .sbtn,
+  .circsc:hover .circnav,.circsc:focus-within .circnav{opacity:1;pointer-events:auto}
+  .circsc:hover .circnav:disabled{opacity:.25;pointer-events:none}
+  .slider.mhsl .sbtn:hover,.slider.cbsl .sbtn:hover,.circnav:hover:not(:disabled){
+    background:var(--black);color:var(--white);border-color:var(--black)}
+  .circnav{top:58px}
+  .circnav.prev{left:max(-74px, calc((100% - 100vw) / 2 + 8px))}
+  .circnav.next{right:max(-74px, calc((100% - 100vw) / 2 + 8px))}
+}
+@media(min-width:901px) and (hover:none){
+  .slider.mhsl .sbtn,.slider.cbsl .sbtn,.circnav{opacity:1;pointer-events:auto}
+  .circnav:disabled{opacity:.25}
+}
+@media(prefers-reduced-motion:reduce){
+  .slider.mhsl .sbtn,.slider.cbsl .sbtn,.circnav{transition:none}}
 </style>
 </head>
 <body>
