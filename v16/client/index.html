@@ -4597,6 +4597,16 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   .cbtabs{gap:5px}
   .cbtabs button{font-size:10.5px;padding:0 3px}
 }
+
+/* best-pad-eq-v16-20261126 */
+/* 모바일 베스트 상품 섹션 — 위아래 여백 넉넉하게, 같은 값 (갑 지시 2026-11-26).
+   앞선 「배너와 여백 0」(best-npban-nogap) · 「여백 50%」(section-gap50) 보다 나중 지시라 덮어쓴다. */
+@media(max-width:900px){
+  #r-main > .wsec.gband:has(> .bestwrap){padding-top:48px !important;padding-bottom:48px !important}
+}
+@media(max-width:560px){
+  #r-main > .wsec.gband:has(> .bestwrap){padding-top:40px !important;padding-bottom:40px !important}
+}
 </style>
 </head>
 <body>
