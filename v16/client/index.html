@@ -4464,6 +4464,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(prefers-reduced-motion:reduce){
   .circnav,.cbtabs button,.npban__b{transition:none}
   .wsec.circ .circsc .circwrap{scroll-behavior:auto}}
+
+/* best-npban-nogap-v16-20261126 */
+/* 모바일 — 베스트 상품과 케이스 줄 위 배너 사이 여백 0 (갑 지시 2026-11-26) */
+@media(max-width:900px){
+  #r-main > .wsec:has(+ .wsec.npsec > .npban){padding-bottom:0}
+  #r-main > .wsec.npsec:has(> .npban){margin-top:0}
+}
 </style>
 </head>
 <body>
