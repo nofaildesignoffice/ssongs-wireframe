@@ -4641,6 +4641,12 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 }
 @media(prefers-reduced-motion:reduce){
   .slider.mhsl .sbtn,.slider.cbsl .sbtn,.circnav{transition:none}}
+
+/* npban-taller-v16-20261126 */
+/* 모바일 케이스 줄 위 배너 — 세로 20% 더 (2.25:1 -> 1.875:1, 갑 지시 2026-11-26) */
+@media(max-width:900px){
+  #r-main > .wsec > .npban{aspect-ratio:1.875/1}
+}
 </style>
 </head>
 <body>
