@@ -4654,6 +4654,19 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(min-width:901px) and (max-width:1480px){
   :root{--maxw:1280px}
 }
+
+/* circ-80-v16-20261127 */
+/* 데스크탑 「내 제품 찾기」 원형 줄 (갑 지시 2026-11-27)
+   줄 폭을 본문의 80% 로 · 원 104 -> 88px · 원 사이 간격도 같이 줄어든다(한 화면 8개 유지 — 두 탭 모두 넘길 게 있다).
+   좌우 버튼은 마우스를 안 올려도 항상 보인다 (넘길 게 없는 쪽만 흐리게). */
+@media(min-width:901px){
+  .wsec.circ > .circsc{width:min(80%, calc(var(--maxw) * .8));max-width:none;margin-inline:auto}
+  .wsec.circ .circsc .circ__ph{width:88px;height:88px}
+  .wsec.circ .circsc .circ__i{gap:10px}
+  .wsec.circ .circsc .circ__t{font-size:13.5px}
+  .circnav{top:50px;opacity:1;pointer-events:auto}
+  .circnav:disabled,.circsc:hover .circnav:disabled{opacity:.25;pointer-events:none}
+}
 </style>
 </head>
 <body>
