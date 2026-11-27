@@ -4719,6 +4719,17 @@ br.rvbr{display:none}
     margin-left:calc(var(--pad,15px) * -1);padding-left:var(--pad,15px);
     scroll-padding-left:var(--pad,15px)}
 }
+
+/* npsec-line-content-v16-20261127 */
+/* 데스크탑 — 구분선을 화면 전체가 아니라 본문 폭 길이로, 이어폰케이스 ↔ 세트 상품 사이에도 (갑 지시 2026-11-27) */
+@media(min-width:901px){
+  #r-main > .wsec.npsec + .wsec.npsec{border-top:0}
+  #r-main > .wsec.npsec + .wsec.npsec,
+  #r-main > .wsec.npend + .wsec{position:relative}
+  #r-main > .wsec.npsec + .wsec.npsec::before,
+  #r-main > .wsec.npend + .wsec::before{content:"";position:absolute;top:0;height:1px;background:#E2E1DE;
+    left:max(var(--pad), (100% - var(--maxw)) / 2);right:max(var(--pad), (100% - var(--maxw)) / 2)}
+}
 </style>
 </head>
 <body>
