@@ -4667,6 +4667,14 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
   .circnav{top:50px;opacity:1;pointer-events:auto}
   .circnav:disabled,.circsc:hover .circnav:disabled{opacity:.25;pointer-events:none}
 }
+
+/* desk-nosnap-v16-20261127 */
+/* 데스크탑 — 문서 세로 스냅(proximity)을 끈다 (갑 지시 2026-11-27).
+   띠배너(.pbar) 스냅 지점 바로 아래 「내 제품 찾기」에서 원형 줄 좌우 버튼을 누르면
+   브라우저가 스냅을 다시 계산해 페이지를 띠배너 위치로 끌어올렸다.
+   히어로 → 띠배너 한 번에 넘기기는 휠 스크립트(glide)가 따로 하므로 기능은 그대로다.
+   (터치 기기는 이미 꺼져 있다 — pointer:coarse) */
+html:has(#r-main:not([hidden])){scroll-snap-type:none}
 </style>
 </head>
 <body>
