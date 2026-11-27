@@ -4675,6 +4675,15 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
    히어로 → 띠배너 한 번에 넘기기는 휠 스크립트(glide)가 따로 하므로 기능은 그대로다.
    (터치 기기는 이미 꺼져 있다 — pointer:coarse) */
 html:has(#r-main:not([hidden])){scroll-snap-type:none}
+
+/* npsec-1pxline-v16-20261127 */
+/* 데스크탑 — 신제품·기획 줄(케이스 ~ 이어폰케이스) 사이 14px 회색 띠와 큰 여백을 없애고
+   1px 회색 가로선 하나로 나눈다 (갑 지시 2026-11-27). 모바일은 그대로. */
+@media(min-width:901px){
+  #r-main > .wsec.npsec{padding-top:40px;padding-bottom:40px}
+  #r-main > .wsec.npsec:has(> .npban){padding-top:0}
+  #r-main > .wsec.npsec + .wsec.npsec{border-top:1px solid #E2E1DE}
+}
 </style>
 </head>
 <body>
