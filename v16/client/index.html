@@ -4766,7 +4766,12 @@ br.rvbrd{display:none}
 /* cbcard-taller-mobile-v16-20261127 */
 /* 모바일 — SSONGS PRODUCTS 카드 세로 10% 늘림 (5:8 → 5:8.8), 가로폭 그대로 (갑 지시 2026-11-27) */
 @media(max-width:900px){
-  .cbdesk .catban__item .bph{aspect-ratio:25/44}
+  .cbdesk .catban__item .bph{aspect-ratio:5/8}
+  /* 2026-11-28 — 종횡비는 원래(5:8)로 되돌리고 가로를 1.1배 (2.2장 → 2장) 해서 세로 10% 증가를 유지 */
+  .slider.cbsl .track > *,.cbgrid > *{flex:0 0 calc((100% - 10px) / 2)}
+  /* 360 링홀더 탭(.cbgrid)도 다른 탭처럼 밀면 화면 왼쪽 끝까지 흘러 사라지게 */
+  #r-main .cbgrid{margin-left:calc(var(--pad,15px) * -1);padding-left:var(--pad,15px);
+    scroll-padding-left:var(--pad,15px)}
 }
 
 /* bundle-v16-20261127 */
