@@ -4647,6 +4647,13 @@ html.gliding{scroll-behavior:auto !important;scroll-snap-type:none !important}
 @media(max-width:900px){
   #r-main > .wsec > .npban{aspect-ratio:1.875/1}
 }
+
+/* maxw-laptop-v16-20261127 */
+/* 노트북 화면(브라우저 폭 1480px 이하)은 본문 폭 1280px — 1380 이면 좌우 여백이 32px 뿐이라 답답하다
+   (갑 지시 2026-11-27, 전 페이지). 1481px 이상은 기존 1380px 그대로. 모든 본문 상자가 --maxw 를 쓴다. */
+@media(min-width:901px) and (max-width:1480px){
+  :root{--maxw:1280px}
+}
 </style>
 </head>
 <body>
