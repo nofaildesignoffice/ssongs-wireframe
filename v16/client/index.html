@@ -4834,6 +4834,20 @@ br.rvbrd{display:none}
 @media(hover:hover){
   .buyrow .btn:nth-child(3):hover svg{color:#E5262B;fill:#E5262B}
 }
+
+/* cb-unify-mobile-v16-20261128 */
+/* 모바일 SSONGS PRODUCTS — 4개 탭(CASE · CARD WALLET · CHANGETOC · 360) 카드 크기 · 간격 · 여백을 하나로 (갑 지시 2026-11-28)
+   · 간격 10px → 7px (70%)
+   · 카드 종횡비 5:8 (세로 늘리기 전 비율)
+   · 한 화면에 2장 + 3번째 카드 10% — 보이는 폭 = 트랙(100%) + 오른쪽으로 흘린 여백(--pad)
+     카드 = (보이는 폭 - 간격 2개) / 2.1 */
+@media(max-width:900px){
+  .cbdesk .cbsl .track,.cbdesk .cbgrid{gap:7px}
+  .cbdesk .slider.cbsl .track > *,.cbdesk .cbgrid > *{
+    flex:0 0 calc((100% + var(--pad,15px) - 14px) / 2.1);width:auto;min-width:0;margin:0}
+  .cbdesk .catban__item .bph{aspect-ratio:5/8;height:auto;width:100%}
+  .cbdesk .cbgrid{margin-right:calc(var(--pad,15px) * -1);padding-right:var(--pad,15px);padding-bottom:0}
+}
 </style>
 </head>
 <body>
